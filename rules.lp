@@ -8,9 +8,8 @@ Want to say something similar to this but with any expr with call statements rep
 Instead of expr(mul, 4, call(f, 3)), want expr(mul, 4, expr(mul, 3, expr(mul, 2, expr(mul 1, 1))))
 *%
 
-const(0..100).
-#domain const(N).
-#domain const(R).
+const(0..50000).
+const(e).
 %#domain const(Input).
 #domain const(Index).
 
@@ -29,7 +28,7 @@ value(sub(A, B), V1 - V2) :- eval(sub(A, B)), value(A, V1), value(B, V2).
 value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2).
 value(call(F, Args), Out) :- eval(call(F, Args)), output(call(F, Inputs), Out), value(Args, Inputs).
 value((A, B), (V1, V2)) :- eval((A, B)), value(A, V1), value(B, V2).
-value(N, N) :- eval(N).
+value(N, N) :- eval(N), const(N).
 
 eval(Expr) :- input(call(F, Inputs)), rule(Index, F, Inputs, Expr), match(F, Index, Inputs).
 eval(Args) :- eval(call(F, Args)).
@@ -44,7 +43,7 @@ eval(B) :- eval(add(A, B)).
 
 input(call(F, Inputs)) :- eval(call(F, Args)), value(Args, Inputs).
 
-match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _).
+match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index.
 
 
