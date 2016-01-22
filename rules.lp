@@ -10,16 +10,50 @@ Instead of expr(mul, 4, call(f, 3)), want expr(mul, 4, expr(mul, 3, expr(mul, 2,
 
 const(0..50000).
 const(e).
-%#domain const(Input).
-#domain const(Index).
+
+#domain max_depth(MaxDepth).
 
 #hide const(N).
-#hide rule(R, F, Args, Expr).
+%#hide rule(R, F, Args, Expr).
 #hide match(F, Index, Args).
+#hide match2(F, Index, Args).
 #hide smaller_match(F, Index, Args).
 #hide eval(Expr).
 #hide value(Expr, Out).
+
+#hide valid_args(Args).
+#hide fn_name(F, N).
+#hide max_depth(N).
+#hide expr_const(N).
+#hide var(X).
+#hide valid_expr(Args, Expr).
+%#hide valid_expr(Args, Expr, N).
+
+#hide input(In).
+#hide output(In, Out).
 %%%%
+
+%%%% LANGUAGE BIAS %%%%
+
+input(In) :- example(In, _).
+%:- not output(In, Out), example(In, Out).
+
+0 {rule(RuleNum, FuncName, Args, Expr) : RuleNum = 1..N : valid_args(Args) : valid_expr(Args, Expr)} N :- fn_name(FuncName, N).
+
+valid_args(C) :- expr_const(C).
+valid_args(V) :- var(V).
+
+valid_expr(Args, Expr) :- valid_expr(Args, Expr, N), N <= MaxDepth.
+valid_expr(Args, Args, 1) :- valid_args(Args).
+valid_expr(Args, C, 1) :- valid_args(Args), valid_args(C).
+
+valid_expr(Args, add(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
+valid_expr(Args, sub(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
+valid_expr(Args, sub(Expr, C), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
+valid_expr(Args, mul(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
+valid_expr(Args, call(F, Expr), N+1) :- fn_name(F, _), valid_expr(Args, Expr, N), N < MaxDepth.
+
+%%%% BACKGROUND KNOWLEDGE %%%%
 
 output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value(Expr, Out).
 
@@ -44,7 +78,7 @@ eval(B) :- eval(add(A, B)).
 input(call(F, Inputs)) :- eval(call(F, Args)), value(Args, Inputs).
 
 match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
-smaller_match(F, Index, Args) :- match(F, O, Args), O < Index.
+smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
 
 
 
