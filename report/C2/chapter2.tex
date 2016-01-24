@@ -124,11 +124,11 @@ I will be mainly using one application of aggregates, the choice rule. A choice 
 To calculate the Answer Sets of a program P which contains aggregates by adding an additional step to the construction of the reduct. For each rule with an aggregate:
 
 \begin{enumerate}
-\item If the aggregate is not satisfied by X then convert the rule into a constraint by removing the aggregate, replacing it with %\bot%.
+\item If the aggregate is not satisfied by X then convert the rule into a constraint by removing the aggregate, replacing it with $\bot$.
 \item If the aggregate is satisfied by X then generate one rule for each atom A in the aggregate which is also in X, with A as the head.
 \end{enumerate}
 
-For example, consider program P with X = \{p ,q, r\}:
+For example, consider program P with X = \{p, q, r\}:
 
 \begin{align*}
 1 \: \{p, q\} \: 2 \gets r. \\
@@ -143,14 +143,115 @@ q \gets r. \\
 r.
 \end{align*}
 
-
 \subsubsection{Optimisation Statements}
+
+An Optimisation Statement is an ASP atom of the form $ \#op \: [l_1 = w_1, l_2 = w_2, \dots, l_n = w_n]$, where $\#op$ is either $\#maximise$ or $\#minimise$, and each $l_n$ is a ground literal assigned a weight $w_n$. They allow for an ASP solver to search for optimal Answer Sets which maximise or minimise the sum of the atoms with regards to their weights. For instance, 
+
+\begin{align*}
+p \gets \textsf{not} \: q. \\
+q \gets \textsf{not} \: p. \\
+\#minimise \: [p = 1, q = 2]
+\end{align*}
+
+Has one optimal answer set, \{p\}.
 
 \subsection{Learning from Answer Sets}
 
-\subsubsection{Brave and Cautious Induction}
+I will first introduce the idea of Brave and Cautious Entailment:
+
+\begin{itemize}
+\item We say an atom A is Bravely entailed by a program P if it is true in at least one Answer Set of P.
+\item We say an atom A is Cautiously entailed by a program P if it is true in all Answer Sets of P.
+\end{itemize}
+
+\subsubsection{Cautious Induction}
+
+A Cautious Induction task is defined as a search for Hypothesis $H$, given a background knowledge $B$ (an ASP program) and sets of positive and negative examples (atoms) $E^+$ and $E^-$. \\
+
+We want to find $H$ such that:
+
+\begin{itemize}
+\item $B \cup H$ has at least one Answer Set
+\item For all Answer Sets A of $H$ :
+\begin{itemize}
+\item $\forall e \in E^+ \: : \: e \in A$
+\item $\forall e \in E^- \: : \: e \not \in A$
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Brave Induction}
+
+Brave Induction is defined similarly to Cautious Induction. Given a background knowledge $B$ and sets of examples $E^+$ and $E^-$, we want to find a Hypothesis H such that, there is at least one Answer Set A of $H$ that:
+
+\begin{itemize}
+\item $\forall e \in E^+ \: : \: e \in A$
+\item $\forall e \in E^- \: : \: e \not \in A$
+\end{itemize}
+
+For example, consider Program P:
+
+\begin{align*}
+p &\gets \: \textsf{not} \: q. \\
+q &\gets \: \textsf{not} \: p, \: \textsf{not} \: r. \\
+s &\gets r.
+\end{align*}
+
+with $E^+$ = \{s\} and $E^-$ = \{q\}. \\
+The Hypothesis H = \{p, s\} is both a Brave and Cautious Inductive Solution, as there is only one Answer Set, and it satisfies all of the examples.\\
+
+The Hypothesis H = \{s\} is a Brave Inductive Solution but not a Cautious one. It has two Answer Sets, \{p, s\} and \{q, s\}, but only \{p, s\} satisfies the examples.
 
 \subsubsection{ASPAL}
+
+ASPAL is an ASP algorithm which computes the solution of a Brave Inductive task by encoding it as an ASP program which has the solutions as the Answer Sets of the program.\\
+
+First, we encode the Hypothesis space by generating a number of skeleton rules. Each skeleton rule represents a possible rule in the Hypothesis (with constant terms replaced with variables), together with an identifier. The atom rule(ID, $c_1, \dots, c_n$) represents the choice of skeleton rule with ID and the constant variables replaced by various $c_n$. The goal of the task is to find these rule atoms.\\
+
+We next rule out Answer Sets which do not fit the examples by adding a goal rule and a constraint, of the format :
+
+\begin{align*}
+&\textsf{goal} \gets e_1^+, \dots, e_n^+, \: \textsf{not} \: e_1^-, \dots, \: \textsf{not} \: e_n^- \\
+&\gets \textsf{not goal}
+\end{align*}
+
+This rules out any answer set which does not contain all of the positive examples and contains any negative examples.
+
+We then make sure the Answer Sets of the program correspond to the optimal solutions of the task by adding an optimisation statement
+\begin{align*}
+\# minimise \: [rule(ID, c_1, \dots, c_n) = ruleLength, \dots].
+\end{align*}
+
+where there is a rule predicate for each skeleton rule, weighted by the length of that rule.
+
+As an example of the entire ASPAL encoding, consider the program :
+
+\begin{align*}
+bird(a).& \: &bird(b).\\
+ability(fly).& \: &ability(swim). \\
+can(a, fly).& \: &can(b, swim).
+\end{align*}
+
+with mode declarations 
+
+\begin{align*}
+&modeh(penguin(+bird)).\\
+&modeb(\textsf{not} \: can(+bird, \#ability)).
+\end{align*}
+
+and examples $E^+$ = \{penguin(b)\} and $E^-$ = \{penguin(a)\}. \\
+This task has encoding:
+
+\begin{align*}
+&penguin(V1) \gets bird(V1), \: rule(1).\\
+&penguin(V1) \gets bird(V1), \: \textsf{not} \: can(V1, C1), rule(2, C1).\\
+&penguin(V1) \gets bird(V1), \: \textsf{not} \: can(V1, C1), \: \textsf{not} \: can(V1, C2), rule(3, C1, C2).\\
+&\%\%\%\%\%\%\\
+&\{rule(1), rule(2, fly), rule(2, swim), rule(3, fly, swim)\}.\\
+&\#minimise \: [rule(1)=1, rule(2, fly) = 2, rule(2, swim) = 2, rule(3, fly, swim) = 3]. \\
+&\%\%\%\%\%\%\\
+&goal \gets pengiun(b), \: \textsf{not} \: penguin(a).\\
+&\gets \: \textsf{not} \: goal.
+\end{align*}
 
 \subsection{ASP Solvers}
 

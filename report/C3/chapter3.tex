@@ -1,17 +1,29 @@
-\chapter{Chapter Title}
+\chapter{Method}
 
-\section{First Section Title}
+\section{A Haskell Interpreter in ASP}
 
-\lipsum[1-2]\cite{Crank1975}
+As a way of better understanding how to represent the target language of the tool, my first step was to implement an Interpreter for the simple target language of my tool.
 
-\subsection{First Subsection Title}
+\subsection{Target Language}
 
-\lipsum[3]
+Initially, I chose to target a simple sub language of Haskell with the following terms :
 
-\section{First Section Title}
+\begin{itemize}
+\item Addition
+\item Subtraction
+\item Multiplication
+\item Function Calls (including recursion) with any number of arguments.
+\item Lists
+\end{itemize}
 
-\lipsum[4-5]
+I chose these terms as I felt they were expressive enough to be able to represent sufficiently complicated test examples.
 
+I then represent each line of the target Haskell program with a Rule with a rule(Num, FuncName, Input, Output) predicate in the head. For example, we can represent the recursive factorial Haskell program
+
+
+\section{Initial Learning}
+
+\section{Plans}
 
 \pagebreak
 \renewcommand\bibname{{References}}
