@@ -60,11 +60,16 @@ I decided to base my (initial) learning task as an ASP encoding similar to ASPAL
 \item My background knowledge is simply my interpreter from 2.1.2
 \item I characterised the Skeleton Rules as a choice rule where there can be up to a given number of rule predicates with an expression that is structured correctly. 
 \lstinputlisting[language=Prolog, firstline=41, lastline=41]{../rules.lp}
-\item I then add a constraint to remove any answer sets which do not produce the correct output when given the correct input.
+\item I then add a constraint to remove any answer sets which do not produce the correct output against the given examples.
 \lstinputlisting[language=Prolog, firstline=39, lastline=39]{../rules.lp}
 \end{itemize}
 
 \section{Future Work}
+
+\begin{itemize}
+\item Before the end of this term (~11th March) I hope to have a basic learning system in place where I can learn programs with an arbitrary number of arguments, including lists. 
+\item My goals after Easter will be primarily focused on extending the language bias to deal with guards, let / where statements and higher order functions. At the same time I would like to attempt to apply existing IFP optimisations to my implementation and run experiments to compare my new tool to the most up to date IFP algorithms.
+\end{itemize}
 
 \pagebreak
 \renewcommand\bibname{{References}}
