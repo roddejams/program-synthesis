@@ -54,7 +54,17 @@ These rules allow us to match to the most fitting rule. A rule matches some argu
 
 \section{Initial Learning}
 
-\section{Plans}
+I decided to base my (initial) learning task as an ASP encoding similar to ASPAL, with the goal to learn the correct rule() predicates given a number of input/output example pairs:
+
+\begin{itemize}
+\item My background knowledge is simply my interpreter from 2.1.2
+\item I characterised the Skeleton Rules as a choice rule where there can be up to a given number of rule predicates with an expression that is structured correctly. 
+\lstinputlisting[language=Prolog, firstline=41, lastline=41]{../rules.lp}
+\item I then add a constraint to remove any answer sets which do not produce the correct output when given the correct input.
+\lstinputlisting[language=Prolog, firstline=39, lastline=39]{../rules.lp}
+\end{itemize}
+
+\section{Future Work}
 
 \pagebreak
 \renewcommand\bibname{{References}}
