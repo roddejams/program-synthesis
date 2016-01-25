@@ -24,5 +24,7 @@
 \contentsline {chapter}{\numberline {2}Method}{14}{chapter.2}
 \contentsline {section}{\numberline {2.1}A Haskell Interpreter in ASP}{14}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Target Language}{14}{subsection.2.1.1}
-\contentsline {section}{\numberline {2.2}Initial Learning}{14}{section.2.2}
+\contentsline {subsection}{\numberline {2.1.2}Evaluating Rules}{15}{subsection.2.1.2}
+\contentsline {section}{\numberline {2.2}Initial Learning}{16}{section.2.2}
+\contentsline {section}{\numberline {2.3}Plans}{16}{section.2.3}
 \gdef \the@ipfilectr {}

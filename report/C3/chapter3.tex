@@ -20,6 +20,37 @@ I chose these terms as I felt they were expressive enough to be able to represen
 
 I then represent each line of the target Haskell program with a Rule with a rule(Num, FuncName, Input, Output) predicate in the head. For example, we can represent the recursive factorial Haskell program
 
+\lstinputlisting[language=Haskell, firstline=5, lastline=7]{../examples/factorial_obs.lp}
+
+Is represented by the ASP program
+
+\lstinputlisting[language=Prolog, firstline=11, lastline=12]{../examples/factorial_obs.lp}
+
+We add the input atom to the body of the rule to constrain the grounding of these rules. \\
+
+\subsection{Evaluating Rules}
+
+The goal of my interpreter is to be able to evaluate these rules with some given input, to get the correct output. Because we are interpreting Functional Programs we can be sure each input has one output.
+
+\lstinputlisting[language=Prolog, firstline=58, lastline=58]{../rules.lp}
+
+This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value.
+
+\lstinputlisting[language=Prolog, firstline=60, lastline=65]{../rules.lp}
+
+These rules handle calculating the value of expressions. The eval() predicate is generated whenever you need to calculate the value of an expression.
+
+\lstinputlisting[language=Prolog, firstline=67, lastline=76]{../rules.lp}
+
+These rules handle which expressions to calculate values for. The most important rule here is to top one, which says that whenever you have an input to some matching rule then you need to evaluate the output of that rule.
+
+\lstinputlisting[language=Prolog, firstline=78, lastline=78]{../rules.lp}
+
+This rule generates more input predicated if we have to calculate the value for a call to a function. This allows us to then generate more ground rule predicates and repeat.
+
+\lstinputlisting[language=Prolog, firstline=80, lastline=81]{../rules.lp}
+
+These rules allow us to match to the most fitting rule. A rule matches some arguments if there is no smaller rule that also matches those arguments. The match2() predicate is there as a placeholder, and will have effect when more complicated matching (e.g guards) will be needed.
 
 \section{Initial Learning}
 
