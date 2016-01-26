@@ -255,21 +255,60 @@ This task has encoding:
 
 \subsection{ASP Solvers}
 
-\subsubsection{CLASP}
+Typically, ASP solvers work in two parts.
+
+\begin{itemize}
+\item First the input program must be converted into the ground finite logic program by a grounder. Typically this step also includes optimisations to help the solver.
+\item The ground program is then passed into the solver which calculates the Answer Sets of the program.
+\end{itemize}
+
+The main popular ASP solvers are SMODELS, DLV and CLASP. CLASP is the ASP solver which I will be using to run my learning tasks as part of this project. It consists of three programs : The grounder \textit{gringo}, the ASP solver \textit{clasp} and the utility \textit{clingo} which combines the two.
+
+\subsubsection{Gringo}
+
+Gringo calculates the ground logic program by replacing the variables in the program by ground terms. The resulting program needs only be an equivalent program (meaning it has the same Answer Sets), to be able to deal with programs with infinite number of Answer Sets.
 
 \section{Inductive Functional Programming}
 
-\begin{itemize}
-\item Inductive Functional Programming is the automatic synthesis of program
-\item Applications
-\item Traditionally, there have been two approaches to IFP. The analytical approach performs pattern matching on the given examples, usually performing a two-step process of first generalising the examples and then folding this generalisation into a recursive program. The "generate and test" search approach works by generating an infinite stream of candidate programs and then test these candidates to see if they correctly model the examples. \\ \\
+Inductive Functional Programming is the automatic synthesis of declarative programs from an incomplete specification, typically given as pairs of input-output examples.
+
+Traditionally, there have been two approaches to IFP. The analytical approach performs pattern matching on the given examples, usually performing a two-step process of first generalising the examples and then folding this generalisation into a recursive program. The "generate and test" search approach works by generating an infinite stream of candidate programs and then test these candidates to see if they correctly model the examples. \\
 
 Each approach has its own advantages and disadvantages. The analytical approach, while fast, can be very limited in its target language and the types of programs it can generate, typically being limited to reasoning about data structures such as lists or trees. On the other hand, the search based approach is a lot less restricted but has worse performance due to the potentially huge search space. This issue is minimised by various optimisations performed on the generated programs, typically using a subset of the examples as an initial starting point.
-\item Overview of current approaches and how they relate 
+
+\subsection{Conditional Constructor Systems}
+
+Programs are represented in a functional style as a \textit{term rewriting system}, i.e a set of rules of the form $l \rightarrow r$. The LHS of the rule, $l$, has the format $F(a_1, \dots, a_n)$ where $F$ is a user-defined function and $a_1$ to $a_n$ are variables or pre-defined data type functions(constructors). In addition, rules must be \textit{bound}, meaning that all variables that appear on the right hand side of a rule must also appear on the left hand side.\\
+
+We can also extend these rules with conditionals, which must be met if the given rule is to be applied. Conditionals are of the form $l \rightarrow r \Leftarrow v_1 = u_1, \dots, v_n = u_n$, where each $v_n = u_n$ is an \textit{equality constraint} which has to hold for the rule to be applied.
+
+EXAMPLE TRS HERE.\\
+
+Using this definition we can begin to learn TRS. We take the sets of positive and negative examples ($E^+$ and $E^-$), written as sets of input/output examples in the form of unconditional re-write rules, and a \textit{background knowledge} $BK$ which is a set of additional re-write used to help computation. \\
+
+The goal of the learning task is then to a finite set of rewrite rules $R$ such that:
+
+\begin{itemize}
+\item $R \cup BK \models E^+$ (covers all of the positive examples).
+\item $R \cup BK \not \models E^-$ (covers none of the negative examples).
 \end{itemize}
 
+Because the target domain of this task is often very large, two extra constraints are added to the type of rule we are allowed to learn.\\
+Restriction Bias is similar to the language bias typically found in ILP systems, and restricts the format of the learned rules and conditionals, for example to avoid mutual recursion. \\
+Preference Bias introduces an idea of optimisation to the task such that the learned rules are optimal while also satisfying the examples. Some such optimisations are preference to shorter right hand sides or preference to as few rules as possible.
 
-\section{Haskell}
+\subsection{Overview of current tools}
+
+Here I will discuss two modern IFP systems which I will use to compare to my system as part of my evaluation:
+
+\begin{itemize}
+\item \textbf{MagicHaskeller} is based on the generate and test approach to IFP, and works by generating a stream of progressively more complicated programs and then testing them against the given specification. This search is exhaustive and performed in a breadth-first manner with application of a variant of Spivey's Monad.\\
+MagicHaskeller has the advantage of being easy to use as you only have to give the specification of the desired function as an argument, which is typically no more than a few lines of code in the target language. The tool also has a particularly large component library of built-in Haskell primitives which the tool uses where possible.\\
+However, MagicHaskeller does not have the ability to compute large programs, due to the performance cost of exhaustive breadth-first search. This problem, however, is typical of the generate and test approach.
+\item \textbf{Igor II}
+\end{itemize}
+
+\section{Haskell?}
 
 \pagebreak
 \renewcommand\bibname{{References}}

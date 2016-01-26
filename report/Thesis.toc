@@ -16,15 +16,17 @@
 \contentsline {subsubsection}{Brave Induction}{9}{section*.10}
 \contentsline {subsubsection}{ASPAL}{10}{section*.11}
 \contentsline {subsection}{\numberline {1.1.4}ASP Solvers}{12}{subsection.1.1.4}
-\contentsline {subsubsection}{CLASP}{12}{section*.12}
-\contentsline {section}{\numberline {1.2}Inductive Functional Programming}{12}{section.1.2}
-\contentsline {section}{\numberline {1.3}Haskell}{13}{section.1.3}
+\contentsline {subsubsection}{Gringo}{12}{section*.12}
+\contentsline {section}{\numberline {1.2}Inductive Functional Programming}{13}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}Conditional Constructor Systems}{13}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {1.2.2}Overview of current tools}{14}{subsection.1.2.2}
+\contentsline {section}{\numberline {1.3}Haskell?}{15}{section.1.3}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-2}
-\contentsline {chapter}{\numberline {2}Method}{14}{chapter.2}
-\contentsline {section}{\numberline {2.1}A Haskell Interpreter in ASP}{14}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}Target Language}{14}{subsection.2.1.1}
-\contentsline {subsection}{\numberline {2.1.2}Evaluating Rules}{15}{subsection.2.1.2}
-\contentsline {section}{\numberline {2.2}Initial Learning}{16}{section.2.2}
-\contentsline {section}{\numberline {2.3}Future Work}{17}{section.2.3}
+\contentsline {chapter}{\numberline {2}Method}{16}{chapter.2}
+\contentsline {section}{\numberline {2.1}A Haskell Interpreter in ASP}{16}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Target Language}{16}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Evaluating Rules}{17}{subsection.2.1.2}
+\contentsline {section}{\numberline {2.2}Initial Learning}{18}{section.2.2}
+\contentsline {section}{\numberline {2.3}Future Work}{19}{section.2.3}
 \gdef \the@ipfilectr {}

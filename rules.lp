@@ -27,7 +27,7 @@ const(e).
 #hide expr_const(N).
 #hide var(X).
 #hide valid_expr(Args, Expr).
-%#hide valid_expr(Args, Expr, N).
+#hide valid_expr(Args, Expr, N).
 
 #hide input(In).
 #hide output(In, Out).
@@ -36,7 +36,7 @@ const(e).
 %%%% LANGUAGE BIAS %%%%
 
 input(In) :- example(In, _).
-%:- not output(In, Out), example(In, Out).
+:- not output(In, Out), example(In, Out).
 
 0 {rule(RuleNum, FuncName, Args, Expr) : RuleNum = 1..N : valid_args(Args) : valid_expr(Args, Expr)} N :- fn_name(FuncName, N).
 
