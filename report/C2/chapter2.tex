@@ -81,7 +81,7 @@ Let P be a ground normal logic program, and X be a set of atoms. The reduct of P
 \item Delete any negation as failure atoms from the remaining rules in P.
 \end{enumerate}
 
-We then say X is an Answer Set (Stable Model) of P if it is the least Herbrand Model of  P\textsuperscript{X}. For example, if program P is:
+We then say X is an Answer Set (Stable Model) of P if it is a least Herbrand Model of  P\textsuperscript{X}. For example, if program P is:
 
 \begin{lstlisting}
 p(1, 2).
@@ -99,7 +99,7 @@ q(1) :- p(1, 2).
 q(2) :- p(2, 2).
 \end{lstlisting}
 
-The Least Herbrand Model M(P\textsuperscript{X}) = \{p(1,2), q(1)\}, so X is an Answer Set of P. \\ \\
+A Least Herbrand Model M(P\textsuperscript{X}) = \{p(1,2), q(1)\}, so X is an Answer Set of P. \\ \\
 
 It is important to note that Answer Sets are not unique and some programs might have no Answer Sets.
 
@@ -281,8 +281,6 @@ Each approach has its own advantages and disadvantages. The analytical approach,
 Programs are represented in a functional style as a \textit{term rewriting system}, i.e a set of rules of the form $l \rightarrow r$. The LHS of the rule, $l$, has the format $F(a_1, \dots, a_n)$ where $F$ is a user-defined function and $a_1$ to $a_n$ are variables or pre-defined data type functions(constructors). In addition, rules must be \textit{bound}, meaning that all variables that appear on the right hand side of a rule must also appear on the left hand side.\\
 
 We can also extend these rules with conditionals, which must be met if the given rule is to be applied. Conditionals are of the form $l \rightarrow r \Leftarrow v_1 = u_1, \dots, v_n = u_n$, where each $v_n = u_n$ is an \textit{equality constraint} which has to hold for the rule to be applied.
-
-EXAMPLE TRS HERE.\\
 
 Using this definition we can begin to learn TRS. We take the sets of positive and negative examples ($E^+$ and $E^-$), written as sets of input/output examples in the form of unconditional re-write rules, and a \textit{background knowledge} $BK$ which is a set of additional re-write used to help computation. \\
 
