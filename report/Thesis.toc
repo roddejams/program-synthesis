@@ -20,6 +20,7 @@
 \contentsline {section}{\numberline {1.2}Inductive Functional Programming}{11}{section.1.2}
 \contentsline {subsection}{\numberline {1.2.1}Conditional Constructor Systems}{11}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Overview of current tools}{12}{subsection.1.2.2}
+\contentsline {section}{{References}}{14}{section*.13}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-2}
 \contentsline {chapter}{\numberline {2}Method}{15}{chapter.2}
