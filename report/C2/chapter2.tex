@@ -6,55 +6,55 @@
 
 The Stable Model Semantics provides a natural semantics for both normal and extended logic programs, in which instead of giving individual solutions to queries we define a set of "Answer Sets" (Stable Models) of the program. For example, given the program:
 
-\begin{align*}
-p \gets \textsf{not} \: q. \\
-q \gets \textsf{not} \: p. 
-\end{align*}
+\begin{lstlisting}
+p :- not q.
+q :- not p.
+\end{lstlisting}
 
-Because the value of p depends on the value of q, when you query Prolog for p? this program results in an infinite search, alternately searching for p and q until cancelled. However, using the Stable Model Semantics, this particular program has an answer set for each solution : \{p\} and \{q\}.
+The value of p depends on the value of q, when you query Prolog for p? this program results in an infinite search, alternately searching for p and q until cancelled. However, using the Stable Model Semantics, this particular program has an answer set for each solution : \{p\} and \{q\}.
 
 \subsubsection{Grounding}
 
 Before you can solve an extended logic program using Answer Sets you must first ground it. To calculate the grounding of a program P you replace each rule in P by every ground instance of that rule. For example, program 
 
-\begin{align*}
-&p(1,2). \\
-&q(X) \gets p(X, Y), \: \textsf{not} \: q(Y).
-\end{align*}
+\begin{lstlisting}
+p(1, 2).
+q(X) :- p(X, Y), not q(Y).
+\end{lstlisting}
 
 has grounding
 
-\begin{align*}
-&p(1,2). \\
-&q(1) \gets p(1, 1), \: \textsf{not} \: q(1). \\
-&q(1) \gets p(1, 2), \: \textsf{not} \: q(2). \\
-&q(2) \gets p(2, 1), \: \textsf{not} \: q(1). \\
-&q(2) \gets p(2, 2), \: \textsf{not} \: q(2).
-\end{align*}
+\begin{lstlisting}
+p(1,2).
+q(1) :- p(1, 1), not q(1).
+q(1) :- p(1, 2), not q(2).
+q(2) :- p(2, 1), not q(1).
+q(2) :- p(2, 2), not q(2).
+\end{lstlisting}
 
 Typically, a program containing functions has an infinite grounding. For example, 
 
-\begin{align*}
-&q(0, f(0)). \\
-&p(X) \gets q(X,Y), \: \textsf{not} \: p(Y).
-\end{align*}
+\begin{lstlisting}
+q(0, f(0)).
+p(X) :- q(X, Y), not p(Y).
+\end{lstlisting}
 
 This program would have an infinite grounding as there are an infinite amount of atoms 0, f(0), f(f(0)).. and so on. ASP solvers deal with this issue by incrementally calculating the grounding, by only generating rules such that for each atom A in the positive literals of the rule there exists another rule A as the head. This would give program 1.10 the grounding :
 
-\begin{align*}
-&q(0, f(0)). \\
-&p(0) \gets q(0, f(0)), \: \textsf{not} \: p(f(0)).
-\end{align*}
+\begin{lstlisting}
+q(0, f(0)).
+p(0) :- q(0, f(0)), not p(f(0)).
+\end{lstlisting}
 
 \subsubsection{Safety}
 
 Because of the need for ASP solvers to ground the entire program, they are restricted to safe rules. A rule is safe if every variable in that rule occurs positively in the body of the rule. Some examples of unsafe rules are:
 
-\begin{align*}
-p(X) &\gets q(Y). \\
-p(Z) &\gets \: \textsf{not} \: q(X,Y), \: r(X,Y). \\
-p(X) &\gets q(X), \: \textsf{not} \: r(Y).
-\end{align*}
+\begin{lstlisting}
+p(X) :- q(Y).
+p(Z) :- not q(X, Y), r(X, Y).
+p(X) :- q(X), not r(Y).
+\end{lstlisting}
 
 \subsubsection{Least Herbrand Models}
 
@@ -63,10 +63,10 @@ A Herbrand Model M is minimal if no subset of M is also a model. For definite lo
 
 For example, the program 
 
-\begin{align*}
-p \gets \textsf{not} \: q. \\
-q \gets \textsf{not} \: p. 
-\end{align*}
+\begin{lstlisting}
+p :- not q.
+q :- not p.
+\end{lstlisting}
 
 has two minimal models, \{p\} and \{q\}.
 
@@ -83,21 +83,21 @@ Let P be a ground normal logic program, and X be a set of atoms. The reduct of P
 
 We then say X is an Answer Set (Stable Model) of P if it is the least Herbrand Model of  P\textsuperscript{X}. For example, if program P is:
 
-\begin{align*}
-&p(1,2). \\
-&q(1) \gets p(1, 1), \: \textsf{not} \: q(1). \\
-&q(1) \gets p(1, 2), \: \textsf{not} \: q(2). \\
-&q(2) \gets p(2, 1), \: \textsf{not} \: q(1). \\
-&q(2) \gets p(2, 2), \: \textsf{not} \: q(2).
-\end{align*}
+\begin{lstlisting}
+p(1, 2).
+q(1) :- p(1, 1), not q(1).
+q(1) :- p(1, 2), not q(2).
+q(2) :- p(2, 1), not q(1).
+q(2) :- p(2, 2), not q(2).
+\end{lstlisting}
 
 Then, when trying X = \{p(1,2), q(1)\}, the reduct is:
 
-\begin{align*}
-&p(1,2). \\
-&q(1) \gets p(1, 2). \\
-&q(2) \gets p(2, 2).
-\end{align*}
+\begin{lstlisting}
+p(1, 2).
+q(1) :- p(1, 2).
+q(2) :- p(2, 2).
+\end{lstlisting}
 
 The Least Herbrand Model M(P\textsuperscript{X}) = \{p(1,2), q(1)\}, so X is an Answer Set of P. \\ \\
 
@@ -107,11 +107,11 @@ It is important to note that Answer Sets are not unique and some programs might 
 
 Constraints are a way of filtering out unwanted Answer Sets. They are written as rules with an empty head, which is equivalent to $\bot$. Semantically, this means that any model which satisfies the body of the constraint cannot be an Answer Set. For example, the program with constraint
 
-\begin{align*}
-p \gets \textsf{not} \: q. \\
-q \gets \textsf{not} \: p. \\
-\gets p, \: \textsf{not} \: q.
-\end{align*}
+\begin{lstlisting}
+p :- not q.
+q :- not p.
+:- p, not q.
+\end{lstlisting}
 
 Has only one Answer Set, \{q\}.
 
@@ -130,28 +130,28 @@ To calculate the Answer Sets of a program P which contains aggregates by adding 
 
 For example, consider program P with X = \{p, q, r\}:
 
-\begin{align*}
-1 \: \{p, q\} \: 2 \gets r. \\
+\begin{lstlisting}
+1 {p, q} 2 :- r.
 r.
-\end{align*}
+\end{lstlisting}
 
 the reduct is then
 
-\begin{align*}
-p \gets r. \\
-q \gets r. \\
+\begin{lstlisting}
+p :- r.
+q :- r.
 r.
-\end{align*}
+\end{lstlisting}
 
 \subsubsection{Optimisation Statements}
 
 An Optimisation Statement is an ASP atom of the form $ \#op \: [l_1 = w_1, l_2 = w_2, \dots, l_n = w_n]$, where $\#op$ is either $\#maximise$ or $\#minimise$, and each $l_n$ is a ground literal assigned a weight $w_n$. They allow for an ASP solver to search for optimal Answer Sets which maximise or minimise the sum of the atoms with regards to their weights. For instance, 
 
-\begin{align*}
-p \gets \textsf{not} \: q. \\
-q \gets \textsf{not} \: p. \\
-\#minimise \: [p = 1, q = 2]
-\end{align*}
+\begin{lstlisting}
+p :- not q.
+q :- not p.
+#minimise [p = 1, q = 2].
+\end{lstlisting}
 
 Has one optimal answer set, \{p\}.
 
@@ -188,13 +188,13 @@ Brave Induction is defined similarly to Cautious Induction. Given a background k
 \item $\forall e \in E^- \: : \: e \not \in A$
 \end{itemize}
 
-For example, consider Program P:
+For example, consider the program:
 
-\begin{align*}
-p &\gets \: \textsf{not} \: q. \\
-q &\gets \: \textsf{not} \: p, \: \textsf{not} \: r. \\
-s &\gets r.
-\end{align*}
+\begin{lstlisting}
+p :- not q.
+q :- not p, not r.
+s :- r.
+\end{lstlisting}
 
 with $E^+$ = \{s\} and $E^-$ = \{q\}. \\
 The Hypothesis H = \{p, s\} is both a Brave and Cautious Inductive Solution, as there is only one Answer Set, and it satisfies all of the examples.\\
@@ -209,49 +209,49 @@ First, we encode the Hypothesis space by generating a number of skeleton rules. 
 
 We next rule out Answer Sets which do not fit the examples by adding a goal rule and a constraint, of the format :
 
-\begin{align*}
-&\textsf{goal} \gets e_1^+, \dots, e_n^+, \: \textsf{not} \: e_1^-, \dots, \: \textsf{not} \: e_n^- \\
-&\gets \textsf{not goal}
-\end{align*}
+\begin{lstlisting}[mathescape=true]
+goal :- $e_1^+, \dots, e_n^+, \: \textsf{not} \: e_1^-, \dots, \: \textsf{not} \: e_n^-$
+:- not goal.
+\end{lstlisting}
 
 This rules out any answer set which does not contain all of the positive examples and contains any negative examples.
 
 We then make sure the Answer Sets of the program correspond to the optimal solutions of the task by adding an optimisation statement
-\begin{align*}
-\# minimise \: [rule(ID, c_1, \dots, c_n) = ruleLength, \dots].
-\end{align*}
+\begin{lstlisting}[mathescape=true]
+#minimise [rule(ID, $c_1, \dots, c_n$) = ruleLength, $\dots$].
+\end{lstlisting}
 
 where there is a rule predicate for each skeleton rule, weighted by the length of that rule.
 
 As an example of the entire ASPAL encoding, consider the program :
 
-\begin{align*}
-bird(a).& \: &bird(b).\\
-ability(fly).& \: &ability(swim). \\
-can(a, fly).& \: &can(b, swim).
-\end{align*}
+\begin{lstlisting}
+bird(a).		bird(b).
+ability(fly).		ability(swim).
+can(a, fly).		can(b, swim).
+\end{lstlisting}
 
 with mode declarations 
 
-\begin{align*}
-&modeh(penguin(+bird)).\\
-&modeb(\textsf{not} \: can(+bird, \#ability)).
-\end{align*}
+\begin{lstlisting}
+modeh(penguin(+bird)).
+modeb(not can(+bird, #ability)).
+\end{lstlisting}
 
 and examples $E^+$ = \{penguin(b)\} and $E^-$ = \{penguin(a)\}. \\
 This task has encoding:
 
-\begin{align*}
-&penguin(V1) \gets bird(V1), \: rule(1).\\
-&penguin(V1) \gets bird(V1), \: \textsf{not} \: can(V1, C1), rule(2, C1).\\
-&penguin(V1) \gets bird(V1), \: \textsf{not} \: can(V1, C1), \: \textsf{not} \: can(V1, C2), rule(3, C1, C2).\\
-&\%\%\%\%\%\%\\
-&\{rule(1), rule(2, fly), rule(2, swim), rule(3, fly, swim)\}.\\
-&\#minimise \: [rule(1)=1, rule(2, fly) = 2, rule(2, swim) = 2, rule(3, fly, swim) = 3]. \\
-&\%\%\%\%\%\%\\
-&goal \gets pengiun(b), \: \textsf{not} \: penguin(a).\\
-&\gets \: \textsf{not} \: goal.
-\end{align*}
+\begin{lstlisting}
+penguin(V1) :- bird(V1), rule(1).
+penguin(V1) :- bird(V1), not can(V1, C1), rule(2, C1).
+penguin(V1) :- bird(V1), not can(V1, C1), not can(V1, C2), rule(3, C1, C2).
+%%%%%%%%
+{rule(1), rule(2, fly), rule(2, swim), rule(3, fly, swim)}
+#minimise [rule(1) = 1, rule(2, fly) = 2, rule(2, swim) = 2, rule(3, fly, swim) = 3].
+%%%%%%%%
+goal :- penguin(b), not penguin(a).
+:- not goal.
+\end{lstlisting}
 
 \subsection{ASP Solvers}
 
@@ -303,12 +303,20 @@ Here I will discuss two modern IFP systems which I will use to compare to my sys
 
 \begin{itemize}
 \item \textbf{MagicHaskeller} is based on the generate and test approach to IFP, and works by generating a stream of progressively more complicated programs and then testing them against the given specification. This search is exhaustive and performed in a breadth-first manner with application of a variant of Spivey's Monad.\\
-MagicHaskeller has the advantage of being easy to use as you only have to give the specification of the desired function as an argument, which is typically no more than a few lines of code in the target language. The tool also has a particularly large component library of built-in Haskell primitives which the tool uses where possible.\\
-However, MagicHaskeller does not have the ability to compute large programs, due to the performance cost of exhaustive breadth-first search. This problem, however, is typical of the generate and test approach.
-\item \textbf{Igor II}
-\end{itemize}
 
-\section{Haskell?}
+MagicHaskeller has the advantage of being easy to use as you only have to give the specification of the desired function as an argument, which is typically no more than a few lines of code in the target language. The tool also has a particularly large component library of built-in Haskell primitives which the tool uses where possible.\\
+
+However, MagicHaskeller does not have the ability to compute large programs, due to the performance cost of exhaustive breadth-first search. This problem, however, is typical of the generate and test approach.
+
+\item \textbf{Igor II} is based on the analytical approach is specialised towards learning recursive programs. It works by first calculating the \textit{least-general generalisation} of the examples, which extracts terms which are common between the examples and terms which are uncommon are represented as variables. If this initial hypothesis is incomplete (i.e not a correct functional program) then four refinement operators are applied to attempt to complete it:
+\begin{enumerate}
+\item Partition the examples into two subsets and generate a new, more specific least general generalisation for each subset. This partition is calculated using pattern matching on the variables from the lhs of the initial hypothesis.
+\item If the rhs of the initial hypothesis has a function as its root element then each unbound argument of this function is treated as a subproblem, and new functions are introduced for each argument.
+\item The rhs of the initial hypothesis may be replaced by a recursive call to a user-defined function, where the arguments of this call are newly introduced functions.
+\item If the examples match certain properties then a higher order function may be introduced, and synthesising the arguments to this function becomes the new induction problem.
+\end{enumerate}
+Igor II has a number of limitations. If there are a large number of examples then performance can be impacted because of the large number of combinations when matching to a defined function. Synthesis can fail or perform incorrectly if some examples from the middle of the set are removed, meaning if we want to specify a particularly large or complex example we also have to specify all of the smaller examples, reducing performance.
+\end{itemize}
 
 \pagebreak
 \renewcommand\bibname{{References}}
