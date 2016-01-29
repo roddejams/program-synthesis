@@ -270,8 +270,6 @@ Gringo calculates the ground logic program by replacing the variables in the pro
 
 \section{Inductive Functional Programming}
 
-Inductive Functional Programming is the automatic synthesis of declarative programs from an incomplete specification, typically given as pairs of input-output examples.
-
 Traditionally, there have been two approaches to IFP. The analytical approach performs pattern matching on the given examples, usually performing a two-step process of first generalising the examples and then folding this generalisation into a recursive program. The "generate and test" search approach works by generating an infinite stream of candidate programs and then test these candidates to see if they correctly model the examples. \\
 
 Each approach has its own advantages and disadvantages. The analytical approach, while fast, can be very limited in its target language and the types of programs it can generate, typically being limited to reasoning about data structures such as lists or trees. On the other hand, the search based approach is a lot less restricted but has worse performance due to the potentially huge search space. This issue is minimised by various optimisations performed on the generated programs, typically using a subset of the examples as an initial starting point.

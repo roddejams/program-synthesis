@@ -1,17 +1,23 @@
-\chapter{Chapter Title}
+\chapter{Evaluation and Future Work}
 
-\section{First Section Title}
+\section{Future Work}
 
-\lipsum[1-2]\cite{Cooper13}
+Before the end of this term (~11th March) I hope to have a basic learning system in place. I will be able to learn programs with an arbitrary number of arguments, including lists, and these programs will be implemented using the languages features described in Chapter 3.  \\
+In addition, I will aim to have started implementation on the pre and post processing to convert input examples into ASP and the learned rules into Haskell. \\
 
-\subsection{First Subsection Title}
+During the Easter holidays I will first aim to spend some time trying examples and bug fixing on my existing code. Some thought will have to go into coming up with interesting and difficult examples. \\
 
-\lipsum[3]
+After this I will start extending my tool to implement other Haskell language features. Most importantly is guards and let / where statements, allowing for more complicated conditionals and program structure. As part of this work I will have to introduce the generation of auxiliary functions to characterise this more complicated program structure. \\
 
-\section{First Section Title}
+After Easter I will have a lot of options for extending my tool:
 
-\lipsum[4-5]
+\begin{itemize}
+\item Implementing usage of Higher-order functions. This should theoretically not be too difficult but it is hard to say at this time.
+\item Various performance increases, perhaps reducing the grounding of the ASP encoding or extracting more work to the pre/post processing step. As part of this work, I could look into which optimisations applied to existing IFP tools are applicable to my tool (although at this time I think this will be quite limited due to the difference in approach).
+\item Development of a simple GUI or web interface to allow usage of my tool by interested third parties. While this would not have to be particularly complicated (see the MagicHaskeller web interface), it would still 
+\end{itemize}
 
+\section{Evaluation}
 
 \pagebreak
 \renewcommand\bibname{{References}}
