@@ -14,23 +14,21 @@ const(e).
 #domain max_depth(MaxDepth).
 
 #hide const(N).
-%#hide rule(R, F, Args, Expr).
+#hide rule(R, F, Args, Expr).
 #hide match(F, Index, Args).
 #hide match2(F, Index, Args).
 #hide smaller_match(F, Index, Args).
 #hide eval(Expr).
 #hide value(Expr, Out).
+#hide num_rules(N).
+#hide num_generated(N).
 
-#hide valid_args(Args).
 #hide fn_name(F, N).
 #hide max_depth(N).
 #hide expr_const(N).
-#hide var(X).
-#hide valid_expr(Args, Expr).
-#hide valid_expr(Args, Expr, N).
 
-#hide input(In).
-#hide output(In, Out).
+%#hide input(In).
+%#hide output(In, Out).
 %%%%
 
 %%%% LANGUAGE BIAS %%%%
@@ -38,6 +36,8 @@ const(e).
 input(In) :- example(In, _).
 :- not output(In, Out), example(In, Out).
 
+
+%* OLD CODE
 0 {rule(RuleNum, FuncName, Args, Expr) : RuleNum = 1..N : valid_args(Args) : valid_expr(Args, Expr)} N :- fn_name(FuncName, N).
 
 valid_args(C) :- expr_const(C).
@@ -52,6 +52,7 @@ valid_expr(Args, sub(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N),
 valid_expr(Args, sub(Expr, C), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
 valid_expr(Args, mul(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
 valid_expr(Args, call(F, Expr), N+1) :- fn_name(F, _), valid_expr(Args, Expr, N), N < MaxDepth.
+*%
 
 %%%% BACKGROUND KNOWLEDGE %%%%
 
