@@ -8,7 +8,7 @@ Want to say something similar to this but with any expr with call statements rep
 Instead of expr(mul, 4, call(f, 3)), want expr(mul, 4, expr(mul, 3, expr(mul, 2, expr(mul 1, 1))))
 *%
 
-const(0..50000).
+const(0..100).
 const(e).
 
 #domain max_depth(MaxDepth).
@@ -56,11 +56,11 @@ valid_expr(Args, call(F, Expr), N+1) :- fn_name(F, _), valid_expr(Args, Expr, N)
 
 %%%% BACKGROUND KNOWLEDGE %%%%
 
-output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value(Expr, Out).
+output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value(Expr, Out), const(Args).
 
-value(mul(A, B), V1 * V2) :- eval(mul(A, B)), value(A, V1), value(B, V2).
-value(sub(A, B), V1 - V2) :- eval(sub(A, B)), value(A, V1), value(B, V2).
-value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2).
+value(mul(A, B), V1 * V2) :- eval(mul(A, B)), value(A, V1), value(B, V2), const(V1*V2).
+value(sub(A, B), V1 - V2) :- eval(sub(A, B)), value(A, V1), value(B, V2), const(V1-V2).
+value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2), const(V1+V2).
 value(call(F, Args), Out) :- eval(call(F, Args)), output(call(F, Inputs), Out), value(Args, Inputs).
 value((A, B), (V1, V2)) :- eval((A, B)), value(A, V1), value(B, V2).
 value(N, N) :- eval(N), const(N).
