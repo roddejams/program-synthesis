@@ -1,7 +1,6 @@
 %%%%
 
-const(0..1000).
-%const((N1, N2)) :- const(N1), const(N2).
+const(0..50).
 const(e).
 
 #domain max_depth(MaxDepth).
@@ -14,15 +13,17 @@ const(e).
 #hide eval_with(Expr, Args).
 #hide value_with(Expr, Out, Args).
 #hide num_rules(N).
-#hide num_generated(N).
+#hide num_generated_rules(N).
+#hide num_generated_wheres_x1(N).
+#hide num_generated_wheres_x2(N).
 
 #hide fn_name(F, N).
 #hide max_depth(N).
 #hide expr_const(N).
 
-%#hide input(In).
+#hide input(In).
 #hide where(X, Args, Expr).
-%#hide output(In, Out).
+#hide output(In, Out).
 %%%%
 
 %%%% LANGUAGE BIAS %%%%
@@ -32,7 +33,7 @@ input(In) :- example(In, _).
 
 %%%% BACKGROUND KNOWLEDGE %%%%
 
-output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args), const(Out).
+output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args).%, const(Out).
 
 value_with(mul(A, B), V1 * V2, Args) :- eval_with(mul(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const(V1*V2).
 value_with(sub(A, B), V1 - V2, Args) :- eval_with(sub(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const(V1-V2).
