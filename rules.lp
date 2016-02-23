@@ -1,14 +1,6 @@
 %%%%
 
-%*
-Ideas for project - program structure as a logic program. 
-
-Want to say something similar to this but with any expr with call statements replaced with the output of the call. 
-
-Instead of expr(mul, 4, call(f, 3)), want expr(mul, 4, expr(mul, 3, expr(mul, 2, expr(mul 1, 1))))
-*%
-
-const(0..100).
+const(0..1000).
 const(e).
 
 #domain max_depth(MaxDepth).
@@ -18,8 +10,8 @@ const(e).
 #hide match(F, Index, Args).
 #hide match2(F, Index, Args).
 #hide smaller_match(F, Index, Args).
-#hide eval(Expr).
-#hide value(Expr, Out).
+#hide eval_with(Expr, Args).
+#hide value_with(Expr, Out, Args).
 #hide num_rules(N).
 #hide num_generated(N).
 
@@ -28,6 +20,7 @@ const(e).
 #hide expr_const(N).
 
 %#hide input(In).
+#hide where(X, Args, Expr).
 %#hide output(In, Out).
 %%%%
 
@@ -36,47 +29,33 @@ const(e).
 input(In) :- example(In, _).
 :- not output(In, Out), example(In, Out).
 
-
-%* OLD CODE
-0 {rule(RuleNum, FuncName, Args, Expr) : RuleNum = 1..N : valid_args(Args) : valid_expr(Args, Expr)} N :- fn_name(FuncName, N).
-
-valid_args(C) :- expr_const(C).
-valid_args(V) :- var(V).
-
-valid_expr(Args, Expr) :- valid_expr(Args, Expr, N), N <= MaxDepth.
-valid_expr(Args, Args, 1) :- valid_args(Args).
-valid_expr(Args, C, 1) :- valid_args(Args), valid_args(C).
-
-valid_expr(Args, add(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
-valid_expr(Args, sub(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
-valid_expr(Args, sub(Expr, C), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
-valid_expr(Args, mul(C, Expr), N+1) :- expr_const(C), valid_expr(Args, Expr, N), N < MaxDepth.
-valid_expr(Args, call(F, Expr), N+1) :- fn_name(F, _), valid_expr(Args, Expr, N), N < MaxDepth.
-*%
-
 %%%% BACKGROUND KNOWLEDGE %%%%
 
-output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value(Expr, Out), const(Args).
+output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args), const(Args).
 
-value(mul(A, B), V1 * V2) :- eval(mul(A, B)), value(A, V1), value(B, V2), const(V1*V2).
-value(sub(A, B), V1 - V2) :- eval(sub(A, B)), value(A, V1), value(B, V2), const(V1-V2).
-value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2), const(V1+V2).
-value(call(F, Args), Out) :- eval(call(F, Args)), output(call(F, Inputs), Out), value(Args, Inputs).
-value((A, B), (V1, V2)) :- eval((A, B)), value(A, V1), value(B, V2).
-value(N, N) :- eval(N), const(N).
+value_with(mul(A, B), V1 * V2, Args) :- eval_with(mul(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const(V1*V2).
+value_with(sub(A, B), V1 - V2, Args) :- eval_with(sub(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const(V1-V2).
+value_with(add(A, B), V1 + V2, Args) :- eval_with(add(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const(V1+V2).
+value_with(call(F, Args_new), Out, Args_old) :- eval_with(call(F, Args_new), Args_old), output(call(F, Inputs), Out), value_with(Args_new, Inputs, Args_old).
+value_with((A, B), (V1, V2), Args) :- eval_with((A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args).
+value_with(N, N, Args) :- eval_with(N, Args), const(N).
+value_with(X, V, Args) :- eval_with(X, Args), where(X, Args, Expr), value_with(Expr, V, Args).
 
-eval(Expr) :- input(call(F, Inputs)), rule(Index, F, Inputs, Expr), match(F, Index, Inputs).
-eval(Args) :- eval(call(F, Args)).
-eval(A) :- eval((A, B)).
-eval(B) :- eval((A, B)).
-eval(A) :- eval(mul(A, B)).
-eval(B) :- eval(mul(A, B)).
-eval(A) :- eval(sub(A, B)).
-eval(B) :- eval(sub(A, B)).
-eval(A) :- eval(add(A, B)).
-eval(B) :- eval(add(A, B)).
+%value_with_with(X, V, Args) :- 
 
-input(call(F, Inputs)) :- eval(call(F, Args)), value(Args, Inputs).
+eval_with(Expr, Inputs) :- input(call(F, Inputs)), rule(Index, F, Inputs, Expr), match(F, Index, Inputs).
+eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
+eval_with(Args_new, Args_old) :- eval_with(call(F, Args_new), Args_old).
+eval_with(A, Args) :- eval_with((A, B), Args).
+eval_with(B, Args) :- eval_with((A, B), Args).
+eval_with(A, Args) :- eval_with(mul(A, B), Args).
+eval_with(B, Args) :- eval_with(mul(A, B), Args).
+eval_with(A, Args) :- eval_with(sub(A, B), Args).
+eval_with(B, Args) :- eval_with(sub(A, B), Args).
+eval_with(A, Args) :- eval_with(add(A, B), Args).
+eval_with(B, Args) :- eval_with(add(A, B), Args).
+
+input(call(F, Inputs)) :- eval_with(call(F, Args_new), Args_old), value_with(Args_new, Inputs, Args_old).
 
 match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
