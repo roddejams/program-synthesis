@@ -1,6 +1,6 @@
 %%%%
 
-const(0..50).
+const(0..10).
 const(e).
 
 #domain max_depth(MaxDepth).
@@ -16,8 +16,6 @@ const(e).
 #hide num_generated_rules(N).
 #hide num_generated_wheres(N).
 
-#hide fn_name(F, N).
-#hide max_depth(N).
 #hide expr_const(N).
 
 #hide input(In).

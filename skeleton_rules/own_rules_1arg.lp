@@ -31,7 +31,6 @@ where(x1, N, call(f, N)) :- input(call(f, N)), choose_where(28).
 where(x1, N, call(f, C1)) :- input(call(f, N)), choose_where(29, C1).
 where(x1, N, call(f, x2)) :- input(call(f, N)), choose_where(30).
 
-
 where(x2, N, add(N, N)) :- input(call(f, N)), choose_where(31).
 where(x2, N, mul(N, N)) :- input(call(f, N)), choose_where(32).
 where(x2, N, sub(N, N)) :- input(call(f, N)), choose_where(33).
