@@ -48,20 +48,11 @@ choose(R, N, C0) : num_rules(R) : num_generated_rules(N) : expr_const(C0) ,
 choose(R, N, C0, C1) : num_rules(R) : num_generated_rules(N) : expr_const(C0) : expr_const(C1) 
 } 2.
 
-1 {
-choose_where(N) : num_generated_wheres_x1(N), 
-choose_where(N, C1) : num_generated_wheres_x1(N) : expr_const(C1), 
-choose_where(N, C1, C2) : num_generated_wheres_x1(N) : expr_const(C1) : expr_const(C2)
-} 1.
-
-1 {
-choose_where(N) : num_generated_wheres_x2(N), 
-choose_where(N, C1) : num_generated_wheres_x2(N) : expr_const(C1), 
-choose_where(N, C1, C2) : num_generated_wheres_x2(N) : expr_const(C1) : expr_const(C2)
-} 1.
-
-#minimise [choose(R)=R, choose(R, _)=R, choose(R, _, _)=R, choose_where(N)=0, choose_where(_, _)=0, choose_where(_, _, _)=0 ].
+0 {
+choose_where(N) : num_generated_wheres(N), 
+choose_where(N, C1) : num_generated_wheres(N) : expr_const(C1), 
+choose_where(N, C1, C2) : num_generated_wheres(N) : expr_const(C1) : expr_const(C2)
+} 2.
 
 num_generated_rules(0..16).
-num_generated_wheres_x1(17..30).
-num_generated_wheres_x2(31..39).
+num_generated_wheres(17..39).

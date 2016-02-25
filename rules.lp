@@ -14,8 +14,7 @@ const(e).
 #hide value_with(Expr, Out, Args).
 #hide num_rules(N).
 #hide num_generated_rules(N).
-#hide num_generated_wheres_x1(N).
-#hide num_generated_wheres_x2(N).
+#hide num_generated_wheres(N).
 
 #hide fn_name(F, N).
 #hide max_depth(N).
@@ -30,6 +29,9 @@ const(e).
 
 input(In) :- example(In, _).
 :- not output(In, Out), example(In, Out).
+
+:- where(X, Args, Expr_1), where(X, Args, Expr_2), Expr_1 != Expr_2.
+:- rule(N, F, Args, Expr_1), rule(N, F, Args, Expr_2), Expr_1 != Expr_2.
 
 %%%% BACKGROUND KNOWLEDGE %%%%
 
