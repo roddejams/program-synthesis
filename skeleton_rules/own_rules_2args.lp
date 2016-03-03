@@ -74,7 +74,7 @@ where(x1, (N1, N2), call(f, (N1, C1))) :- input(call(f, (N1, N2))), choose_where
 where(x1, (N1, N2), call(f, (N2, C1))) :- input(call(f, (N1, N2))), choose_where(66, C1).
 where(x1, (N1, N2), call(f, (C1, N1))) :- input(call(f, (N1, N2))), choose_where(67, C1).
 where(x1, (N1, N2), call(f, (C1, N2))) :- input(call(f, (N1, N2))), choose_where(68, C1).
-where(x1, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(69, C1, C2).
+%where(x1, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(69, C1, C2).
 
 where(x2, (N1, N2), add(N1, N1)) :- input(call(f, (N1, N2))), choose_where(70).
 where(x2, (N1, N2), add(N1, N2)) :- input(call(f, (N1, N2))), choose_where(71).
@@ -104,19 +104,27 @@ where(x2, (N1, N2), call(f, (N1, C1))) :- input(call(f, (N1, N2))), choose_where
 where(x2, (N1, N2), call(f, (N2, C1))) :- input(call(f, (N1, N2))), choose_where(93, C1).
 where(x2, (N1, N2), call(f, (C1, N1))) :- input(call(f, (N1, N2))), choose_where(94, C1).
 where(x2, (N1, N2), call(f, (C1, N2))) :- input(call(f, (N1, N2))), choose_where(95, C1).
-where(x2, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(96, C1, C2).
+%where(x2, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(96, C1, C2).
 
 1 {
-choose(R, N) : num_rules(R) : num_generated_rules(N) ,
-choose(R, N, C0) : num_rules(R) : num_generated_rules(N) : expr_const(C0) ,
-choose(R, N, C0, C1) : num_rules(R) : num_generated_rules(N) : expr_const(C0) : expr_const(C1) 
-} 2.
+choose(R, 2..13;30..42) ,
+choose(R, 1;14..28, C0) : expr_const(C0) ,
+choose(R, 29, C0, C1) : expr_const(C0) : expr_const(C1) 
+} 1 :- num_rules(R).
 
 0 {
-choose_where(N) : num_generated_wheres(N), 
-choose_where(N, C1) : num_generated_wheres(N) : expr_const(C1), 
-choose_where(N, C1, C2) : num_generated_wheres(N) : expr_const(C1) : expr_const(C2)
-} 2.
+choose_where(43..52;61..64) , 
+choose_where(53..60;65..68, C1) : expr_const(C1)
+} 1.
+
+0 {
+choose_where(70..79;88..91) , 
+choose_where(80..87;92..95, C1) : expr_const(C1)
+} 1.
+
+#minimise[choose_where(R)=100, choose_where(R, C)=100].
 
 num_generated_rules(0..42).
+num_generated_wheres_x1(43..68).
+num_generated_wheres_x2(70..95).
 num_generated_wheres(43..96).

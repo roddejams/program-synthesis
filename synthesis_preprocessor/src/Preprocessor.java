@@ -14,95 +14,120 @@ public class Preprocessor {
 
     private List<String> functionNames;
     private static final List<String> arg_ops = Arrays.asList(
-            "add(N, %s)",
-            "mul(N, %s)",
-            "sub(N, %s)",
-            "sub(%s, N)");
-
-    private static final List<String> const_ops = Arrays.asList(
-            "add(C%d, %s)",
-            "mul(C%d, %s)",
-            "sub(C%d, %s)");
+            "add(%s, %s)",
+            "mul(%s, %s)",
+            "sub(%s, %s)");
 
     public Preprocessor(List<String> functionNames) {
         this.functionNames = functionNames;
     }
 
-    public List<Rule> generateSkeletonRules(int maxDepth, int numFuncs) {
-        List<Rule> skeletonRules;
+    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numFuncs, int numArgs) {
 
         String fnName = functionNames.get(0);
-        Rule.RuleBuilder builder = new Rule.RuleBuilder().withName(fnName).withArgs("N").withDepth(maxDepth);
+        List<String> args = generateArgs(numArgs);
+        List<String> vars = generateWhereVars(maxDepth);
 
-        if(maxDepth == 0) {
-            skeletonRules = Arrays.asList(
-                    builder.withRuleNumber(1).withName(fnName).withArgs("N").withBody("C1").build(),
-                    builder.withRuleNumber(2).withName(fnName).withArgs("N").withBody("N").build()
-            );
-        } else if(maxDepth == 1) {
-            skeletonRules = new ArrayList<>();
-            skeletonRules.addAll(generateSkeletonRules(0, numFuncs));
-            skeletonRules.addAll(Arrays.asList(
-                    builder.withRuleNumber(3).withName(fnName).withArgs("N").withBody("add(N, N)").build(),
-                    builder.withRuleNumber(4).withName(fnName).withArgs("N").withBody("mul(N, N)").build(),
-                    builder.withRuleNumber(5).withName(fnName).withArgs("N").withBody("sub(N, N)").build(),
-                    builder.withRuleNumber(6).withName(fnName).withArgs("N").withBody("add(N, C1)").build(),
-                    builder.withRuleNumber(7).withName(fnName).withArgs("N").withBody("mul(N, C1)").build(),
-                    builder.withRuleNumber(8).withName(fnName).withArgs("N").withBody("sub(N, C1)").build(),
-                    builder.withRuleNumber(9).withName(fnName).withArgs("N").withBody("sub(C1, N)").build(),
-                    builder.withRuleNumber(10).withName(fnName).withArgs("N").withBody("add(C1, C2)").build(),
-                    builder.withRuleNumber(11).withName(fnName).withArgs("N").withBody("mul(C1, C2)").build(),
-                    builder.withRuleNumber(12).withName(fnName).withArgs("N").withBody("sub(C1, C2)").build(),
-                    builder.withRuleNumber(13).withName(fnName).withArgs("N").withBody(String.format("call(%s, C1)", fnName)).build(),
-                    builder.withRuleNumber(14).withName(fnName).withArgs("N").withBody(String.format("call(%s, N)", fnName)).build()
-            ));
-        } else {
-            List<Rule> existingRules = generateSkeletonRules(maxDepth-1, numFuncs);
-            skeletonRules = new ArrayList<>();
-            skeletonRules.addAll(existingRules);
+        ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
+        Rule.RuleBuilder ruleBuilder = new Rule.RuleBuilder().withDepth(maxDepth).withName(fnName).withArgs(args);
+        Where.WhereBuilder whereBuilder = new Where.WhereBuilder().withArgs(args);
 
-            int numRules = existingRules.size() + 1;
+        factory.addRule(ruleBuilder.withBody("C1"));
 
-            for(Rule rule : existingRules) {
-                if(rule.depth() == maxDepth - 1) {
-                    for (String op : arg_ops) {
-                        skeletonRules.add(builder
-                                .withRuleNumber(numRules++)
-                                .withBody(String.format(op, rule.body()))
-                                .build());
+        // Add "rule" rules.
+        for(int i = 0; i < numArgs; i++) {
+            factory.addRule(ruleBuilder.withBody(args.get(i)));
+        }
+
+        for(String op : arg_ops) {
+            for(int i = 0; i < numArgs; i++) {
+                for(int j = 0; j < numArgs; j++) {
+                    factory.addRule(ruleBuilder.withBody(String.format(op, args.get(i), args.get(j))));
+                }
+
+                factory.addRule(ruleBuilder.withBody(String.format(op, args.get(i), "C1")));
+
+                for(String var : vars) {
+                    factory.addRule(ruleBuilder.withBody(String.format(op, args.get(i), var)));
+                }
+            }
+        }
+
+        for(String fn : functionNames) {
+            for(int i = 0; i < numArgs; i++) {
+                factory.addRule(ruleBuilder.withBody(String.format("call(%s, %s)", fn, args.get(i))));
+
+                factory.addRule(ruleBuilder.withBody(String.format("call(%s, %s)", fn, "C1")));
+
+                for(String var : vars) {
+                    factory.addRule(ruleBuilder.withBody(String.format("call(%s, %s)", fn, var)));
+                }
+            }
+        }
+
+        //Add "where" rules.
+        for(String var : vars) {
+            for(String op : arg_ops) {
+                for(int i = 0; i < numArgs; i++) {
+                    for(int j = 0; j < numArgs; j++) {
+                        factory.addRule(whereBuilder.withVar(var).withBody(String.format(op, args.get(i), args.get(j))));
                     }
 
-                    for (String op : const_ops) {
-                        skeletonRules.add(builder
-                                .withRuleNumber(numRules++)
-                                .withBody(String.format(op, rule.numConstants() + 1, rule.body()))
-                                .build());
+                    factory.addRule(whereBuilder.withVar(var).withBody(String.format(op, args.get(i), "C1")));
+
+                    for(String inner_var : vars) {
+                        if(!inner_var.equals(var)) {
+                            factory.addRule(whereBuilder.withVar(var).withBody(String.format(op, args.get(i), inner_var)));
+                        }
                     }
+                }
+            }
 
-                    skeletonRules.add(builder
-                            .withRuleNumber(numRules++)
-                            .withBody(String.format("sub(%s, C%d)", rule.body(), rule.numConstants() + 1))
-                            .build());
+            for(String fn : functionNames) {
+                for(int i = 0; i < numArgs; i++) {
+                    factory.addRule(whereBuilder.withVar(var).withBody(String.format("call(%s, %s)", fn, args.get(i))));
 
-                    for (int i = 0; i < numFuncs; i++) {
-                        skeletonRules.add(builder
-                                .withRuleNumber(numRules++)
-                                .withBody(String.format("call(%s, %s)", functionNames.get(i), rule.body()))
-                                .build());
+                    factory.addRule(whereBuilder.withVar(var).withBody(String.format("call(%s, %s)", fn, "C1")));
+
+                    for(String inner_var : vars) {
+                        if(!inner_var.equals(var)) {
+                            factory.addRule(whereBuilder.withVar(var).withBody(String.format("call(%s, %s)", fn, inner_var)));
+                        }
                     }
                 }
             }
         }
 
-        return skeletonRules;
+        return factory.getRules();
+    }
+
+    private List<String> generateWhereVars(int depth) {
+        List<String> vars = new ArrayList<>();
+
+        for(int i = 0; i < depth; i++) {
+            vars.add(String.format("x%s", i));
+        }
+
+        return vars;
+    }
+
+    private List<String> generateArgs(int numArgs) {
+        List<String> args = new ArrayList<>();
+
+        for(int i = 0; i < numArgs; i++) {
+            args.add(String.format("N%s", i));
+        }
+
+        return args;
     }
 
     public static void main(String[] args) {
         int maxDepth = 2;
         int numFuncs = 1;
+        int numArgs = 1;
 
-        Preprocessor preproc = new Preprocessor(Arrays.asList("succ"));
-        List<Rule> generatedRules = preproc.generateSkeletonRules(maxDepth, numFuncs);
+        Preprocessor preproc = new Preprocessor(Arrays.asList("f"));
+        List<ChoiceRule> generatedRules = preproc.generateSkeletonRules(maxDepth, numFuncs, numArgs);
 
         Path file = Paths.get(String.format("../skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
         int maxNumConstants = 0;
@@ -110,7 +135,7 @@ public class Preprocessor {
         try {
             Files.write(file, "".getBytes());
 
-            for(Rule rule : generatedRules) {
+            for(ChoiceRule rule : generatedRules) {
                 if(rule.numConstants() > maxNumConstants) {
                     maxNumConstants = rule.numConstants();
                 }
@@ -140,10 +165,10 @@ public class Preprocessor {
             String choice = "";
             String min = "";
             if(i == maxNumConstants) {
-                choice = String.format("choose(R, N%s) : num_rules(R) : num_generated(N) %s\n", consts, expr_consts);
+                choice = String.format("choose(R, N%s) : num_generated(N) %s\n", consts, expr_consts);
                 min = String.format("choose(R%s)=R ", StringUtils.repeat(", _", i));
             } else {
-                choice = String.format("choose(R, N%s) : num_rules(R) : num_generated(N) %s,\n", consts, expr_consts);
+                choice = String.format("choose(R, N%s) : num_generated(N) %s,\n", consts, expr_consts);
                 min = String.format("choose(R%s)=R, ", StringUtils.repeat(", _", i));
             }
 
@@ -151,7 +176,7 @@ public class Preprocessor {
             write(file, choice);
         }
 
-        write(file, "} 2.\n");
+        write(file, "} 1 :- num_rules(R).\n");
 
         write(file, String.format("#minimise [%s].\n", minimiseStmt));
     }
