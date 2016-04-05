@@ -60,6 +60,3 @@ choose_where(34..37;39, C1) : expr_const(C1)
 } 1.
 
 #minimise[choose_where(R)=100, choose_where(R, C)=100].
-
-num_generated_rules(0..16).
-num_generated_wheres(17..40).

@@ -64,9 +64,8 @@ value_with(call(F, Args_new), Out, Args_old) :- eval_with(call(F, Args_new), Arg
 value_with((A, B), (V1, V2), Args) :- eval_with((A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args).
 value_with(N, N, Args) :- eval_with(N, Args), const(N).
 value_with(X, V, Args) :- eval_with(X, Args), where(X, Args, Expr), value_with(Expr, V, Args).
-
 value_with(X, V, Args) :- eval_with(X, Args), value(X, V).
-
+value_with(N, N, Args) :- const_number(N), input(call(F, Args)).
 
 value(mul(A, B), @to_num(V1) * @to_num(V2)) :- const_number(V1), const_number(V2), n_complex(mul(A, B)), value(A, V1), value(B, V2), const_number(@to_num(V1)*@to_num(V2)).
 value(sub(A, B), @to_num(V1) - @to_num(V2)) :- const_number(V1), const_number(V2), n_complex(sub(A, B)), value(A, V1), value(B, V2), const_number(@to_num(V1)-@to_num(V2)).
@@ -100,7 +99,7 @@ check_if_complex(B) :- check_if_complex(sub(A, B)).
 check_if_complex(A) :- check_if_complex(add(A, B)).
 check_if_complex(B) :- check_if_complex(add(A, B)).
 
-complex(x1;x2).
+complex(x1;x2;x3).
 
 complex((A, B))        :- complex(A), check_if_complex((A, B)).
 complex((A, B))        :- complex(B), check_if_complex((A, B)).
