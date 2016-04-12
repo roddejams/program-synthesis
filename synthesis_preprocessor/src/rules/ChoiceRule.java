@@ -1,3 +1,5 @@
+package rules;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -19,6 +21,10 @@ public abstract class ChoiceRule {
 
     public int numConstants() {
         return numConstants;
+    }
+
+    public int ruleNumber() {
+        return ruleNumber;
     }
 
     public static abstract class ChoiceRuleBuilder {

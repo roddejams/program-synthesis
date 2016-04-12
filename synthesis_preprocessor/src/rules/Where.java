@@ -1,3 +1,5 @@
+package rules;
+
 import java.util.List;
 
 public class Where extends ChoiceRule {
@@ -7,6 +9,10 @@ public class Where extends ChoiceRule {
     public Where(int ruleNumber, List<String> args, String body, String var) {
         super(ruleNumber, args, body);
         this.var = var;
+    }
+
+    public String var() {
+        return var;
     }
 
     public static class WhereBuilder extends ChoiceRuleBuilder {
@@ -49,7 +55,7 @@ public class Where extends ChoiceRule {
         argString = argString.replace('[', '(');
         argString = argString.replace("]", ")");
 
-        return String.format("where(%s, %s, %s) :- input(call(_, %s)), choose_where(R, %d%s).\n",
+        return String.format("where(%s, %s, %s) :- input(call(_, %s)), choose_where(%d%s).\n",
                 var,
                 argString,
                 body,

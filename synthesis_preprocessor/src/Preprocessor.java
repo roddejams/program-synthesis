@@ -1,6 +1,9 @@
 import org.apache.commons.lang3.StringUtils;
+import rules.ChoiceRule;
+import rules.Rule;
+import rules.Where;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -132,6 +135,9 @@ public class Preprocessor {
         Path file = Paths.get(String.format("../skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
         int maxNumConstants = 0;
 
+        String[] ruleNums = new String[2*maxDepth];
+        String[][] whereNums = new String[maxDepth][2*maxDepth];
+
         try {
             Files.write(file, "".getBytes());
 
@@ -139,17 +145,98 @@ public class Preprocessor {
                 if(rule.numConstants() > maxNumConstants) {
                     maxNumConstants = rule.numConstants();
                 }
+
+                //Fuck about with rule numbers for choice rules later :(
+                if(rule instanceof Rule) {
+                    int numConsts = rule.numConstants();
+
+                    String nums = ruleNums[numConsts];
+                    if(nums == null) {
+                        ruleNums[numConsts] = "" + rule.ruleNumber();
+                    } else {
+                        nums += ";" + rule.ruleNumber();
+                        ruleNums[numConsts] = nums;
+                    }
+                }
+
+                if(rule instanceof Where) {
+                    int numConsts = rule.numConstants();
+                    String var = ((Where) rule).var();
+                    int varNum = Integer.valueOf(var.substring(1));
+
+                    String nums = whereNums[varNum][numConsts];
+                    if(nums == null) {
+                        whereNums[varNum][numConsts] = "" + rule.ruleNumber();
+                    } else {
+                        nums += ";" + rule.ruleNumber();
+                        whereNums[varNum][numConsts] = nums;
+                    }
+                }
+
                 write(file, rule.toString());
             }
 
-            generateChoiceRule(file, maxNumConstants);
-            write(file, String.format("num_generated(0..%d).", generatedRules.size()));
-        } catch(IOException e) {
+            generateChoiceRule(file, maxNumConstants, ruleNums);
+            generateWhereChoices(file, maxNumConstants, maxDepth, whereNums);
+
+            doClingo(file.toFile().getAbsolutePath());
+
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void generateChoiceRule(Path file, int maxNumConstants) throws IOException {
+    private static void doClingo(String skeletonRulePath) throws InterruptedException, IOException {
+        //Run clingo
+        Runtime rt = Runtime.getRuntime();
+        Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
+                skeletonRulePath));
+
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+        // Print clingo output
+        String s;
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        // Print standard error
+        System.out.println("Error:\n");
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        proc.waitFor();
+    }
+
+    private static void generateWhereChoices(Path file, int maxNumConstants, int maxDepth, String[][] whereNums) throws IOException {
+        for(int i = 0; i < maxDepth; i++) {
+            write(file, "0 {\n");
+
+            for(int c = 0; c <= maxNumConstants; c++) {
+                String consts = "";
+                String expr_consts = "";
+                for (int j = 0; j < c; j++) {
+                    consts += String.format(", C%d", j);
+                    expr_consts += String.format(": expr_const(C%d) ", j);
+                }
+
+                //have to check to put a comma or not;
+                String choice = "";
+                if(c == maxNumConstants) {
+                    choice = String.format("choose_where(%s%s) %s\n", whereNums[i][c], consts, expr_consts);
+                } else {
+                    choice = String.format("choose_where(%s%s) %s,\n", whereNums[i][c], consts, expr_consts);
+                }
+                write(file, choice);
+            }
+
+            write(file, "} 1.\n");
+        }
+    }
+
+    private static void generateChoiceRule(Path file, int maxNumConstants, String[] ruleNums) throws IOException {
         String minimiseStmt = "";
         write(file, "1 {\n");
 
@@ -165,11 +252,11 @@ public class Preprocessor {
             String choice = "";
             String min = "";
             if(i == maxNumConstants) {
-                choice = String.format("choose(R, N%s) : num_generated(N) %s\n", consts, expr_consts);
-                min = String.format("choose(R%s)=R ", StringUtils.repeat(", _", i));
+                choice = String.format("choose(R, %s%s) %s\n", ruleNums[i], consts, expr_consts);
+                min = String.format("choose_where(R%s)=1 ", StringUtils.repeat(", _", i));
             } else {
-                choice = String.format("choose(R, N%s) : num_generated(N) %s,\n", consts, expr_consts);
-                min = String.format("choose(R%s)=R, ", StringUtils.repeat(", _", i));
+                choice = String.format("choose(R, %s%s) %s,\n", ruleNums[i], consts, expr_consts);
+                min = String.format("choose_where(R%s)=1, ", StringUtils.repeat(", _", i));
             }
 
             minimiseStmt += min;

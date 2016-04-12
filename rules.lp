@@ -25,10 +25,6 @@ const(e).
 #hide eval_with(Expr, Args).
 #hide value_with(Expr, Out, Args).
 #hide num_rules(N).
-#hide num_generated_rules(N).
-#hide num_generated_wheres(N).
-#hide num_generated_wheres_x1(N).
-#hide num_generated_wheres_x2(N).
 #hide check_if_complex(Expr).
 #hide complex(Expr).
 #hide n_complex(Expr).
@@ -99,7 +95,7 @@ check_if_complex(B) :- check_if_complex(sub(A, B)).
 check_if_complex(A) :- check_if_complex(add(A, B)).
 check_if_complex(B) :- check_if_complex(add(A, B)).
 
-complex(x1;x2;x3).
+complex(x0;x1;x2;x3).
 
 complex((A, B))        :- complex(A), check_if_complex((A, B)).
 complex((A, B))        :- complex(B), check_if_complex((A, B)).

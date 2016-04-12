@@ -1,7 +1,5 @@
-import org.apache.commons.lang3.StringUtils;
+package rules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Rule extends ChoiceRule {
