@@ -12,6 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Preprocessor {
 
@@ -179,14 +180,20 @@ public class Preprocessor {
             generateChoiceRule(file, maxNumConstants, ruleNums);
             generateWhereChoices(file, maxNumConstants, maxDepth, whereNums);
 
-            doClingo(file.toFile().getAbsolutePath());
+            List<String> chosenPredicates = doClingo(file.toFile().getAbsolutePath());
 
+            HaskellGenerator generator = new HaskellGenerator(generatedRules);
+            String out = generator.generateHaskell(chosenPredicates);
+
+            System.out.println(out);
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void doClingo(String skeletonRulePath) throws InterruptedException, IOException {
+    private static List<String> doClingo(String skeletonRulePath) throws InterruptedException, IOException {
+        List<String> chosenPredicates = new ArrayList<>();
+
         //Run clingo
         Runtime rt = Runtime.getRuntime();
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
@@ -199,6 +206,9 @@ public class Preprocessor {
         String s;
         while ((s = stdInput.readLine()) != null) {
             System.out.println(s);
+            List<String> splitLine = Arrays.asList(s.split("\\s+"));
+
+            chosenPredicates.addAll(splitLine.stream().filter(pred -> pred.startsWith("choose")).collect(Collectors.toList()));
         }
 
         // Print standard error
@@ -208,6 +218,8 @@ public class Preprocessor {
         }
 
         proc.waitFor();
+
+        return chosenPredicates;
     }
 
     private static void generateWhereChoices(Path file, int maxNumConstants, int maxDepth, String[][] whereNums) throws IOException {
