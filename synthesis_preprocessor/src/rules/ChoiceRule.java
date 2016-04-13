@@ -27,6 +27,18 @@ public abstract class ChoiceRule {
         return ruleNumber;
     }
 
+    public String body() {
+        return body;
+    }
+
+    public List<String> args() {
+        return args;
+    }
+
+    public void updateBody(String newBody) {
+        body = newBody;
+    }
+
     public static abstract class ChoiceRuleBuilder {
 
         protected int ruleNumber;

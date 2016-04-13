@@ -212,7 +212,7 @@ public class Preprocessor {
         }
 
         // Print standard error
-        System.out.println("Error:\n");
+        //System.out.println("Error:\n");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }

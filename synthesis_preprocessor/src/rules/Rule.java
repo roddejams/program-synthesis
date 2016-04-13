@@ -6,11 +6,24 @@ public class Rule extends ChoiceRule {
 
     private final int depth;
     private String functionName;
+    private int rulePosition = 0;
 
     public Rule(int ruleNumber, String functionName, List<String> args, String body, int depth) {
         super(ruleNumber, args, body);
         this.functionName = functionName;
         this.depth = depth;
+    }
+
+    public String functionName() {
+        return functionName;
+    }
+
+    public int rulePosition() {
+        return rulePosition;
+    }
+
+    public void setRulePosition(int position) {
+        rulePosition = position;
     }
 
     public static class RuleBuilder extends ChoiceRuleBuilder{
@@ -59,7 +72,10 @@ public class Rule extends ChoiceRule {
         argString = argString.replace('[', '(');
         argString = argString.replace("]", ")");
 
-        return String.format("rule(R, %s, %s, %s) :- input(call(%s, %s)), choose(R, %d%s).\n",
+        String position = rulePosition == 0 ? "R" : String.valueOf(rulePosition);
+
+        return String.format("rule(%s, %s, %s, %s) :- input(call(%s, %s)), choose(R, %d%s).\n",
+                position,
                 functionName,
                 argString,
                 body,
