@@ -16,7 +16,7 @@ public class HaskellGenerator {
         this.skeletonRules = skeletonRules;
     }
 
-    public String generateHaskell(List<String> chosenPredicates) throws IOException {
+    public List<String> generateHaskell(List<String> chosenPredicates) throws IOException {
         //Step 1: Get relevant rules from set of skeleton rules.
 
         List<ChoiceRule> chosenRules = new ArrayList<>();
@@ -46,12 +46,20 @@ public class HaskellGenerator {
                 ChoiceRule rule = skeletonRules.get(ruleNum - 1);
 
                 String ruleBody = rule.body();
+                List<String> args = rule.args();
                 int numConsts = rule.numConstants();
 
-                //Replace constants with learned values
+                //Replace constants in with learned values
                 for(int i = 1; i <= numConsts; i++){
                     String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i+1];
                     ruleBody = ruleBody.replace("C" + i, constVal);
+
+                    for(int j = 0; j < args.size(); j++) {
+                        if(args.get(j).equals("C" + i)) {
+                            args.remove(j);
+                            args.add(j, constVal);
+                        }
+                    }
                 }
 
                 //Replace rule number R with learned value
@@ -59,6 +67,7 @@ public class HaskellGenerator {
                 ((Rule) rule).setRulePosition(Integer.valueOf(rulePosition));
 
                 rule.updateBody(ruleBody);
+                rule.updateArgs(args);
                 chosenRules.add(rule);
             }
         }
@@ -83,8 +92,8 @@ public class HaskellGenerator {
                 String functionName = ((Rule) rule).functionName();
 
                 if (body.contains("add")) {
-                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase();
-                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase();
+                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
+                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();
 
                     codeline = String.format("%s %s = %s + %s\n",
                             functionName,
@@ -93,8 +102,8 @@ public class HaskellGenerator {
                             arg2
                     );
                 } else if(body.contains("mul")) {
-                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase();
-                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase();
+                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
+                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();
                     codeline = String.format("%s %s = %s * %s\n",
                             functionName,
                             inputs,
@@ -102,8 +111,8 @@ public class HaskellGenerator {
                             arg2
                     );
                 } else if(body.contains("sub")) {
-                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase();
-                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase();
+                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
+                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();
                     codeline = String.format("%s %s = %s * %s\n",
                             functionName,
                             inputs,
@@ -137,8 +146,8 @@ public class HaskellGenerator {
                 String var = ((Where) rule).var();
 
                 if (body.contains("add")) {
-                    String arg1 = body.split("\\(")[1].split(",")[0];
-                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0];
+                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
+                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();
 
                     codeline = String.format("where %s = %s + %s\n",
                             var,
@@ -146,16 +155,16 @@ public class HaskellGenerator {
                             arg2
                     );
                 } else if(body.contains("mul")) {
-                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase();
-                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase();
+                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
+                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();
                     codeline = String.format("where %s = %s * %s\n",
                             var,
                             arg1,
                             arg2
                     );
                 } else if(body.contains("sub")) {
-                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase();
-                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase();
+                    String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
+                    String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();
                     codeline = String.format("where %s = %s - %s\n",
                             var,
                             arg1,
@@ -163,7 +172,7 @@ public class HaskellGenerator {
                     );
                 } else if(body.contains("call")) {
                     String calledFunction = body.split("\\(")[1].split(",")[0];
-                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split("\\("), 2, chosenRules.size()));
+                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split("\\("), 2, 2 + rule.args().size()));
                     funcArgs = funcArgs.replace("[", "");
                     funcArgs = funcArgs.replace("]", "");
                     funcArgs = funcArgs.replace(",", "");
@@ -188,7 +197,7 @@ public class HaskellGenerator {
             }
         }
 
-        return Arrays.asList(haskell).toString();
+        return Arrays.asList(haskell);
 
     }
 }

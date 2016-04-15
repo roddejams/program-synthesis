@@ -39,6 +39,10 @@ public abstract class ChoiceRule {
         body = newBody;
     }
 
+    public void updateArgs(List<String> newArgs) {
+        args = newArgs;
+    }
+
     public static abstract class ChoiceRuleBuilder {
 
         protected int ruleNumber;

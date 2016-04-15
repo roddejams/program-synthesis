@@ -1,4 +1,4 @@
-rule(R, f, (C0, C1), C3) :- input(call(f, (C0, C1))), choose(R, 1, C1, C2, C3).
+rule(R, f, (C1, C2), C3) :- input(call(f, (C1, C2))), choose(R, 1, C1, C2, C3).
 rule(R, f, (N0, N1), N0) :- input(call(f, (N0, N1))), choose(R, 2).
 rule(R, f, (N0, N1), N1) :- input(call(f, (N0, N1))), choose(R, 3).
 rule(R, f, (N0, N1), add(N0, N0)) :- input(call(f, (N0, N1))), choose(R, 4).
@@ -61,12 +61,12 @@ where(x0, (N0, N1), sub(N1, N0)) :- input(call(_, (N0, N1))), choose_where(60).
 where(x0, (N0, N1), sub(N1, N1)) :- input(call(_, (N0, N1))), choose_where(61).
 where(x0, (N0, N1), sub(N1, C1)) :- input(call(_, (N0, N1))), choose_where(62, C1).
 where(x0, (N0, N1), sub(N1, x1)) :- input(call(_, (N0, N1))), choose_where(63).
-rule(R, f, (N0, N1), call(f, (x0 , (x1)))) :- input(call(f, (N0, N1))), choose(R, 64).
-rule(R, f, (N0, N1), call(f, (N0 , (N1)))) :- input(call(f, (N0, N1))), choose(R, 65).
-rule(R, f, (N0, N1), call(f, (N0 , (x0)))) :- input(call(f, (N0, N1))), choose(R, 66).
-rule(R, f, (N0, N1), call(f, (N1 , (x0)))) :- input(call(f, (N0, N1))), choose(R, 67).
-rule(R, f, (N0, N1), call(f, (N0 , (x1)))) :- input(call(f, (N0, N1))), choose(R, 68).
-rule(R, f, (N0, N1), call(f, (N1 , (x1)))) :- input(call(f, (N0, N1))), choose(R, 69).
+where(x0, (N0, N1), call(f, (x0 , (x1)))) :- input(call(_, (N0, N1))), choose_where(64).
+where(x0, (N0, N1), call(f, (N0 , (N1)))) :- input(call(_, (N0, N1))), choose_where(65).
+where(x0, (N0, N1), call(f, (N0 , (x0)))) :- input(call(_, (N0, N1))), choose_where(66).
+where(x0, (N0, N1), call(f, (N1 , (x0)))) :- input(call(_, (N0, N1))), choose_where(67).
+where(x0, (N0, N1), call(f, (N0 , (x1)))) :- input(call(_, (N0, N1))), choose_where(68).
+where(x0, (N0, N1), call(f, (N1 , (x1)))) :- input(call(_, (N0, N1))), choose_where(69).
 where(x1, (N0, N1), add(N0, N0)) :- input(call(_, (N0, N1))), choose_where(70).
 where(x1, (N0, N1), add(N0, N1)) :- input(call(_, (N0, N1))), choose_where(71).
 where(x1, (N0, N1), add(N0, C1)) :- input(call(_, (N0, N1))), choose_where(72, C1).
@@ -91,27 +91,27 @@ where(x1, (N0, N1), sub(N1, N0)) :- input(call(_, (N0, N1))), choose_where(90).
 where(x1, (N0, N1), sub(N1, N1)) :- input(call(_, (N0, N1))), choose_where(91).
 where(x1, (N0, N1), sub(N1, C1)) :- input(call(_, (N0, N1))), choose_where(92, C1).
 where(x1, (N0, N1), sub(N1, x0)) :- input(call(_, (N0, N1))), choose_where(93).
-rule(R, f, (N0, N1), call(f, (x0 , (x1)))) :- input(call(f, (N0, N1))), choose(R, 94).
-rule(R, f, (N0, N1), call(f, (N0 , (N1)))) :- input(call(f, (N0, N1))), choose(R, 95).
-rule(R, f, (N0, N1), call(f, (N0 , (x0)))) :- input(call(f, (N0, N1))), choose(R, 96).
-rule(R, f, (N0, N1), call(f, (N1 , (x0)))) :- input(call(f, (N0, N1))), choose(R, 97).
-rule(R, f, (N0, N1), call(f, (N0 , (x1)))) :- input(call(f, (N0, N1))), choose(R, 98).
-rule(R, f, (N0, N1), call(f, (N1 , (x1)))) :- input(call(f, (N0, N1))), choose(R, 99).
+where(x1, (N0, N1), call(f, (x0 , (x1)))) :- input(call(_, (N0, N1))), choose_where(94).
+where(x1, (N0, N1), call(f, (N0 , (N1)))) :- input(call(_, (N0, N1))), choose_where(95).
+where(x1, (N0, N1), call(f, (N0 , (x0)))) :- input(call(_, (N0, N1))), choose_where(96).
+where(x1, (N0, N1), call(f, (N1 , (x0)))) :- input(call(_, (N0, N1))), choose_where(97).
+where(x1, (N0, N1), call(f, (N0 , (x1)))) :- input(call(_, (N0, N1))), choose_where(98).
+where(x1, (N0, N1), call(f, (N1 , (x1)))) :- input(call(_, (N0, N1))), choose_where(99).
 1 {
-choose(R, 2;3;4;5;7;8;9;10;12;13;14;15;17;18;19;20;22;23;24;25;27;28;29;30;32;33;34;35;36;37;38;39;64;65;66;67;68;69;94;95;96;97;98;99) ,
+choose(R, 2;3;4;5;7;8;9;10;12;13;14;15;17;18;19;20;22;23;24;25;27;28;29;30;32;33;34;35;36;37;38;39) ,
 choose(R, 6;11;16;21;26;31, C0) : expr_const(C0) ,
 choose(R, null, C0, C1) : expr_const(C0) : expr_const(C1) ,
 choose(R, 1, C0, C1, C2) : expr_const(C0) : expr_const(C1) : expr_const(C2) 
 } 1 :- num_rules(R).
 #minimise [choose_where(R)=1, choose_where(R, _)=1, choose_where(R, _, _)=1, choose_where(R, _, _, _)=1 ].
 0 {
-choose_where(40;41;43;44;45;47;48;49;51;52;53;55;56;57;59;60;61;63) ,
+choose_where(40;41;43;44;45;47;48;49;51;52;53;55;56;57;59;60;61;63;64;65;66;67;68;69) ,
 choose_where(42;46;50;54;58;62, C0) : expr_const(C0) ,
 choose_where(null, C0, C1) : expr_const(C0) : expr_const(C1) ,
 choose_where(null, C0, C1, C2) : expr_const(C0) : expr_const(C1) : expr_const(C2) 
 } 1.
 0 {
-choose_where(70;71;73;74;75;77;78;79;81;82;83;85;86;87;89;90;91;93) ,
+choose_where(70;71;73;74;75;77;78;79;81;82;83;85;86;87;89;90;91;93;94;95;96;97;98;99) ,
 choose_where(72;76;80;84;88;92, C0) : expr_const(C0) ,
 choose_where(null, C0, C1) : expr_const(C0) : expr_const(C1) ,
 choose_where(null, C0, C1, C2) : expr_const(C0) : expr_const(C1) : expr_const(C2) 

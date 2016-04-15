@@ -37,7 +37,7 @@ public class Preprocessor {
 
         //Add const rule (for base cases)
         List<String> constArgs = new ArrayList<>();
-        for(int i = 0; i < numArgs; i++) {
+        for(int i = 1; i < numArgs + 1; i++) {
             constArgs.add("C" + i);
         }
         factory.addRule(ruleBuilder.withArgs(constArgs).withBody("C" + (numArgs + 1)));
@@ -106,7 +106,7 @@ public class Preprocessor {
                     List<Object> stringformatArgs = new ArrayList<>();
                     stringformatArgs.add(fn);
                     stringformatArgs.addAll(funcArgs);
-                    factory.addRule(ruleBuilder.withBody(String.format(callString, stringformatArgs.toArray())));
+                    factory.addRule(whereBuilder.withVar(var).withBody(String.format(callString, stringformatArgs.toArray())));
                 }
             }
         }
@@ -195,9 +195,16 @@ public class Preprocessor {
             List<String> chosenPredicates = doClingo(file.toAbsolutePath().toString());
 
             HaskellGenerator generator = new HaskellGenerator(generatedRules);
-            String out = generator.generateHaskell(chosenPredicates);
+            List<String> haskell = generator.generateHaskell(chosenPredicates);
+            System.out.println(haskell);
 
-            System.out.println(out);
+            Path haskellFile = Paths.get("haskell/projectout.hs");
+            Files.write(haskellFile, "".getBytes());
+
+            for(String line : haskell) {
+                write(haskellFile, line);
+            }
+
         } catch(Exception e) {
             e.printStackTrace();
         }
