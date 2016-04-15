@@ -74,7 +74,7 @@ where(x1, (N1, N2), call(f, (N1, C1))) :- input(call(f, (N1, N2))), choose_where
 where(x1, (N1, N2), call(f, (N2, C1))) :- input(call(f, (N1, N2))), choose_where(66, C1).
 where(x1, (N1, N2), call(f, (C1, N1))) :- input(call(f, (N1, N2))), choose_where(67, C1).
 where(x1, (N1, N2), call(f, (C1, N2))) :- input(call(f, (N1, N2))), choose_where(68, C1).
-%where(x1, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(69, C1, C2).
+where(x1, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(69, C1, C2).
 
 where(x2, (N1, N2), add(N1, N1)) :- input(call(f, (N1, N2))), choose_where(70).
 where(x2, (N1, N2), add(N1, N2)) :- input(call(f, (N1, N2))), choose_where(71).
@@ -123,8 +123,3 @@ choose_where(80..87;92..95, C1) : expr_const(C1)
 } 1.
 
 #minimise[choose_where(R)=100, choose_where(R, C)=100].
-
-num_generated_rules(0..42).
-num_generated_wheres_x1(43..68).
-num_generated_wheres_x2(70..95).
-num_generated_wheres(43..96).

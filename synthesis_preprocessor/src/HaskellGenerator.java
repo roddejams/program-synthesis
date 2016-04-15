@@ -76,6 +76,7 @@ public class HaskellGenerator {
             String inputs = rule.args().toString();
             inputs = inputs.replace("[", "");
             inputs = inputs.replace("]", "");
+            inputs = inputs.replace(",", "");
             inputs = inputs.toLowerCase();
 
             if(rule instanceof Rule) {
@@ -111,9 +112,11 @@ public class HaskellGenerator {
                     );
                 } else if(body.contains("call")) {
                     String calledFunction = body.split("\\(")[1].split(",")[0];
-                    String funcArgs = body.split("\\(")[1].split(",")[1].toString();
+                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split("\\("), 2, chosenRules.size()));
                     funcArgs = funcArgs.replace("[", "");
                     funcArgs = funcArgs.replace("]", "");
+                    funcArgs = funcArgs.replace(",", "");
+                    funcArgs = funcArgs.replace(")", "");
                     funcArgs = funcArgs.toLowerCase();
 
                     codeline = String.format("%s %s = %s %s\n",
@@ -160,9 +163,11 @@ public class HaskellGenerator {
                     );
                 } else if(body.contains("call")) {
                     String calledFunction = body.split("\\(")[1].split(",")[0];
-                    String funcArgs = body.split("\\(")[1].split(",")[1].toString();
+                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split("\\("), 2, chosenRules.size()));
                     funcArgs = funcArgs.replace("[", "");
                     funcArgs = funcArgs.replace("]", "");
+                    funcArgs = funcArgs.replace(",", "");
+                    funcArgs = funcArgs.replace(")", "");
                     funcArgs = funcArgs.toLowerCase();
 
                     codeline = String.format("where %s = %s %s\n",

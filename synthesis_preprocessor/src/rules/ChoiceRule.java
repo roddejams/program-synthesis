@@ -13,7 +13,7 @@ public abstract class ChoiceRule {
     protected String body;
 
     public ChoiceRule(int ruleNumber, List<String> args, String body) {
-        this.numConstants =  StringUtils.countMatches(body, "C");
+        this.numConstants =  StringUtils.countMatches(body, "C") + StringUtils.countMatches(args.toString(), "C");
         this.ruleNumber = ruleNumber;
         this.args = args;
         this.body = body;

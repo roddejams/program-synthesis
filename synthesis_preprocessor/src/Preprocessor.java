@@ -1,3 +1,4 @@
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import rules.ChoiceRule;
 import rules.Rule;
@@ -9,9 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Preprocessor {
@@ -33,16 +32,23 @@ public class Preprocessor {
         List<String> vars = generateWhereVars(maxDepth);
 
         ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
-        Rule.RuleBuilder ruleBuilder = new Rule.RuleBuilder().withDepth(maxDepth).withName(fnName).withArgs(args);
+        Rule.RuleBuilder ruleBuilder = new Rule.RuleBuilder().withDepth(maxDepth).withName(fnName);
         Where.WhereBuilder whereBuilder = new Where.WhereBuilder().withArgs(args);
 
-        factory.addRule(ruleBuilder.withBody("C1"));
+        //Add const rule (for base cases)
+        List<String> constArgs = new ArrayList<>();
+        for(int i = 0; i < numArgs; i++) {
+            constArgs.add("C" + i);
+        }
+        factory.addRule(ruleBuilder.withArgs(constArgs).withBody("C" + (numArgs + 1)));
 
-        // Add "rule" rules.
+        ruleBuilder.withArgs(args);
+
         for(int i = 0; i < numArgs; i++) {
             factory.addRule(ruleBuilder.withBody(args.get(i)));
         }
 
+        // Add "rule" rules.
         for(String op : arg_ops) {
             for(int i = 0; i < numArgs; i++) {
                 for(int j = 0; j < numArgs; j++) {
@@ -57,15 +63,23 @@ public class Preprocessor {
             }
         }
 
+        String callString = "call(%s, (%s " + StringUtils.repeat(", (%s", numArgs - 1) + StringUtils.repeat(")", numArgs + 1);
+
+        Set<String> vargs = new HashSet<>();
+        vargs.addAll(args);
+        vargs.addAll(vars);
+        /*for(int i = 1; i < numArgs; i++) {
+            vargs.add("C" + i);
+        }*/
+
+        Set<Set<String>> combinations = Sets.powerSet(vargs).stream().filter(s -> s.size() == numArgs).collect(Collectors.toSet());
+
         for(String fn : functionNames) {
-            for(int i = 0; i < numArgs; i++) {
-                factory.addRule(ruleBuilder.withBody(String.format("call(%s, %s)", fn, args.get(i))));
-
-                factory.addRule(ruleBuilder.withBody(String.format("call(%s, %s)", fn, "C1")));
-
-                for(String var : vars) {
-                    factory.addRule(ruleBuilder.withBody(String.format("call(%s, %s)", fn, var)));
-                }
+            for(Set<String> funcArgs : combinations) {
+                List<Object> stringformatArgs = new ArrayList<>();
+                stringformatArgs.add(fn);
+                stringformatArgs.addAll(funcArgs);
+                factory.addRule(ruleBuilder.withBody(String.format(callString, stringformatArgs.toArray())));
             }
         }
 
@@ -88,16 +102,11 @@ public class Preprocessor {
             }
 
             for(String fn : functionNames) {
-                for(int i = 0; i < numArgs; i++) {
-                    factory.addRule(whereBuilder.withVar(var).withBody(String.format("call(%s, %s)", fn, args.get(i))));
-
-                    factory.addRule(whereBuilder.withVar(var).withBody(String.format("call(%s, %s)", fn, "C1")));
-
-                    for(String inner_var : vars) {
-                        if(!inner_var.equals(var)) {
-                            factory.addRule(whereBuilder.withVar(var).withBody(String.format("call(%s, %s)", fn, inner_var)));
-                        }
-                    }
+                for(Set<String> funcArgs : combinations) {
+                    List<Object> stringformatArgs = new ArrayList<>();
+                    stringformatArgs.add(fn);
+                    stringformatArgs.addAll(funcArgs);
+                    factory.addRule(ruleBuilder.withBody(String.format(callString, stringformatArgs.toArray())));
                 }
             }
         }
@@ -128,12 +137,15 @@ public class Preprocessor {
     public static void main(String[] args) {
         int maxDepth = 2;
         int numFuncs = 1;
-        int numArgs = 1;
+        int numArgs = 2;
 
         Preprocessor preproc = new Preprocessor(Arrays.asList("f"));
         List<ChoiceRule> generatedRules = preproc.generateSkeletonRules(maxDepth, numFuncs, numArgs);
 
-        Path file = Paths.get(String.format("../skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
+        Path current = Paths.get("");
+        System.out.println("Current dir = " + current.toAbsolutePath().toString());
+        Path file = Paths.get(String.format("skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
+
         int maxNumConstants = 0;
 
         String[] ruleNums = new String[2*maxDepth];
@@ -180,7 +192,7 @@ public class Preprocessor {
             generateChoiceRule(file, maxNumConstants, ruleNums);
             generateWhereChoices(file, maxNumConstants, maxDepth, whereNums);
 
-            List<String> chosenPredicates = doClingo(file.toFile().getAbsolutePath());
+            List<String> chosenPredicates = doClingo(file.toAbsolutePath().toString());
 
             HaskellGenerator generator = new HaskellGenerator(generatedRules);
             String out = generator.generateHaskell(chosenPredicates);
@@ -196,8 +208,10 @@ public class Preprocessor {
 
         //Run clingo
         Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
+        Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo 0 rules.lp tail_fac_examples.lp %s",
                 skeletonRulePath));
+        /*Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
+                skeletonRulePath));*/
 
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -236,12 +250,13 @@ public class Preprocessor {
 
                 //have to check to put a comma or not;
                 String choice = "";
-                if(c == maxNumConstants) {
+                if (c == maxNumConstants) {
                     choice = String.format("choose_where(%s%s) %s\n", whereNums[i][c], consts, expr_consts);
                 } else {
                     choice = String.format("choose_where(%s%s) %s,\n", whereNums[i][c], consts, expr_consts);
                 }
                 write(file, choice);
+
             }
 
             write(file, "} 1.\n");
