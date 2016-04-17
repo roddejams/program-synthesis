@@ -4,7 +4,7 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String)(content: Html)
+@(title: String)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +17,8 @@
         <title>@title</title>
         <!-- Bootstrap -->
         <link href="@routes.Assets.versioned("stylesheets/css/bootstrap.min.css")" rel="stylesheet">
+        <link rel='stylesheet prefetch' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/table.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/haskell.png")">
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -34,7 +36,7 @@
     <body>
         @* And here's where we render the `Html` object containing
          * the page content. *@
-            <div class="container-fluid">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
                     <nav class="navbar navbar-default" role="navigation">
@@ -71,41 +73,76 @@
                         </p>
                     </div>
 
-                    <!--<div class="jumbotron">
-                        <h2>
-
-                        </h2>
-                        <p>
-                            Use this page to specify a new learning task. Add corresponding input and output examples to be learned, and then run the ASP to display the program.
-                            Any inputs without matching outputs will be automatically completed.
-                        </p>
-                    </div>-->
-
-                    <div class="row">
-                        <div class="col-md-1">
-                            <form role="form">
+                    <div id="paramForm">
+                        <form role="form">
+                            <div class="col-md-1">
                                 <div class="form-group">
 
-                                    <label for="numArguments">
-                                        Number of Arguments
+                                    <label for="numArgs">
+                                        No. Args
                                     </label>
-                                    <input class="form-control" id="numArguments" />
+                                    <select class="form-control" id="numArgs">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
                                 </div>
+                            </div>
+                            <div class="col-md-1">
                                 <div class="form-group">
 
-                                    <label for="numFunctions">
-                                        Number of Functions
+                                    <label for="numFuncs">
+                                        No. Functions
                                     </label>
-                                    <input class="form-control" id="numFunctions" type="password" />
+                                    <select class="form-control" id="numFuncs">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                    </select>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-large">
-                                    Run ASP
-                                </button>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <form class="form-horizontal">
+                    <div class="col-md-3">
+                        <div id="table" class="table-editable">
+                            <table class="table table-bordered table-hover">
+                                <tr>
+                                    <th>Arg 1</th>
+                                    <th>Output</th>
+                                    <th>
+                                        <span class="table-add glyphicon glyphicon-plus"></span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="form-control" placeholder="Input"/></td>
+                                    <td><input type="text" class="form-control" placeholder="Output"/></td>
+                                    <td>
+                                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                                    </td>
+                                </tr>
+                                <!-- This is our clonable table line -->
+                                <tr class="hide">
+                                    <td><input type="text" class="form-control" placeholder="Input"/></td>
+                                    <td><input type="text" class="form-control" placeholder="Output"/></td>
+                                    <td>
+                                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+            <button id="export-btn" class="btn btn-primary">Run ASP</button>
+                <p id="export"></p>
+            </div>
+            <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
         </div>
     </body>
 </html>
