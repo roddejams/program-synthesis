@@ -4,7 +4,8 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String)
+@(title:        String,
+  examplesForm: Form[controllers.IOExample])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -107,8 +108,9 @@
                 </div>
             </div>
             <div class="row">
-                <form class="form-horizontal">
-                    <div class="col-md-3">
+            
+                <div class="col-md-3">            
+                    @helper.form(routes.HomeController.runLearningTask(), 'class -> "form-horizontal") {
                         <div id="table" class="table-editable">
                             <table class="table table-bordered table-hover">
                                 <tr>
@@ -119,29 +121,80 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" class="form-control" placeholder="Input"/></td>
-                                    <td><input type="text" class="form-control" placeholder="Output"/></td>
+                                    <!--<td><input type="text" class="form-control" placeholder="Input"/></td>
+                                        <td><input type="text" class="form-control" placeholder="Output"/></td>-->
+                                        
+                                    @helper.repeat(examplesForm("inputs"), min = 1) { example => 
+                                        <td>
+                                            @helper.inputText(example,
+                                                                'class -> "form-control",
+                                                                'placeholder -> "Input",
+                                                                '_label -> null)
+                                        </td>
+                                    }
+                                    
+                                    <!-- Clonable table column component -->
+                                    <td class = "hide">
+                                        @helper.inputText(examplesForm("inputs"),
+                                                            'class -> "form-control",
+                                                            'placeholder -> "Input",
+                                                            '_label -> null)
+                                    </td>
+                                    
+                                    <td>
+                                        @helper.inputText(examplesForm("output"), 
+                                                            'class -> "form-control", 
+                                                            'placeholder -> "Output",
+                                                            '_label -> null)
+                                                                
+                                    </td>
                                     <td>
                                         <span class="table-remove glyphicon glyphicon-remove"></span>
                                     </td>
                                 </tr>
-                                <!-- This is our clonable table line -->
+                                <!-- This is our clonable table line-->
                                 <tr class="hide">
-                                    <td><input type="text" class="form-control" placeholder="Input"/></td>
-                                    <td><input type="text" class="form-control" placeholder="Output"/></td>
+                                    <!--<td><input type="text" class="form-control" placeholder="Input"/></td>
+                                        <td><input type="text" class="form-control" placeholder="Output"/></td>-->
+                                        
+                                    @helper.repeat(examplesForm("inputs"), min = 1) { example => 
+                                        <td>
+                                            @helper.inputText(example,
+                                                                'class -> "form-control",
+                                                                'placeholder -> "Input",
+                                                                '_label -> null)
+                                        </td>
+                                    }
+                                    
+                                    <!-- Clonable table column component -->
+                                    <td class = "hide">
+                                        @helper.inputText(examplesForm("inputs"),
+                                                            'class -> "form-control",
+                                                            'placeholder -> "Input",
+                                                            '_label -> null)
+                                    </td>
+                                    
+                                    <td>
+                                    @helper.inputText(examplesForm("output"), 
+                                                            'class -> "form-control", 
+                                                            'placeholder -> "Output",
+                                                            '_label -> null)
+                                                                
+                                    </td>
                                     <td>
                                         <span class="table-remove glyphicon glyphicon-remove"></span>
                                     </td>
                                 </tr>
                             </table>
                         </div>
-                    </div>
-                </form>
+                    
+                </div>
             </div>
             <div class="row">
-            <button id="export-btn" class="btn btn-primary">Run ASP</button>
+            <button type="submit" id="export-btn" class="btn btn-primary">Run ASP</button>
                 <p id="export"></p>
             </div>
+            }
             <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
         </div>
     </body>
