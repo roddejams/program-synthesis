@@ -5,7 +5,7 @@
  * object to insert into the body of the page.
  *@
 @(title:        String,
-  examplesForm: Form[controllers.IOExample])
+  examplesForm: Form[IOExamples])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -115,43 +115,51 @@
                             <table class="table table-bordered table-hover">
                                 <tr>
                                     <th>Arg 1</th>
+                                    @for(i <- 1 to examplesForm("examples")("[0].inputs").indexes.max) {
+                                        <th>Arg @{i+1}</th>
+                                    }
                                     <th>Output</th>
                                     <th>
                                         <span class="table-add glyphicon glyphicon-plus"></span>
                                     </th>
                                 </tr>
-                                <tr>
-                                    <!--<td><input type="text" class="form-control" placeholder="Input"/></td>
-                                        <td><input type="text" class="form-control" placeholder="Output"/></td>-->
-                                        
-                                    @helper.repeat(examplesForm("inputs"), min = 1) { example => 
-                                        <td>
-                                            @helper.inputText(example,
-                                                                'class -> "form-control",
-                                                                'placeholder -> "Input",
-                                                                '_label -> null)
+
+                                @helper.repeat(examplesForm("examples"), min = 1) { example =>
+                                    <tr>
+                                            <!--<td><input type="text" class="form-control" placeholder="Input"/></td>
+                                            <td><input type="text" class="form-control" placeholder="Output"/></td>-->
+
+                                        @helper.repeat(examplesForm(example.name.toString + ".inputs"), min = 1) { input =>
+                                            <td>
+                                                @helper.inputText(input,
+                                                    'class -> "form-control",
+                                                    'placeholder -> "Input",
+                                                    '_label -> null)
+                                            </td>
+                                        }
+
+                                            <!-- Clonable table column component -->
+                                        <td class = "hide">
+
+                                        @helper.inputText(examplesForm(example.name.toString + ".inputs[0]"),
+                                            'class -> "form-control",
+                                            'placeholder -> "Input",
+                                            '_label -> null)
+
                                         </td>
-                                    }
-                                    
-                                    <!-- Clonable table column component -->
-                                    <td class = "hide">
-                                        @helper.inputText(examplesForm("inputs"),
-                                                            'class -> "form-control",
-                                                            'placeholder -> "Input",
-                                                            '_label -> null)
-                                    </td>
-                                    
-                                    <td>
-                                        @helper.inputText(examplesForm("output"), 
-                                                            'class -> "form-control", 
-                                                            'placeholder -> "Output",
-                                                            '_label -> null)
-                                                                
-                                    </td>
-                                    <td>
-                                        <span class="table-remove glyphicon glyphicon-remove"></span>
-                                    </td>
-                                </tr>
+
+                                        <td>
+                                        @helper.inputText(examplesForm(example.name.toString + ".output"),
+                                            'class -> "form-control",
+                                            'placeholder -> "Output",
+                                            '_label -> null)
+
+                                        </td>
+                                        <td>
+                                            <span class="table-remove glyphicon glyphicon-remove"></span>
+                                        </td>
+                                    </tr>
+                                }
                                 <!-- This is our clonable table line-->
                                 <tr class="hide">
                                     <!--<td><input type="text" class="form-control" placeholder="Input"/></td>
