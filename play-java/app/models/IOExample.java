@@ -1,12 +1,11 @@
 package models;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class IOExample {
 
-    private List<String> inputs = Arrays.asList("");
-    private String output = "";
+    private List<String> inputs;
+    private String output;
 
     public void setInputs(List<String> inputs) {
         this.inputs = inputs;

@@ -1,9 +1,9 @@
 @*
- * This template is called from the `index` template. This template
- * handles the rendering of the page header and body tags. It takes
- * two arguments, a `String` for the title of the page and an `Html`
- * object to insert into the body of the page.
- *@
+* This template is called from the `index` template. This template
+* handles the rendering of the page header and body tags. It takes
+* two arguments, a `String` for the title of the page and an `Html`
+* object to insert into the body of the page.
+*@
 @(title:        String,
   examplesForm: Form[IOExamples])
 
@@ -115,8 +115,12 @@
                             <table class="table table-bordered table-hover">
                                 <tr>
                                     <th>Arg 1</th>
-                                    @for(i <- 1 to examplesForm("examples")("[0].inputs").indexes.max) {
-                                        <th>Arg @{i+1}</th>
+                                    @if(!examplesForm("examples")("[0].inputs").indexes.isEmpty ) {
+                                        @for(i <- 1 to examplesForm("examples")("[0].inputs").indexes.max) {
+                                            <th>Arg @{
+                                                i + 1
+                                            }</th>
+                                        }
                                     }
                                     <th>Output</th>
                                     <th>
@@ -138,12 +142,12 @@
                                             </td>
                                         }
 
-                                            <!-- Clonable table column component -->
+                                        <!-- Clonable table column component -->
                                         <td class = "hide">
-
                                         @helper.inputText(examplesForm(example.name.toString + ".inputs[0]"),
                                             'class -> "form-control",
                                             'placeholder -> "Input",
+                                            '_value -> "",
                                             '_label -> null)
 
                                         </td>
@@ -165,7 +169,7 @@
                                     <!--<td><input type="text" class="form-control" placeholder="Input"/></td>
                                         <td><input type="text" class="form-control" placeholder="Output"/></td>-->
                                         
-                                    @helper.repeat(examplesForm("inputs"), min = 1) { example => 
+                                    @helper.repeat(examplesForm("examples[0].inputs"), min = 1) { example =>
                                         <td>
                                             @helper.inputText(example,
                                                                 'class -> "form-control",
@@ -176,14 +180,14 @@
                                     
                                     <!-- Clonable table column component -->
                                     <td class = "hide">
-                                        @helper.inputText(examplesForm("inputs"),
+                                        @helper.inputText(examplesForm("examples[0].inputs[0]"),
                                                             'class -> "form-control",
                                                             'placeholder -> "Input",
                                                             '_label -> null)
                                     </td>
                                     
                                     <td>
-                                    @helper.inputText(examplesForm("output"), 
+                                    @helper.inputText(examplesForm("examples[0].output"),
                                                             'class -> "form-control", 
                                                             'placeholder -> "Output",
                                                             '_label -> null)
