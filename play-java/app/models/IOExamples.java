@@ -17,5 +17,13 @@ public class IOExamples {
     public List<IOExample> getExamples() {
         return examples;
     }
-    //TODO: Override toString();
+
+    @Override
+    public String toString() {
+        String out = "";
+        for(IOExample example : examples) {
+            out += example;
+        }
+        return out;
+    }
 }

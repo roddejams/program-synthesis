@@ -1,6 +1,7 @@
 package controllers;
 
 import models.IOExamples;
+import models.LearningResult;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -25,13 +26,6 @@ public class HomeController extends Controller {
      */
     public Result index() {
         IOExamples examples = new IOExamples();
-        /*IOExample example1 = new IOExample();
-        IOExample example2 = new IOExample();
-        example1.setInputs(Arrays.asList("1", "8"));
-        example1.setOutput("7");
-        example2.setInputs(Arrays.asList("2", "4"));
-        example2.setOutput("3");
-        examples.setExamples(Arrays.asList(example1, example2));*/
         Form<IOExamples> formData = formFactory.form(IOExamples.class).fill(examples);
 
         return ok(main.render(
@@ -44,8 +38,17 @@ public class HomeController extends Controller {
         Form<IOExamples> formData = formFactory.form(IOExamples.class).bindFromRequest();
         IOExamples examples = formData.get();
 
-        return ok(main.render(
-                "A Haskell Code Generator from I/O Examples",
-                formData));
+        try {
+            LearningResult result = Preprocessor.runLearningTask(examples);
+
+            Form<IOExamples> returnedData = formFactory.form(IOExamples.class).fill(result.getCompletedExamples());
+
+            return ok(main.render(
+                    "A Haskell Code Generator from I/O Examples",
+                    returnedData));
+
+        } catch (Exception e) {
+            return internalServerError();
+        }
     }
 }

@@ -154,6 +154,48 @@ public class Preprocessor {
         Preprocessor preproc = new Preprocessor(Arrays.asList("f"));
         List<ChoiceRule> generatedRules = preproc.generateSkeletonRules(maxDepth, numFuncs, numArgs);
 
+        Path skeletonRulePath = writeSkeletonRules(generatedRules, maxDepth, numFuncs);
+
+        Path examplesPath = writeExamples(inputExamples);
+
+        List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
+
+        HaskellGenerator generator = new HaskellGenerator(generatedRules);
+        List<String> haskell = generator.generateHaskell(chosenPredicates);
+        System.out.println(haskell);
+
+        Path haskellFile = Paths.get("haskell/projectout.hs");
+        Files.write(haskellFile, "".getBytes());
+
+        for(String line : haskell) {
+            write(haskellFile, line);
+        }
+
+        return new LearningResult(inputExamples, haskell);
+    }
+
+    private static Path writeExamples(IOExamples examples) {
+        Path file = Paths.get("examples.lp");
+
+        try {
+            Files.write(file, "".getBytes());
+            write(file, "expr_const(0;1).\n");
+            write(file, "num_rules(1..2).\n");
+
+            //Statically write match statements for now. Will learn these later
+            write(file, "match2(f, 1, Input) :- Input == 0, rule(1, f, Input, _).\n");
+            write(file, "match2(f, 2, Input) :- rule(2, f, Input, _).\n");
+
+            write(file, examples.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return file;
+    }
+
+    private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) {
         Path current = Paths.get("");
         System.out.println("Current dir = " + current.toAbsolutePath().toString());
         Path file = Paths.get(String.format("skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
@@ -166,17 +208,17 @@ public class Preprocessor {
         try {
             Files.write(file, "".getBytes());
 
-            for(ChoiceRule rule : generatedRules) {
-                if(rule.numConstants() > maxNumConstants) {
+            for (ChoiceRule rule : generatedRules) {
+                if (rule.numConstants() > maxNumConstants) {
                     maxNumConstants = rule.numConstants();
                 }
 
                 //Fuck about with rule numbers for choice rules later :(
-                if(rule instanceof Rule) {
+                if (rule instanceof Rule) {
                     int numConsts = rule.numConstants();
 
                     String nums = ruleNums[numConsts];
-                    if(nums == null) {
+                    if (nums == null) {
                         ruleNums[numConsts] = "" + rule.ruleNumber();
                     } else {
                         nums += ";" + rule.ruleNumber();
@@ -184,13 +226,13 @@ public class Preprocessor {
                     }
                 }
 
-                if(rule instanceof Where) {
+                if (rule instanceof Where) {
                     int numConsts = rule.numConstants();
                     String var = ((Where) rule).var();
                     int varNum = Integer.valueOf(var.substring(1));
 
                     String nums = whereNums[varNum][numConsts];
-                    if(nums == null) {
+                    if (nums == null) {
                         whereNums[varNum][numConsts] = "" + rule.ruleNumber();
                     } else {
                         nums += ";" + rule.ruleNumber();
@@ -203,34 +245,19 @@ public class Preprocessor {
 
             generateChoiceRule(file, maxNumConstants, ruleNums);
             generateWhereChoices(file, maxNumConstants, maxDepth, whereNums);
-
-            List<String> chosenPredicates = doClingo(file.toAbsolutePath().toString());
-
-            HaskellGenerator generator = new HaskellGenerator(generatedRules);
-            List<String> haskell = generator.generateHaskell(chosenPredicates);
-            System.out.println(haskell);
-
-            Path haskellFile = Paths.get("haskell/projectout.hs");
-            Files.write(haskellFile, "".getBytes());
-
-            for(String line : haskell) {
-                write(haskellFile, line);
-            }
-
-            return new LearningResult(inputExamples, haskell);
-
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         }
+        return file;
     }
 
-    private static List<String> doClingo(String skeletonRulePath) throws InterruptedException, IOException {
+    private static List<String> doClingo(String skeletonRulePath, String examplesPath) throws InterruptedException, IOException {
         List<String> chosenPredicates = new ArrayList<>();
 
         //Run clingo
         Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo 0 rules.lp tail_fac_examples.lp %s",
+        Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo 0 rules.lp %s %s",
+                examplesPath,
                 skeletonRulePath));
         /*Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
