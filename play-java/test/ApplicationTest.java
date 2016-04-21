@@ -1,23 +1,6 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.*;
-
-import play.mvc.*;
-import play.test.*;
-import play.data.DynamicForm;
-import play.data.validation.ValidationError;
-import play.data.validation.Constraints.RequiredValidator;
-import play.i18n.Lang;
-import play.libs.F;
-import play.libs.F.*;
-import play.twirl.api.Content;
-
-import static play.test.Helpers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -34,12 +17,12 @@ public class ApplicationTest {
         assertEquals(2, a);
     }
 
-    @Test
+    /*@Test
     public void renderTemplate() {
         Content html = views.html.index.render("Your new application is ready.");
         assertEquals("text/html", html.contentType());
         assertTrue(html.body().contains("Your new application is ready."));
-    }
+    }*/
 
 
 }

@@ -1,6 +1,9 @@
 package controllers;
 
 import com.google.common.collect.Sets;
+import models.IOExample;
+import models.IOExamples;
+import models.LearningResult;
 import org.apache.commons.lang3.StringUtils;
 import controllers.rules.ChoiceRule;
 import controllers.rules.Rule;
@@ -141,10 +144,12 @@ public class Preprocessor {
         return args;
     }
 
-    public static void main(String[] args) {
-        int maxDepth = 2;
+    public static LearningResult runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
+        List<IOExample> examples = inputExamples.getExamples();
+
+        int numArgs = examples.get(0).getInputs().size();
+        int maxDepth = 2* numArgs + 1;
         int numFuncs = 1;
-        int numArgs = 2;
 
         Preprocessor preproc = new Preprocessor(Arrays.asList("f"));
         List<ChoiceRule> generatedRules = preproc.generateSkeletonRules(maxDepth, numFuncs, numArgs);
@@ -212,8 +217,11 @@ public class Preprocessor {
                 write(haskellFile, line);
             }
 
+            return new LearningResult(inputExamples, haskell);
+
         } catch(Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
