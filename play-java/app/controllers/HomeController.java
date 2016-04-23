@@ -9,6 +9,8 @@ import play.mvc.Result;
 import views.html.main;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -27,10 +29,12 @@ public class HomeController extends Controller {
     public Result index() {
         IOExamples examples = new IOExamples();
         Form<IOExamples> formData = formFactory.form(IOExamples.class).fill(examples);
+        List<String> emptyHaskell = new ArrayList<>();
 
         return ok(main.render(
                 "A Haskell Code Generator from I/O Examples",
-                formData
+                formData,
+                emptyHaskell
         ));
     }
 
@@ -45,9 +49,12 @@ public class HomeController extends Controller {
 
             return ok(main.render(
                     "A Haskell Code Generator from I/O Examples",
-                    returnedData));
+                    returnedData,
+                    result.getGeneratedHaskell()));
 
         } catch (Exception e) {
+            System.out.println("Caught Exception");
+            e.printStackTrace();
             return internalServerError();
         }
     }

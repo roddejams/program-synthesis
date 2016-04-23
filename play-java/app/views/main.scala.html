@@ -4,8 +4,9 @@
 * two arguments, a `String` for the title of the page and an `Html`
 * object to insert into the body of the page.
 *@
-@(title:        String,
-  examplesForm: Form[IOExamples])
+@(title:            String,
+  examplesForm:     Form[IOExamples],
+  generatedCode:    List[String])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,6 +28,8 @@
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="@routes.Assets.versioned("javascripts/js/bootstrap.min.js")"></script>
 
+        <!-- Code prettify used to display Haskell -->
+        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=hs"></script>
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -74,6 +77,15 @@
                         </p>
                     </div>
 
+                    <div class="col-md-12">
+                        <div class="progress hide">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar"
+                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
+                                40%
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="paramForm">
                         <form role="form">
                             <div class="col-md-1">
@@ -107,125 +119,25 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
-            
-                <div class="col-md-3">            
-                    @helper.form(routes.HomeController.runLearningTask(), 'class -> "form-horizontal") {
-                        <div id="table" class="table-editable">
-                            <table class="table table-bordered table-hover">
-                                <!-- This is our clonable table line-->
-                                <tr class="hide">
-                                    @if(!examplesForm("examples")("[0].inputs").indexes.isEmpty ) {
-                                        @for(i <- 0 to examplesForm("examples")("[0].inputs").indexes.max) {
-                                            <td>
-                                                <d1 id=@{"clone_line_" + i + "_field"}>
-                                                    <dt>
-                                                        <label for=@{"clone_line_" + i}></label>
-                                                    </dt>
-                                                    <dd>
-                                                        <input id=@{"clone_line_" + i} value="" name=@{"clone_name_" + i} class="form-control" placeholder="Input" type="Text"/>
-                                                    </dd>
-                                                </d1>
-                                            </td>
-                                        }
-                                    } else {
-                                        <td>
-                                            <d1 id="clone_line_0_field">
-                                                <dt>
-                                                    <label for="clone_line_0"></label>
-                                                </dt>
-                                                <dd>
-                                                    <input id="clone_line_0" name="clone_name_0" class="form-control" value="" placeholder="Input" type="Text"/>
-                                                </dd>
-                                            </d1>
-                                        </td>
-                                    }
-                                        <!-- Clonable table column component -->
-                                    <td class = "hide">
-                                        <d1 id="clone_line_col_field">
-                                            <dt>
-                                                <label for="clone_line_col"></label>
-                                            </dt>
-                                            <dd>
-                                                <input id="clone_line_col" name="clone_name_col" class="form-control" value="" placeholder="Input" type="Text"/>
-                                            </dd>
-                                        </d1>
-                                    </td>
+                @dynamicTable(examplesForm)
 
-                                    <td>
-                                        <d1 id="clone_line_out_field">
-                                            <dt>
-                                                <label for="clone_line_out"></label>
-                                            </dt>
-                                            <dd>
-                                                <input id="clone_line_out" name="clone_name_out" class="form-control" value="" placeholder="Output" type="Text"/>
-                                            </dd>
-                                        </d1>
-                                    </td>
-                                    <td>
-                                        <span class="table-remove glyphicon glyphicon-remove"></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Arg 1</th>
-                                    @if(!examplesForm("examples")("[0].inputs").indexes.isEmpty ) {
-                                        @for(i <- 1 to examplesForm("examples")("[0].inputs").indexes.max) {
-                                            <th>Arg @{
-                                                i + 1
-                                            }</th>
-                                        }
-                                    }
-                                    <th>Output</th>
-                                    <th>
-                                        <span class="table-add glyphicon glyphicon-plus"></span>
-                                    </th>
-                                </tr>
-
-                                @helper.repeat(examplesForm("examples"), min = 1) { example =>
-                                    <tr>
-                                        @helper.repeat(examplesForm(example.name.toString + ".inputs"), min = 1) { input =>
-                                            <td>
-                                                @helper.inputText(input,
-                                                    'class -> "form-control",
-                                                    'placeholder -> "Input",
-                                                    '_label -> null)
-                                            </td>
-                                        }
-
-                                            <!-- Clonable table column component -->
-                                        <td class = "hide">
-                                            <d1 id="clone_line_col_field">
-                                                <dt>
-                                                    <label for="clone_line_col"></label>
-                                                </dt>
-                                                <dd>
-                                                    <input id="clone_line_col" name="clone_name_col" class="form-control" value="" placeholder="Input" type="Text"/>
-                                                </dd>
-                                            </d1>
-                                        </td>
-
-                                        <td>
-                                        @helper.inputText(examplesForm(example.name.toString + ".output"),
-                                            'class -> "form-control",
-                                            'placeholder -> "Output",
-                                            '_label -> null)
-
-                                        </td>
-                                        <td>
-                                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                                        </td>
-                                    </tr>
-                                }
-                            </table>
+                <div class="col-md-3 col-md-offset-1">
+                    <div class="panel panel-default hide" id="codePanel">
+                        <div class="panel-heading">
+                            <h4>Generated Code</h4>
                         </div>
-                    
+                        <div class="panel-body" id="codeBody">
+                            <code class="prettyprint">
+                                @generatedCode.map { line =>
+                                    <p>@line</p>
+                                }
+                            </code>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-            <button type="submit" id="export-btn" class="btn btn-primary">Run ASP</button>
-                <p id="export"></p>
-            </div>
-            }
             <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
         </div>
     </body>

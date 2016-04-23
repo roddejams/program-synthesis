@@ -1,15 +1,17 @@
 package controllers;
 
 import com.google.common.collect.Sets;
+import controllers.rules.ChoiceRule;
+import controllers.rules.Rule;
+import controllers.rules.Where;
 import models.IOExample;
 import models.IOExamples;
 import models.LearningResult;
 import org.apache.commons.lang3.StringUtils;
-import controllers.rules.ChoiceRule;
-import controllers.rules.Rule;
-import controllers.rules.Where;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,9 +55,23 @@ public class Preprocessor {
             factory.addRule(ruleBuilder.withBody(args.get(i)));
         }
 
+        Set<String> vargs = new HashSet<>();
+        vargs.addAll(args);
+        vargs.addAll(vars);
+        vargs.add("C1");
+
+        Set<Set<String>> ruleCombinations = Sets.powerSet(vargs).stream().filter(s -> s.size() == 2).collect(Collectors.toSet());
+
         // Add "rule" rules.
         for(String op : arg_ops) {
-            for(int i = 0; i < numArgs; i++) {
+            for(String arg : args) {
+                factory.addRule(ruleBuilder.withBody(String.format(op, arg, arg)));
+            }
+            for(Set<String> funcArgs : ruleCombinations) {
+                factory.addRule(ruleBuilder.withBody(String.format(op, funcArgs.toArray())));
+            }
+
+            /*for(int i = 0; i < numArgs; i++) {
                 for(int j = 0; j < numArgs; j++) {
                     factory.addRule(ruleBuilder.withBody(String.format(op, args.get(i), args.get(j))));
                 }
@@ -65,22 +81,22 @@ public class Preprocessor {
                 for(String var : vars) {
                     factory.addRule(ruleBuilder.withBody(String.format(op, args.get(i), var)));
                 }
-            }
+            }*/
         }
 
         String callString = "call(%s, (%s " + StringUtils.repeat(", (%s", numArgs - 1) + StringUtils.repeat(")", numArgs + 1);
 
-        Set<String> vargs = new HashSet<>();
+        vargs.clear();
         vargs.addAll(args);
         vargs.addAll(vars);
         /*for(int i = 1; i < numArgs; i++) {
             vargs.add("C" + i);
         }*/
 
-        Set<Set<String>> ruleCombinations = Sets.powerSet(vargs).stream().filter(s -> s.size() == numArgs).collect(Collectors.toSet());
+        Set<Set<String>> callArgCombinations = Sets.powerSet(vargs).stream().filter(s -> s.size() == numArgs).collect(Collectors.toSet());
 
         for(String fn : functionNames) {
-            for(Set<String> funcArgs : ruleCombinations) {
+            for(Set<String> funcArgs : callArgCombinations) {
                 List<Object> stringformatArgs = new ArrayList<>();
                 stringformatArgs.add(fn);
                 stringformatArgs.addAll(funcArgs);
@@ -148,7 +164,7 @@ public class Preprocessor {
         List<IOExample> examples = inputExamples.getExamples();
 
         int numArgs = examples.get(0).getInputs().size();
-        int maxDepth = 2* numArgs + 1;
+        int maxDepth = 2;
         int numFuncs = 1;
 
         Preprocessor preproc = new Preprocessor(Arrays.asList("f"));
@@ -156,7 +172,7 @@ public class Preprocessor {
 
         Path skeletonRulePath = writeSkeletonRules(generatedRules, maxDepth, numFuncs);
 
-        Path examplesPath = writeExamples(inputExamples);
+        Path examplesPath = writeExamples(inputExamples, numArgs);
 
         List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
 
@@ -164,7 +180,7 @@ public class Preprocessor {
         List<String> haskell = generator.generateHaskell(chosenPredicates);
         System.out.println(haskell);
 
-        Path haskellFile = Paths.get("haskell/projectout.hs");
+        Path haskellFile = Paths.get("ASP/haskell/projectout.hs");
         Files.write(haskellFile, "".getBytes());
 
         for(String line : haskell) {
@@ -174,8 +190,8 @@ public class Preprocessor {
         return new LearningResult(inputExamples, haskell);
     }
 
-    private static Path writeExamples(IOExamples examples) {
-        Path file = Paths.get("examples.lp");
+    private static Path writeExamples(IOExamples examples, int numArgs) {
+        Path file = Paths.get("ASP/examples.lp");
 
         try {
             Files.write(file, "".getBytes());
@@ -183,9 +199,14 @@ public class Preprocessor {
             write(file, "num_rules(1..2).\n");
 
             //Statically write match statements for now. Will learn these later
-            write(file, "match2(f, 1, Input) :- Input == 0, rule(1, f, Input, _).\n");
-            write(file, "match2(f, 2, Input) :- rule(2, f, Input, _).\n");
+            if(numArgs == 1) {
+                write(file, "match2(f, 1, Input) :- Input == 0, rule(1, f, Input, _).\n");
+                write(file, "match2(f, 2, Input) :- rule(2, f, Input, _).\n");
 
+            } else {
+                write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, rule(1, f, (Arg1, Args), _).\n");
+                write(file, "match2(f, 2, (Arg1, Args)) :- rule(2, f, (Arg1, Args), _).\n");
+            }
             write(file, examples.toString());
 
         } catch (IOException e) {
@@ -198,7 +219,7 @@ public class Preprocessor {
     private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) {
         Path current = Paths.get("");
         System.out.println("Current dir = " + current.toAbsolutePath().toString());
-        Path file = Paths.get(String.format("skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
+        Path file = Paths.get(String.format("ASP/skeleton_rules/skeleton_rules_%d_%d.lp", maxDepth, numFuncs));
 
         int maxNumConstants = 0;
 
@@ -256,7 +277,7 @@ public class Preprocessor {
 
         //Run clingo
         Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo 0 rules.lp %s %s",
+        Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo ASP/rules.lp %s %s",
                 examplesPath,
                 skeletonRulePath));
         /*Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
