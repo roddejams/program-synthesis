@@ -40,7 +40,7 @@
     <body>
         @* And here's where we render the `Html` object containing
          * the page content. *@
-        <div class="container-fluid">
+        <div class="container-fluid" id="main-content">
             <div class="row">
                 <div class="col-md-12">
                     <nav class="navbar navbar-default" role="navigation">
@@ -120,23 +120,8 @@
                 </div>
             </div>
 
-            <div class="row">
-                @dynamicTable(examplesForm)
-
-                <div class="col-md-3 col-md-offset-1">
-                    <div class="panel panel-default hide" id="codePanel">
-                        <div class="panel-heading">
-                            <h4>Generated Code</h4>
-                        </div>
-                        <div class="panel-body" id="codeBody">
-                            <code class="prettyprint">
-                                @generatedCode.map { line =>
-                                    <p>@line</p>
-                                }
-                            </code>
-                        </div>
-                    </div>
-                </div>
+            <div class="row" id="table-container">
+                @dynamicTable(examplesForm, generatedCode)
             </div>
             <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
         </div>

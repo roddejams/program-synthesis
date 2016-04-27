@@ -5,10 +5,40 @@ $(document).ready(function() {
    var colCount = $TABLE.find('tr:first td').length - 3;
    $("#numArgs").find("option[value=" + colCount + "]").attr('selected', 'selected');
 
-    //Load code
-    if($("#codeBody").has('p').length > 0) {
-        $("#codePanel").removeClass('hide');
-    }
+    //Display generated Haskell if there's any.
+    //if($("#codeBody").has('p').length > 0) {
+    //   $("#codePanel").removeClass('hide');
+    //}
+
+    var interval = setInterval(function () {
+        $.ajax({
+            type: "GET",
+            url: "/status",
+            dataType: "html",
+            statusCode:  {
+                200 :function(html) {
+                    $('#table-container').html(html);
+                    clearInterval(interval);
+                }
+            }
+        });
+    }, 100)
+});
+
+$('.export-btn').click(function () {
+    var interval = setInterval(function () {
+        $.ajax({
+            type: "GET",
+            url: "/status",
+            dataType: "html",
+            statusCode:  {
+                200 :function(html) {
+                    $('#table-container').html(html);
+                    clearInterval(interval);
+                }
+            }
+        });
+    }, 100)
 });
 
 $('.table-add').click(function () {

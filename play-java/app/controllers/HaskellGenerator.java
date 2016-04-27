@@ -1,9 +1,9 @@
 package controllers;
 
 import org.apache.commons.lang3.StringUtils;
-import controllers.rules.ChoiceRule;
-import controllers.rules.Rule;
-import controllers.rules.Where;
+import models.rules.ChoiceRule;
+import models.rules.Rule;
+import models.rules.Where;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class HaskellGenerator {
                     );
                 } else if(body.contains("call")) {
                     String calledFunction = body.split("\\(")[1].split(",")[0];
-                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split("\\("), 2, chosenRules.size()));
+                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split(","), 1, 1 + chosenRules.size()));
                     funcArgs = funcArgs.replace("[", "");
                     funcArgs = funcArgs.replace("]", "");
                     funcArgs = funcArgs.replace(",", "");
@@ -175,7 +175,7 @@ public class HaskellGenerator {
                     );
                 } else if(body.contains("call")) {
                     String calledFunction = body.split("\\(")[1].split(",")[0];
-                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split("\\("), 2, 2 + rule.args().size()));
+                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split(","), 1, 1 + rule.args().size()));
                     funcArgs = funcArgs.replace("[", "");
                     funcArgs = funcArgs.replace("]", "");
                     funcArgs = funcArgs.replace(",", "");

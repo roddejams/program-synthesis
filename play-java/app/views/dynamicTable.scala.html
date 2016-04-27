@@ -1,6 +1,5 @@
-@(examplesForm : Form[IOExamples])
-
-
+@(examplesForm : Form[IOExamples],
+  generatedCode: List[String])
 
 <div class="col-md-3">
     @helper.form(routes.HomeController.runLearningTask(), 'class -> "form-horizontal") {
@@ -114,8 +113,23 @@
         <div class="row">
             <div class="col-md-1">
                 <button type="submit" id="export-btn" class="btn btn-primary">Run ASP</button>
-                <p id="export"></p>
             </div>
         </div>
     </div>
+
+<div class="col-md-3 col-md-offset-1">
+    <div class="panel panel-default" id="codePanel">
+        <div class="panel-heading">
+            <h4>Generated Code</h4>
+        </div>
+        <div class="panel-body" id="codeBody">
+            <code class="prettyprint">
+            @generatedCode.map { line =>
+                <p>@line</p>
+            }
+            </code>
+        </div>
+    </div>
+</div>
 }
+

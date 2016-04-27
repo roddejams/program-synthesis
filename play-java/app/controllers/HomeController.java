@@ -1,25 +1,45 @@
 package controllers;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import models.IOExamples;
 import models.LearningResult;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Results;
+import scala.compat.java8.FutureConverters;
 import views.html.main;
+import views.html.dynamicTable;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionStage;
+
+import static akka.pattern.Patterns.ask;
+import static controllers.StatusProtocol.*;
+import static controllers.StatusProtocol.StatusQuery;
 
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
  */
+@Singleton
 public class HomeController extends Controller {
 
     @Inject
     FormFactory formFactory;
+    final ActorRef learningActor;
+    private final static int TIMEOUT = 6000; //10 second timeout;
+
+    @Inject
+    public HomeController(ActorSystem system) {
+        learningActor = system.actorOf(LearningProcessor.props);
+    }
+
     /**
      * An action that renders an HTML page with a welcome message.
      * The configuration in the <code>routes</code> file means that
@@ -41,21 +61,29 @@ public class HomeController extends Controller {
     public Result runLearningTask() {
         Form<IOExamples> formData = formFactory.form(IOExamples.class).bindFromRequest();
         IOExamples examples = formData.get();
+        List<String> emptyHaskell = new ArrayList<>();
 
-        try {
-            LearningResult result = Preprocessor.runLearningTask(examples);
+        learningActor.tell(examples, learningActor);
 
-            Form<IOExamples> returnedData = formFactory.form(IOExamples.class).fill(result.getCompletedExamples());
+        return ok(main.render(
+                "A Haskell Code Generator from I/O Examples",
+                formData,
+                emptyHaskell
+        ));
+    }
 
-            return ok(main.render(
-                    "A Haskell Code Generator from I/O Examples",
-                    returnedData,
-                    result.getGeneratedHaskell()));
+    public CompletionStage<Result> getStatus() {
+        return FutureConverters.toJava(ask(learningActor, new StatusQuery(), TIMEOUT)).thenApply( response -> {
+            StatusResult result = (StatusResult) response;
+            if(result.finished) {
+                LearningResult learned = result.result;
+                Form<IOExamples> returnedData = formFactory.form(IOExamples.class).fill(learned.getCompletedExamples());
 
-        } catch (Exception e) {
-            System.out.println("Caught Exception");
-            e.printStackTrace();
-            return internalServerError();
-        }
+                return ok(dynamicTable.render(returnedData, learned.getGeneratedHaskell()));
+            } else {
+                //Return a 202 Accepted Header as learning is in progress
+                return Results.status(202);
+            }
+        });
     }
 }
