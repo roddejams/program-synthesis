@@ -1,5 +1,6 @@
 package models.rules;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rule extends ChoiceRule {
@@ -35,7 +36,7 @@ public class Rule extends ChoiceRule {
         }
 
         public RuleBuilder withArgs(List<String> args) {
-            this.args = args;
+            this.args = new ArrayList<>(args);
             return this;
         }
 

@@ -2,6 +2,7 @@ package models;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IOExample {
@@ -10,7 +11,7 @@ public class IOExample {
     private String output;
 
     public void setInputs(List<String> inputs) {
-        this.inputs = inputs;
+        this.inputs = new ArrayList<>(inputs);
     }
 
     public void setOutput(String output) {

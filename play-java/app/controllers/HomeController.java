@@ -33,7 +33,7 @@ public class HomeController extends Controller {
     @Inject
     FormFactory formFactory;
     final ActorRef learningActor;
-    private final static int TIMEOUT = 6000; //10 second timeout;
+    private final static int TIMEOUT = 180000; // 180 sec timeout;
 
     @Inject
     public HomeController(ActorSystem system) {
@@ -54,7 +54,8 @@ public class HomeController extends Controller {
         return ok(main.render(
                 "A Haskell Code Generator from I/O Examples",
                 formData,
-                emptyHaskell
+                emptyHaskell,
+                false
         ));
     }
 
@@ -68,7 +69,8 @@ public class HomeController extends Controller {
         return ok(main.render(
                 "A Haskell Code Generator from I/O Examples",
                 formData,
-                emptyHaskell
+                emptyHaskell,
+                true
         ));
     }
 

@@ -10,22 +10,30 @@ $(document).ready(function() {
     //   $("#codePanel").removeClass('hide');
     //}
 
-    var interval = setInterval(function () {
-        $.ajax({
-            type: "GET",
-            url: "/status",
-            dataType: "html",
-            statusCode:  {
-                200 :function(html) {
-                    $('#table-container').html(html);
-                    clearInterval(interval);
+    if(RUNNING) {
+        var btn = $('#export-btn');
+        btn.button('loading');
+        var interval = setInterval(function () {
+            $.ajax({
+                type: "GET",
+                url: "/status",
+                dataType: "html",
+                statusCode: {
+                    200: function (html) {
+                        $('#table-container').html(html);
+                        clearInterval(interval);
+                        btn.button('reset');
+                    }
                 }
-            }
-        });
-    }, 100)
+            });
+        }, 100)
+    }
 });
 
-$('.export-btn').click(function () {
+$('#export-btn').click(function () {
+    var btn = $(this);
+    btn.button('loading');
+
     var interval = setInterval(function () {
         $.ajax({
             type: "GET",
@@ -35,6 +43,7 @@ $('.export-btn').click(function () {
                 200 :function(html) {
                     $('#table-container').html(html);
                     clearInterval(interval);
+                    btn.button('reset');
                 }
             }
         });

@@ -49,7 +49,9 @@ public class LearningProcessor extends UntypedActor {
     public void runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
         result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
 
-        List<IOExample> examples = inputExamples.getExamples();
+        List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
+        IOExamples examplesToWrite = new IOExamples();
+        examplesToWrite.setExamples(examples);
 
         int numArgs = examples.get(0).getInputs().size();
         int maxDepth = 2; //TODO: Work out a good way to calc this dynamically
@@ -59,7 +61,7 @@ public class LearningProcessor extends UntypedActor {
 
         Path skeletonRulePath = writeSkeletonRules(generatedRules, maxDepth, numFuncs);
 
-        Path examplesPath = writeExamples(inputExamples, numArgs);
+        Path examplesPath = writeExamples(examplesToWrite, numArgs);
 
         List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
 
@@ -68,14 +70,36 @@ public class LearningProcessor extends UntypedActor {
         System.out.println(haskell);
 
         Path haskellFile = Paths.get("ASP/haskell/projectout.hs");
+        writeHaskell(haskell, haskellFile);
+
+        //Complete examples if necessary
+        if(examples.size() != inputExamples.getExamples().size()) {
+            List<IOExample> completedExamples = completeExamples(inputExamples, haskellFile.toAbsolutePath().toString());
+            examples.addAll(completedExamples);
+
+            IOExamples out = new IOExamples();
+            out.setExamples(examples);
+
+            result =  new LearningResult(out, haskell);
+        } else {
+            result =  new LearningResult(inputExamples, haskell);
+        }
+
+        finished = true;
+    }
+
+    private void writeHaskell(List<String> haskell, Path haskellFile) throws IOException {
         Files.write(haskellFile, "".getBytes());
+
+        write(haskellFile, "import System.Environment\n");
+        write(haskellFile, "main = do\n");
+        write(haskellFile, "\targ:args <- getArgs\n");
+        write(haskellFile, "\tputStrLn (show (f (read arg)))\n");
+        write(haskellFile, "\n");
 
         for(String line : haskell) {
             write(haskellFile, line);
         }
-
-        result =  new LearningResult(inputExamples, haskell);
-        finished = true;
     }
 
     public static List<ChoiceRule> generateSkeletonRules(int maxDepth, int numFuncs, int numArgs) {
@@ -103,7 +127,7 @@ public class LearningProcessor extends UntypedActor {
 
         Set<String> vargs = new HashSet<>();
         vargs.addAll(args);
-        vargs.addAll(vars);
+        vargs.add(vars.get(0));
         vargs.add("C1");
 
         Set<Set<String>> ruleCombinations = Sets.powerSet(vargs).stream().filter(s -> s.size() == 2).collect(Collectors.toSet());
@@ -148,6 +172,9 @@ public class LearningProcessor extends UntypedActor {
                 factory.addRule(ruleBuilder.withBody(String.format(callString, fn, filledInputString)));
             }
         }
+
+        //Add all where variables to then be filtered out appropriately.
+        vargs.addAll(vars);
 
         //Add "where" rules.
         for(String var : vars) {
@@ -210,12 +237,12 @@ public class LearningProcessor extends UntypedActor {
 
             //Statically write match statements for now. Will learn these later
             if(numArgs == 1) {
-                write(file, "match2(f, 1, Input) :- Input == 0, rule(1, f, Input, _).\n");
-                write(file, "match2(f, 2, Input) :- rule(2, f, Input, _).\n");
+                write(file, "match2(f, 1, Input) :- Input == 0, input(call(f, Input)).\n");
+                write(file, "match2(f, 2, Input) :- input(call(f, Input)).\n");
 
             } else {
-                write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, rule(1, f, (Arg1, Args), _).\n");
-                write(file, "match2(f, 2, (Arg1, Args)) :- rule(2, f, (Arg1, Args), _).\n");
+                write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, input(call(f, (Arg1, Args))).\n");
+                write(file, "match2(f, 2, (Arg1, Args)) :- input(call(f, (Arg1, Args))).\n");
             }
             write(file, examples.toString());
 
@@ -280,6 +307,37 @@ public class LearningProcessor extends UntypedActor {
             e.printStackTrace();
         }
         return file;
+    }
+
+    private List<IOExample> completeExamples(IOExamples inputExamples, String haskellFileLocation) throws IOException {
+        //Get uncompleted examples
+        List<IOExample> uncompleted = inputExamples.getExamples().stream().filter(example -> "".equals(example.getOutput())).collect(Collectors.toList());
+        String haskellExe = "ASP\\haskell\\projectout.exe";
+
+        //Compile Haskell
+        Runtime rt = Runtime.getRuntime();
+        rt.exec(String.format("C:\\Program Files\\Haskell Platform\\7.10.3\\bin\\ghc -o %s --make %s", haskellExe, haskellFileLocation));
+
+        for(IOExample example : uncompleted) {
+            String argString = example.getInputs().toString();
+            argString = argString.replace("[", "");
+            argString = argString.replace("]", "");
+            argString = argString.replace(",", " ");
+
+            Process proc = rt.exec(String.format("./%s %s", haskellExe, argString));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+            String s;
+            while ((s = stdInput.readLine()) != null) {
+                example.setOutput(s);
+            }
+        }
+
+        return uncompleted;
+    }
+
+    private List<IOExample> removeUncompletedExamples(List<IOExample> allExamples) {
+        return allExamples.stream().filter(example -> !"".equals(example.getOutput())).collect(Collectors.toList());
     }
 
     private static List<String> doClingo(String skeletonRulePath, String examplesPath) throws InterruptedException, IOException {

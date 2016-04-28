@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -11,7 +12,7 @@ public class IOExamples {
     protected List<IOExample> examples;
 
     public void setExamples(List<IOExample> examples) {
-        this.examples = examples;
+        this.examples = new ArrayList<>(examples);
     }
 
     public List<IOExample> getExamples() {

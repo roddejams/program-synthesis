@@ -42,7 +42,7 @@ public abstract class ChoiceRule {
     }
 
     public void updateArgs(List<String> newArgs) {
-        args = newArgs;
+        args = new ArrayList<>(newArgs);
     }
 
     public static abstract class ChoiceRuleBuilder {

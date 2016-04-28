@@ -1,21 +1,25 @@
 package controllers;
 
-import org.apache.commons.lang3.StringUtils;
 import models.rules.ChoiceRule;
 import models.rules.Rule;
 import models.rules.Where;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class HaskellGenerator {
 
     private List<ChoiceRule> skeletonRules;
 
+    //Temp until match learning is implemented
+    private static Map<String, Integer> matchMap_1arg = new HashMap<>();
+    private static Map<String, Integer> matchMap_2args = new HashMap<>();
+
     public HaskellGenerator(List<ChoiceRule> skeletonRules) {
         this.skeletonRules = skeletonRules;
+        matchMap_1arg.put("N0", 0);
+        matchMap_2args.put("N0", 0);
     }
 
     public List<String> generateHaskell(List<String> chosenPredicates) throws IOException {
@@ -48,7 +52,7 @@ public class HaskellGenerator {
                 ChoiceRule rule = skeletonRules.get(ruleNum - 1);
 
                 String ruleBody = rule.body();
-                List<String> args = rule.args();
+                List<String> args = new ArrayList<>(rule.args());
                 int numConsts = rule.numConstants();
 
                 //Replace constants in with learned values
@@ -68,6 +72,20 @@ public class HaskellGenerator {
                 String rulePosition = pred.split("\\(")[1].split("\\)")[0].split(",")[0];
                 ((Rule) rule).setRulePosition(Integer.valueOf(rulePosition));
 
+                //Replace variables with learned match values
+                if(Integer.valueOf(rulePosition) == 1) {
+                    Map<String, Integer> chosenMap = rule.args().size() == 1 ? matchMap_1arg : matchMap_2args;
+                    for(Map.Entry<String, Integer> entry : chosenMap.entrySet()) {
+                        ruleBody = ruleBody.replace(entry.getKey(), entry.getValue().toString());
+                        for(int i = 0; i < args.size(); i++) {
+                            if(args.get(i).equals(entry.getKey())) {
+                                args.remove(i);
+                                args.add(i, entry.getValue().toString());
+                            }
+                        }
+                    }
+                }
+
                 rule.updateBody(ruleBody);
                 rule.updateArgs(args);
                 chosenRules.add(rule);
@@ -76,7 +94,6 @@ public class HaskellGenerator {
 
         String[] haskell = new String[chosenRules.size()];
         int numRules = (int) chosenRules.stream().filter(r -> r instanceof Rule).count();
-
 
         //Step 2: Turn rules into haskell.
 
@@ -123,11 +140,12 @@ public class HaskellGenerator {
                     );
                 } else if(body.contains("call")) {
                     String calledFunction = body.split("\\(")[1].split(",")[0];
-                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split(","), 1, 1 + chosenRules.size()));
+                    String funcArgs = Arrays.toString(Arrays.copyOfRange(body.split(","), 1, 1 + rule.args().size()));
                     funcArgs = funcArgs.replace("[", "");
                     funcArgs = funcArgs.replace("]", "");
                     funcArgs = funcArgs.replace(",", "");
                     funcArgs = funcArgs.replace(")", "");
+                    funcArgs = funcArgs.replace("(", "");
                     funcArgs = funcArgs.replaceAll("\\s+", " ");
                     funcArgs = funcArgs.toLowerCase();
 
@@ -180,6 +198,7 @@ public class HaskellGenerator {
                     funcArgs = funcArgs.replace("]", "");
                     funcArgs = funcArgs.replace(",", "");
                     funcArgs = funcArgs.replace(")", "");
+                    funcArgs = funcArgs.replace("(", "");
                     funcArgs = funcArgs.replaceAll("\\s+", " ");
                     funcArgs = funcArgs.toLowerCase();
 

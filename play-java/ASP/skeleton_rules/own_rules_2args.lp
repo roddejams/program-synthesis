@@ -10,7 +10,7 @@ rule(R, f, (N1, N2), mul(N1, N2)) :- input(call(f, (N1, N2))), choose(R, 8).
 rule(R, f, (N1, N2), mul(N2, N2)) :- input(call(f, (N1, N2))), choose(R, 9).
 rule(R, f, (N1, N2), sub(N1, N1)) :- input(call(f, (N1, N2))), choose(R, 10).
 rule(R, f, (N1, N2), sub(N1, N2)) :- input(call(f, (N1, N2))), choose(R, 11).
-rule(R, f, (N1, N2), sub(N2, N1)) :- input(call(f, (N1, N2))), choose(R, 12).
+%rule(R, f, (N1, N2), sub(N2, N1)) :- input(call(f, (N1, N2))), choose(R, 12).
 rule(R, f, (N1, N2), sub(N2, N2)) :- input(call(f, (N1, N2))), choose(R, 13).
 
 rule(R, f, (N1, N2), add(N1, C1)) :- input(call(f, (N1, N2))), choose(R, 14, C1).
@@ -107,19 +107,29 @@ where(x2, (N1, N2), call(f, (C1, N2))) :- input(call(f, (N1, N2))), choose_where
 %where(x2, (N1, N2), call(f, (C1, C2))) :- input(call(f, (N1, N2))), choose_where(96, C1, C2).
 
 1 {
-choose(R, 2..13;30..42) ,
-choose(R, 1;14..28, C0) : expr_const(C0) ,
+%choose(R, 2..13;30..42) ,
+choose(R, 2;3;4;5;6;7;8;9;10;11;12;13;30;31;32;33;34;35;36;37;38;39;40;41;42),
+
+%choose(R, 1;14..28, C0) : expr_const(C0) ,
+choose(R, 1;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28, C0) : expr_const(C0),
+
 choose(R, 29, C0, C1) : expr_const(C0) : expr_const(C1) 
 } 1 :- num_rules(R).
 
 0 {
-choose_where(43..52;61..64) , 
-choose_where(53..60;65..68, C1) : expr_const(C1)
+%choose_where(43..52;61..64) , 
+choose_where(43;44;45;46;47;48;49;50;51;52;61;62;63;64),
+
+%choose_where(53..60;65..68, C1) : expr_const(C1)
+choose_where(53;54;55;56;57;58;59;60;65;66;67;68, C1) : expr_const(C1)
 } 1.
 
 0 {
-choose_where(70..79;88..91) , 
-choose_where(80..87;92..95, C1) : expr_const(C1)
+%choose_where(70..79;88..91) , 
+choose_where(70;71;72;73;74;75;76;77;78;79;88;89;90;91),
+
+%choose_where(80..87;92..95, C1) : expr_const(C1)
+choose_where(80;81;82;83;84;85;86;87;92;93;94;95, C1) : expr_const(C1)
 } 1.
 
 #minimise[choose_where(R)=100, choose_where(R, C)=100].

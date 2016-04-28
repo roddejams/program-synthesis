@@ -6,7 +6,8 @@
 *@
 @(title:            String,
   examplesForm:     Form[IOExamples],
-  generatedCode:    List[String])
+  generatedCode:    List[String],
+  running:          Boolean)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -123,6 +124,9 @@
             <div class="row" id="table-container">
                 @dynamicTable(examplesForm, generatedCode)
             </div>
+            <script type="text/javascript">
+                var RUNNING = @running;
+            </script>
             <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
         </div>
     </body>
