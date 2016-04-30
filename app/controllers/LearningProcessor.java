@@ -345,14 +345,18 @@ public class LearningProcessor extends UntypedActor {
 
         //Run clingo
         Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo ASP/rules.lp %s %s",
+      /*Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo ASP/rules.lp %s %s",
                 examplesPath,
                 skeletonRulePath));
-        /*Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
+        Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
 
+	Process proc = rt.exec(String.format("/home/jr1412/clingo-3.0.5-x86-linux/clingo ASP/rules.lp %s %s",
+		examplesPath,
+		skeletonRulePath));
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
 
         // Print clingo output
         String s;
