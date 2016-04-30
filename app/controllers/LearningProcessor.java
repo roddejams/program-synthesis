@@ -48,7 +48,7 @@ public class LearningProcessor extends UntypedActor {
     }
 
     public void runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
-        System.setProperty("user.dir", "/home/jr1412");
+        System.setProperty("user.dir", "/home/jr1412/");
         result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
 
         List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
@@ -352,7 +352,7 @@ public class LearningProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-	    ProcessBuilder pb = new ProcessBuilder("/clingo-3.0.5-x86-linux/clingo", "ASP/rules.lp",
+	    ProcessBuilder pb = new ProcessBuilder("clingo-3.0.5-x86-linux/clingo", "ASP/rules.lp",
             examplesPath,
             skeletonRulePath);
 
