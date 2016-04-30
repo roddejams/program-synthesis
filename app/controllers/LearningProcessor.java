@@ -48,7 +48,7 @@ public class LearningProcessor extends UntypedActor {
     }
 
     public void runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
-        //System.setProperty("user.dir", "/home/jr1412/");
+        System.setProperty("user.dir", "/home/jr1412/");
         result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
 
         List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
@@ -72,7 +72,8 @@ public class LearningProcessor extends UntypedActor {
         System.out.println(haskell);
 
         String current = Paths.get(" ").toAbsolutePath().toString();
-        Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
+        //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
+        Path haskellFile = Paths.get(current, "projectout.hs");
         writeHaskell(haskell, haskellFile);
 
         //Complete examples if necessary
@@ -232,7 +233,8 @@ public class LearningProcessor extends UntypedActor {
 
     private static Path writeExamples(IOExamples examples, int numArgs) {
         String current = Paths.get("").toAbsolutePath().toString();
-        Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
+        //Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
+        Path file = Paths.get(current, "examples.lp");
         System.out.println("Writing examples to " + file.toAbsolutePath().toString());
 
         try {
@@ -261,7 +263,8 @@ public class LearningProcessor extends UntypedActor {
     private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
-        Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
+        //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
+        Path file = Paths.get(current, "tmp_skeleton_rules.lp");
         System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
         int maxNumConstants = 0;
