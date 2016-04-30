@@ -352,7 +352,7 @@ public class LearningProcessor extends UntypedActor {
                 skeletonRulePath));*/
 	ProcessBuilder pb = new ProcessBuilder("/home/jr1412/clingo-3.0.5-x86-linux/clingo ASP/rules.lp",
 		examplesPath,
-		skeletonRulePath));
+		skeletonRulePath);
 
 	pb.directory(new File("."));
 	Process proc = pb.start();
