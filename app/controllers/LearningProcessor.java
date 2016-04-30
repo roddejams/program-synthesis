@@ -71,7 +71,8 @@ public class LearningProcessor extends UntypedActor {
         List<String> haskell = generator.generateHaskell(chosenPredicates);
         System.out.println(haskell);
 
-        Path haskellFile = Paths.get("program-synthesis/ASP/haskell/projectout.hs");
+        String current = Paths.get(" ").toAbsolutePath().toString();
+        Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
         writeHaskell(haskell, haskellFile);
 
         //Complete examples if necessary
@@ -230,7 +231,9 @@ public class LearningProcessor extends UntypedActor {
     }
 
     private static Path writeExamples(IOExamples examples, int numArgs) {
-        Path file = Paths.get("program-synthesis/ASP/examples.lp");
+        String current = Paths.get("").toAbsolutePath().toString();
+        Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
+        System.out.println("Writing examples to " + file.toAbsolutePath().toString());
 
         try {
             Files.write(file, "".getBytes());
@@ -256,9 +259,10 @@ public class LearningProcessor extends UntypedActor {
     }
 
     private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) {
-        Path current = Paths.get("");
-        System.out.println("Current dir = " + current.toAbsolutePath().toString());
-        Path file = Paths.get("program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
+        String current = Paths.get("").toAbsolutePath().toString();
+        System.out.println("Current dir = " + current);
+        Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
+        System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
         int maxNumConstants = 0;
 
