@@ -12,6 +12,7 @@ import models.rules.Where;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -351,12 +352,12 @@ public class LearningProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-	ProcessBuilder pb = new ProcessBuilder("/home/jr1412/clingo-3.0.5-x86-linux/clingo ASP/rules.lp",
-		examplesPath,
-		skeletonRulePath);
+	    ProcessBuilder pb = new ProcessBuilder("/home/jr1412/clingo-3.0.5-x86-linux/clingo ASP/rules.lp",
+            examplesPath,
+            skeletonRulePath);
 
-	pb.directory(new File("."));
-	Process proc = pb.start();
+        pb.directory(new File("."));
+        Process proc = pb.start();
 	
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
