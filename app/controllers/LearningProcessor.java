@@ -70,7 +70,7 @@ public class LearningProcessor extends UntypedActor {
         List<String> haskell = generator.generateHaskell(chosenPredicates);
         System.out.println(haskell);
 
-        Path haskellFile = Paths.get("ASP/haskell/projectout.hs");
+        Path haskellFile = Paths.get("~/program-synthesis/ASP/haskell/projectout.hs");
         writeHaskell(haskell, haskellFile);
 
         //Complete examples if necessary
@@ -229,7 +229,7 @@ public class LearningProcessor extends UntypedActor {
     }
 
     private static Path writeExamples(IOExamples examples, int numArgs) {
-        Path file = Paths.get("ASP/examples.lp");
+        Path file = Paths.get("~/program-synthesis/ASP/examples.lp");
 
         try {
             Files.write(file, "".getBytes());
@@ -257,7 +257,7 @@ public class LearningProcessor extends UntypedActor {
     private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) {
         Path current = Paths.get("");
         System.out.println("Current dir = " + current.toAbsolutePath().toString());
-        Path file = Paths.get("ASP/skeleton_rules/tmp_skeleton_rules.lp");
+        Path file = Paths.get("~/program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
 
         int maxNumConstants = 0;
 
