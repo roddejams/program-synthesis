@@ -48,7 +48,7 @@ public class LearningProcessor extends UntypedActor {
     }
 
     public void runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
-        System.setProperty("user.dir", "/home/jr1412/");
+        //System.setProperty("user.dir", "/home/jr1412/");
         result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
 
         List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
