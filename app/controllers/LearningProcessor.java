@@ -320,7 +320,7 @@ public class LearningProcessor extends UntypedActor {
     private List<IOExample> completeExamples(IOExamples inputExamples, String haskellFileLocation) throws IOException {
         //Get uncompleted examples
         List<IOExample> uncompleted = inputExamples.getExamples().stream().filter(example -> "".equals(example.getOutput())).collect(Collectors.toList());
-        String haskellExe = haskellFileLocation.substring(0, haskellFileLocation.length() - 2);
+        String haskellExe = haskellFileLocation.substring(0, haskellFileLocation.length() - 3);
 
         //Compile Haskell
         Runtime rt = Runtime.getRuntime();
@@ -333,7 +333,7 @@ public class LearningProcessor extends UntypedActor {
             argString = argString.replace("]", "");
             argString = argString.replace(",", " ");
 
-            Process proc = rt.exec(String.format("./%s %s", haskellExe, argString));
+            Process proc = rt.exec(String.format("%s %s", haskellExe, argString));
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
             String s;
