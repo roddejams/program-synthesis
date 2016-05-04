@@ -352,7 +352,7 @@ public class LearningProcessor extends UntypedActor {
         List<String> chosenPredicates = new ArrayList<>();
 
         //Run clingo
-        Runtime rt = Runtime.getRuntime();
+        //Runtime rt = Runtime.getRuntime();
       /*Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo ASP/rules.lp %s %s",
                 examplesPath,
                 skeletonRulePath));
