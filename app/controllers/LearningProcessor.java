@@ -320,11 +320,11 @@ public class LearningProcessor extends UntypedActor {
     private List<IOExample> completeExamples(IOExamples inputExamples, String haskellFileLocation) throws IOException {
         //Get uncompleted examples
         List<IOExample> uncompleted = inputExamples.getExamples().stream().filter(example -> "".equals(example.getOutput())).collect(Collectors.toList());
-        String haskellExe = "ASP\\haskell\\projectout.exe";
+        String haskellExe = "ASP/haskell/projectout";
 
         //Compile Haskell
         Runtime rt = Runtime.getRuntime();
-        rt.exec(String.format("C:\\Program Files\\Haskell Platform\\7.10.3\\bin\\ghc -o %s --make %s", haskellExe, haskellFileLocation));
+        rt.exec(String.format("usr/bin/ghc -o %s --make %s", haskellExe, haskellFileLocation));
 
         for(IOExample example : uncompleted) {
             String argString = example.getInputs().toString();
