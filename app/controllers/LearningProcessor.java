@@ -70,9 +70,8 @@ public class LearningProcessor extends UntypedActor {
         List<String> haskell = generator.generateHaskell(chosenPredicates);
         System.out.println(haskell);
 
-        String current = Paths.get(" ").toAbsolutePath().toString();
         //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
-        Path haskellFile = Paths.get(current, "projectout.hs");
+        Path haskellFile = File.createTempFile("projectout", ".hs").toPath();;
         writeHaskell(haskell, haskellFile);
 
         //Complete examples if necessary
@@ -230,10 +229,10 @@ public class LearningProcessor extends UntypedActor {
         return args;
     }
 
-    private static Path writeExamples(IOExamples examples, int numArgs) {
+    private static Path writeExamples(IOExamples examples, int numArgs) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         //Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
-        Path file = Paths.get(current, "examples.lp");
+        Path file = File.createTempFile("examples", ".lp").toPath();
         System.out.println("Writing examples to " + file.toAbsolutePath().toString());
 
         try {
@@ -264,7 +263,7 @@ public class LearningProcessor extends UntypedActor {
         System.out.println("Current dir = " + current);
         //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
         //Path file = Paths.get(current, "tmp_skeleton_rules.lp");
-        Path file = File.createTempFile("tmp_skeleton_rules", "lp").toPath();
+        Path file = File.createTempFile("tmp_skeleton_rules", ".lp").toPath();
         System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
         int maxNumConstants = 0;
@@ -359,11 +358,10 @@ public class LearningProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-	    ProcessBuilder pb = new ProcessBuilder("clingo-3.0.5-x86-linux/clingo", "ASP/rules.lp",
+	    ProcessBuilder pb = new ProcessBuilder("app/bin/clingo", "ASP/rules.lp",
             examplesPath,
             skeletonRulePath);
 
-        pb.directory(new File("/home/jr1412"));
         Process proc = pb.start();
 	
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
