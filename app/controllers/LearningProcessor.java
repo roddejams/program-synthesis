@@ -325,7 +325,7 @@ public class LearningProcessor extends UntypedActor {
         //Compile Haskell
         Runtime rt = Runtime.getRuntime();
         //rt.exec(String.format("/usr/bin/ghc -o %s --make %s", haskellExe, haskellFileLocation));
-        Process compilation = rt.exec(String.format("/usr/bin/ghc --make %s", haskellFileLocation));
+        Process compilation = rt.exec(String.format("bin/ghc --make %s", haskellFileLocation));
         compilation.waitFor();
 
         for(IOExample example : uncompleted) {
