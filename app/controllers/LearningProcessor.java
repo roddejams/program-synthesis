@@ -48,7 +48,6 @@ public class LearningProcessor extends UntypedActor {
     }
 
     public void runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
-        System.setProperty("user.dir", "/home/jr1412/");
         result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
 
         List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
@@ -260,11 +259,12 @@ public class LearningProcessor extends UntypedActor {
         return file;
     }
 
-    private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) {
+    private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
         //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
-        Path file = Paths.get(current, "tmp_skeleton_rules.lp");
+        //Path file = Paths.get(current, "tmp_skeleton_rules.lp");
+        Path file = File.createTempFile("tmp_skeleton_rules", "lp").toPath();
         System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
         int maxNumConstants = 0;
