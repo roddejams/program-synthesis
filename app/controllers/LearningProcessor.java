@@ -333,7 +333,10 @@ public class LearningProcessor extends UntypedActor {
             argString = argString.replace("]", "");
             argString = argString.replace(",", " ");
 
-            Process proc = rt.exec(String.format("%s %s", haskellExe, argString));
+            ProcessBuilder pb = new ProcessBuilder(haskellExe, argString);
+            //Process proc = rt.exec(String.format("%s %s", haskellExe, argString));
+            Process proc = pb.start();
+
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
             String s;
