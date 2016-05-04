@@ -317,7 +317,7 @@ public class LearningProcessor extends UntypedActor {
         return file;
     }
 
-    private List<IOExample> completeExamples(IOExamples inputExamples, String haskellFileLocation) throws IOException {
+    private List<IOExample> completeExamples(IOExamples inputExamples, String haskellFileLocation) throws IOException, InterruptedException {
         //Get uncompleted examples
         List<IOExample> uncompleted = inputExamples.getExamples().stream().filter(example -> "".equals(example.getOutput())).collect(Collectors.toList());
         String haskellExe = haskellFileLocation.substring(0, haskellFileLocation.length() - 3);
@@ -325,7 +325,8 @@ public class LearningProcessor extends UntypedActor {
         //Compile Haskell
         Runtime rt = Runtime.getRuntime();
         //rt.exec(String.format("/usr/bin/ghc -o %s --make %s", haskellExe, haskellFileLocation));
-        rt.exec(String.format("/usr/bin/ghc --make %s", haskellFileLocation));
+        Process compilation = rt.exec(String.format("/usr/bin/ghc --make %s", haskellFileLocation));
+        compilation.waitFor();
 
         for(IOExample example : uncompleted) {
             String argString = example.getInputs().toString();
