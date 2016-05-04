@@ -30,7 +30,7 @@ $(document).ready(function() {
     }
 });
 
-$('#export-btn').click(function () {
+$(document).on("click", "#export-btn", function () {
     var btn = $(this);
     btn.button('loading');
 
@@ -50,7 +50,7 @@ $('#export-btn').click(function () {
     }, 100)
 });
 
-$('.table-add').click(function () {
+$(document).on("click", ".table-add", function() {
     var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
     var rowNum = $TABLE.find('tr').length - 2;
 
@@ -75,11 +75,11 @@ $('.table-add').click(function () {
     $TABLE.find('table').append($clone);
 });
 
-$('.table-remove').click(function () {
+$(document).on("click", ".table-remove", function() {
   $(this).parents('tr').detach();
 });
 
-$("#numArgs").change(function () {
+$(document).on("change", "#numArgs", function() {
     var numArgs = $(this).val();
     var colCount = $TABLE.find('tr:first td').length - 3;
 
