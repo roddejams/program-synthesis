@@ -3,7 +3,7 @@ var $TABLE = $('#table');
 $(document).ready(function() {
    //Set num args dropdown to correct val
    var colCount = $TABLE.find('tr:first td').length - 3;
-   $("#numArgs").find("option[value=" + colCount + "]").attr('selected', 'selected');
+   $("#numArgs").value = colCount;
 
     //Display generated Haskell if there's any.
     //if($("#codeBody").has('p').length > 0) {
