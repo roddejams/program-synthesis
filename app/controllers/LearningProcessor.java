@@ -37,6 +37,9 @@ public class LearningProcessor extends UntypedActor {
 
     private LearningResult result;
     private boolean finished = false;
+    private Path haskellFile;
+    private List<String> haskell;
+    private List<IOExample> computedExamples = new ArrayList<>();
 
     @Override
     public void onReceive(Object msg) throws Exception {
@@ -51,40 +54,46 @@ public class LearningProcessor extends UntypedActor {
         result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
 
         List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
-        IOExamples examplesToWrite = new IOExamples();
-        examplesToWrite.setExamples(examples);
 
-        int numArgs = examples.get(0).getInputs().size();
-        int maxDepth = 2; //TODO: Work out a good way to calc this dynamically
-        int numFuncs = functionNames.size();
+        if(!computedExamples.equals(examples)) {
+            //If there's new examples, relearn.
+            IOExamples examplesToWrite = new IOExamples();
+            examplesToWrite.setExamples(examples);
 
-        List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numFuncs, numArgs);
+            int numArgs = examples.get(0).getInputs().size();
+            int maxDepth = 2; //TODO: Work out a good way to calc this dynamically
+            int numFuncs = functionNames.size();
 
-        Path skeletonRulePath = writeSkeletonRules(generatedRules, maxDepth, numFuncs);
+            List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numFuncs, numArgs);
 
-        Path examplesPath = writeExamples(examplesToWrite, numArgs);
+            Path skeletonRulePath = writeSkeletonRules(generatedRules, maxDepth, numFuncs);
 
-        List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
+            Path examplesPath = writeExamples(examplesToWrite, numArgs);
 
-        HaskellGenerator generator = new HaskellGenerator(generatedRules);
-        List<String> haskell = generator.generateHaskell(chosenPredicates);
-        System.out.println(haskell);
+            List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
 
-        //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
-        Path haskellFile = File.createTempFile("projectout", ".hs").toPath();;
-        writeHaskell(haskell, haskellFile);
+            HaskellGenerator generator = new HaskellGenerator(generatedRules);
+            haskell = generator.generateHaskell(chosenPredicates);
+            System.out.println(haskell);
+
+            //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
+            haskellFile = File.createTempFile("projectout", ".hs").toPath();
+            writeHaskell(haskell, haskellFile);
+        }
 
         //Complete examples if necessary
-        if(examples.size() != inputExamples.getExamples().size()) {
+        if (examples.size() != inputExamples.getExamples().size()) {
             List<IOExample> completedExamples = completeExamples(inputExamples, haskellFile.toAbsolutePath().toString());
+            computedExamples = completedExamples;
             examples.addAll(completedExamples);
 
             IOExamples out = new IOExamples();
             out.setExamples(examples);
 
-            result =  new LearningResult(out, haskell);
+            result = new LearningResult(out, haskell);
         } else {
-            result =  new LearningResult(inputExamples, haskell);
+            computedExamples = inputExamples.getExamples();
+            result = new LearningResult(inputExamples, haskell);
         }
 
         finished = true;
@@ -323,9 +332,12 @@ public class LearningProcessor extends UntypedActor {
         String haskellExe = haskellFileLocation.substring(0, haskellFileLocation.length() - 3);
 
         //Compile Haskell
-        Runtime rt = Runtime.getRuntime();
+        //Runtime rt = Runtime.getRuntime();
         //rt.exec(String.format("/usr/bin/ghc -o %s --make %s", haskellExe, haskellFileLocation));
-        Process compilation = rt.exec(String.format("bin/ghc --make %s", haskellFileLocation));
+        ProcessBuilder compBuilder = new ProcessBuilder("ghc", "--make", haskellFileLocation);
+        compBuilder.directory(new File("bin"));
+        Process compilation = compBuilder.start();
+
         compilation.waitFor();
 
         for(IOExample example : uncompleted) {
@@ -363,9 +375,11 @@ public class LearningProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-	    ProcessBuilder pb = new ProcessBuilder("bin/clingo", "ASP/rules.lp",
+	    ProcessBuilder pb = new ProcessBuilder("clingo", "../ASP/rules.lp",
             examplesPath,
             skeletonRulePath);
+
+        pb.directory(new File("bin/"));
 
         Process proc = pb.start();
 	

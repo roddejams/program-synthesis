@@ -21,6 +21,11 @@
   color: #00f;
 }
 
+.task-add {
+  color: #070;
+  cursor: pointer;
+}
+
 .table-add {
   color: #070;
   cursor: pointer;

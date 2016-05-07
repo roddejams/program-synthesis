@@ -1,9 +1,10 @@
-var $TABLE = $('#table');
+var $CLICKED_TAB;
 
 $(document).ready(function() {
    //Set num args dropdown to correct val
-   var colCount = $TABLE.find('tr:first td').length - 3;
-   $("#numArgs").value = colCount;
+    var $TABLE = $('#table');
+    var colCount = $TABLE.find('tr:first td').length - 3;
+    $("#numArgs").value = colCount;
 
     //Display generated Haskell if there's any.
     //if($("#codeBody").has('p').length > 0) {
@@ -50,7 +51,25 @@ $(document).on("click", "#export-btn", function () {
     }, 100)
 });
 
+$(document).on("click", ".task-add", function() {
+    var $NAV = $("#task-nav");
+    var $clone = $NAV.find("li.hide").clone(true).removeClass("hide");
+    $NAV.find("#task-add-button").before($clone);
+});
+
+$("#closeModal").on("show.bs.modal", function(e) {
+    $CLICKED_TAB = $(e.relatedTarget);
+    console.log($CLICKED_TAB);
+});
+
+$("#closeModal").on("click", "#close-tab", function(e) {
+    $($CLICKED_TAB).parents('li').detach();
+});
+
 $(document).on("click", ".table-add", function() {
+    var $TABLE = $(document).find("#table");
+    //var $TABLE = $("#table");
+
     var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
     var rowNum = $TABLE.find('tr').length - 2;
 
@@ -80,6 +99,8 @@ $(document).on("click", ".table-remove", function() {
 });
 
 $(document).on("change", "#numArgs", function() {
+    var $TABLE = $('#table');
+
     var numArgs = $(this).val();
     var colCount = $TABLE.find('tr:first td').length - 3;
 

@@ -1,6 +1,8 @@
 package models;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,5 +37,26 @@ public class IOExample {
         } else {
             return "";
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof IOExample)) {
+            return false;
+        } else if(obj == this) {
+            return true;
+        }
+
+        IOExample rhs = (IOExample) obj;
+
+        return new EqualsBuilder()
+                .append(inputs, rhs.inputs)
+                .append(output, rhs.output)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(3, 23).append(inputs).append(output).toHashCode();
     }
 }
