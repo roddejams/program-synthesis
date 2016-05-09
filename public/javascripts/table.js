@@ -1,73 +1,49 @@
-var $CLICKED_TAB;
-
 $(document).ready(function() {
-   //Set num args dropdown to correct val
-    var $TABLE = $('#table');
+    var $CURR_TAB = $('.nav-tabs .active a').attr('href');
+    //Set num args dropdown to correct val
+    var $TABLE = $($CURR_TAB).find('#table');
     var colCount = $TABLE.find('tr:first td').length - 3;
     $("#numArgs").value = colCount;
+});
 
-    //Display generated Haskell if there's any.
-    //if($("#codeBody").has('p').length > 0) {
-    //   $("#codePanel").removeClass('hide');
-    //}
+$(document).on("click", "#export-btn", function (event) {
+    console.log("submitting");
+    event.preventDefault();
 
-    if(RUNNING) {
-        var btn = $('#export-btn');
-        btn.button('loading');
+    var $CURR_TAB = $('.nav-tabs .active a').attr('href');
+    var btn = $(this);
+    btn.button('loading');
+
+    var learningForm = $($CURR_TAB).find("#learningForm");
+
+    var posting = $.post("/", learningForm.serialize());
+
+    posting.done(function(data) {
+        console.log(data.uuid);
+        
+        $($CURR_TAB).data('actor-uuid', data.uuid);
+        
         var interval = setInterval(function () {
             $.ajax({
                 type: "GET",
-                url: "/status",
+                url: "/status/" + data.uuid,
                 dataType: "html",
-                statusCode: {
-                    200: function (html) {
-                        $('#table-container').html(html);
+                statusCode:  {
+                    200 :function(html) {
+                        $($CURR_TAB).html(html);
                         clearInterval(interval);
                         btn.button('reset');
                     }
                 }
             });
         }, 100)
-    }
-});
-
-$(document).on("click", "#export-btn", function () {
-    var btn = $(this);
-    btn.button('loading');
-
-    var interval = setInterval(function () {
-        $.ajax({
-            type: "GET",
-            url: "/status",
-            dataType: "html",
-            statusCode:  {
-                200 :function(html) {
-                    $('#table-container').html(html);
-                    clearInterval(interval);
-                    btn.button('reset');
-                }
-            }
-        });
-    }, 100)
-});
-
-$(document).on("click", ".task-add", function() {
-    var $NAV = $("#task-nav");
-    var $clone = $NAV.find("li.hide").clone(true).removeClass("hide");
-    $NAV.find("#task-add-button").before($clone);
-});
-
-$("#closeModal").on("show.bs.modal", function(e) {
-    $CLICKED_TAB = $(e.relatedTarget);
-    console.log($CLICKED_TAB);
-});
-
-$("#closeModal").on("click", "#close-tab", function(e) {
-    $($CLICKED_TAB).parents('li').detach();
+    });
 });
 
 $(document).on("click", ".table-add", function() {
-    var $TABLE = $(document).find("#table");
+    var $CURR_TAB = $('.nav-tabs .active a').attr('href');
+
+    var $TABLE = $($CURR_TAB).find("#table");
     //var $TABLE = $("#table");
 
     var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
@@ -99,7 +75,8 @@ $(document).on("click", ".table-remove", function() {
 });
 
 $(document).on("change", "#numArgs", function() {
-    var $TABLE = $('#table');
+    var $CURR_TAB = $('.nav-tabs .active a').attr('href');
+    var $TABLE = $($CURR_TAB).find('#table');
 
     var numArgs = $(this).val();
     var colCount = $TABLE.find('tr:first td').length - 3;

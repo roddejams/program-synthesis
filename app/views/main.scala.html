@@ -62,12 +62,12 @@
                                     </a>
                                 </li>
                                 <li id="task-add-button">
-                                    <a href="#">
+                                    <a href="javascript:void(0);">
                                         <span class="task-add glyphicon glyphicon-plus"></span>
                                     </a>
                                 </li>
                             </ul>
-                         </div>
+                        </div>
                     </nav>
 
                     <div class="alert alert-success alert-dismissable">
@@ -86,36 +86,12 @@
                 </div>
             </div>
 
-            <div id="task-1">
-                <div class="row">
-                    <div id="paramForm">
-                        <form role="form">
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="numArgs">
-                                        No. Args
-                                    </label>
-                                    <input class="form-control" id="numArgs" value="1">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-
-                                    <label for="numFuncs">
-                                        No. Functions
-                                    </label>
-                                    <select class="form-control" id="numFuncs">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+            <div class="tab-content" id="tab-content">
+                <div id="task-placeholder" class="tab-pane fade hide">
+                    @pageBody(examplesForm, new ArrayList[String])
                 </div>
-                <div class="row" id="table-container">
-                    @dynamicTable(examplesForm, generatedCode)
+                <div id="task-1" class="tab-pane fade in active">
+                    @pageBody(examplesForm, generatedCode)
                 </div>
             </div>
 
@@ -135,11 +111,8 @@
                     </div>
                 </div>
             </div>
-
-            <script type="text/javascript">
-                var RUNNING = @running;
-            </script>
-            <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
         </div>
+        <script src="@routes.Assets.versioned("javascripts/table.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
     </body>
 </html>

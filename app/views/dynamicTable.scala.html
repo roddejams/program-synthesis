@@ -1,7 +1,7 @@
 @(examplesForm : Form[IOExamples],
   generatedCode: List[String])
 
-@helper.form(routes.HomeController.runLearningTask(), 'class -> "form-horizontal") {
+<form id="learningForm" method="post" action="" class="form-horizontal">
     <div class="col-md-4">
         <div id="table" class="table-editable">
             <table class="table table-bordered table-hover">
@@ -131,5 +131,5 @@
             </div>
         </div>
     </div>
-}
+</form>
 

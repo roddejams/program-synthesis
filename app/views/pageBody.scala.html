@@ -1,0 +1,40 @@
+@(examplesForm: Form[IOExamples], generatedCode: List[String])
+
+<div class="row">
+    <div id="paramForm">
+        <form role="form">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="funcName">
+                        Function Name
+                    </label>
+                    <input class="form-control" id="funcName" placeholder="foo">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="numArgs">
+                        No. Args
+                    </label>
+                    <input class="form-control" id="numArgs" value="1">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+
+                    <label for="numFuncs">
+                        No. Functions
+                    </label>
+                    <select class="form-control" id="numFuncs">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row" id="table-container">
+    @dynamicTable(examplesForm, generatedCode)
+</div>
