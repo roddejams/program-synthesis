@@ -40,6 +40,16 @@ $(document).on("click", "#export-btn", function (event) {
     });
 });
 
+$(document).on("click", "#save-btn", function (event) {
+    event.preventDefault();
+
+    var $CURR_TAB = $('.nav-tabs .active a').attr('href');
+
+    var $new_name = $($CURR_TAB).find("#funcName").val();
+
+    $('.nav-tabs .active a').text($new_name);
+});
+
 $(document).on("click", ".table-add", function() {
     var $CURR_TAB = $('.nav-tabs .active a').attr('href');
 
