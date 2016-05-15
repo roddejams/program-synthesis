@@ -1,6 +1,7 @@
 rule(1, f, 0, 1).
 %rule(2, f, N, mul(N, call(f, sub(N, 1)))) :- example(call(f, N), _).
 %rule(2, f, N, call(f, N)) :- example(call(f, N), _).
+%rule(2, f, N, add(N, call(f, N))) :- example(call(f, N), _).
 
 expr_const(0;1).
 num_rules(1..2).
