@@ -1,4 +1,12 @@
 #begin_lua
+function map(func, array)
+  local new_array = {}
+  for i,v in ipairs(array) do
+    new_array[i] = func(v)
+  end
+  return new_array
+end
+
 function eval(x)
   if Val.type(x) == Val.NUM then
     return x
@@ -17,7 +25,7 @@ function eval(x)
     elseif name == "mul" then
       return eval(args[1]) * eval(args[2])
     elseif name == "" then
-      return Val.new(Val.FUNC, name, {eval(args[1]), eval(args[2])})
+      return Val.new(Val.FUNC, name, map(eval, args))
     else
       return 1
     end
