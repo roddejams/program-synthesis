@@ -13,6 +13,10 @@ public class Rule extends ChoiceRule {
         this.depth = depth;
     }
 
+    public int depth() {
+        return depth;
+    }
+
     public String functionName() {
         return functionName;
     }

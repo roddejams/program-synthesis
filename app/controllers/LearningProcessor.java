@@ -113,6 +113,38 @@ public class LearningProcessor extends UntypedActor {
         }
     }
 
+    public static List<ChoiceRule> generateEqSkeletonRules(int maxDepth, int numArgs) {
+        String fnName = "f";
+        List<String> args = generateArgs(numArgs);
+
+        ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
+        Rule.RuleBuilder ruleBuilder = new Rule.RuleBuilder().withArgs(args).withName(fnName);
+
+        Set<String> vargs = new HashSet<>();
+        vargs.addAll(args);
+        vargs.add("C1");
+
+        for(String arg : vargs) {
+            factory.addRule(ruleBuilder.withBody(arg));
+        }
+
+        for(int i = 1; i <= maxDepth; i++) {
+            List<ChoiceRule> currentRules = factory.getRules();
+            for(String op : arg_ops) {
+                for(String arg : args) {
+                    for(ChoiceRule rule : currentRules) {
+                        if(((Rule) rule).depth() == i - 1) {
+                            String body = rule.body();
+                            factory.addRule(ruleBuilder.withDepth(i).withBody(String.format(op, arg, body)));
+                        }
+                    }
+                }
+            }
+        }
+
+        return factory.getRules();
+    }
+
     public static List<ChoiceRule> generateSkeletonRules(int maxDepth, int numFuncs, int numArgs) {
 
         String fnName = functionNames.get(0);
@@ -131,6 +163,7 @@ public class LearningProcessor extends UntypedActor {
         factory.addRule(ruleBuilder.withArgs(constArgs).withBody("C" + (numArgs + 1)));
 */
         ruleBuilder.withArgs(args);
+        factory.addRule(ruleBuilder.withBody("C1"));
 
         for(int i = 0; i < numArgs; i++) {
             factory.addRule(ruleBuilder.withBody(args.get(i)));

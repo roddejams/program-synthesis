@@ -74,7 +74,7 @@ public abstract class ChoiceRule {
         }
 
         public List<ChoiceRule> getRules() {
-            return skeletonRules;
+            return new ArrayList<>(skeletonRules);
         }
     }
 }

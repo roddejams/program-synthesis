@@ -16,12 +16,7 @@ function eval(x)
     if name == "add" then
       return eval(args[1]) + eval(args[2])
     elseif name == "sub" then
-      local sub = eval(args[1]) - eval(args[2])
-      if sub >= 0 then
-        return sub
-      else
-        return 0
-      end
+      return eval(args[1]) - eval(args[2])
     elseif name == "mul" then
       return eval(args[1]) * eval(args[2])
     elseif name == "" then

@@ -10,6 +10,15 @@ rule(R, f, N, sub(C1, N)) :- example(call(f, N), _), choose(R, 9, C1).
 rule(R, f, N, call(f, C1)) :- example(call(f, N), _), choose(R, 10, C1).
 rule(R, f, N, call(f, N)) :- example(call(f, N), _), choose(R, 11).
 
+%*
+rule(R, f, N, call(f, add(N, N))) :- example(call(f, N), _), choose(R, 12).
+rule(R, f, N, call(f, mul(N, N))) :- example(call(f, N), _), choose(R, 13).
+rule(R, f, N, call(f, add(N, C1))) :- example(call(f, N), _), choose(R, 14, C1).
+rule(R, f, N, call(f, mul(N, C1))) :- example(call(f, N), _), choose(R, 15, C1).
+rule(R, f, N, call(f, sub(N, C1))) :- example(call(f, N), _), choose(R, 16, C1).
+rule(R, f, N, call(f, sub(C1, N))) :- example(call(f, N), _), choose(R, 17, C1).
+
+
 rule(R, f, N, add(N, add(N, N))) :- example(call(f, N), _), choose(R, 12).
 rule(R, f, N, add(N, mul(N, N))) :- example(call(f, N), _), choose(R, 13).
 rule(R, f, N, add(N, add(N, C1))) :- example(call(f, N), _), choose(R, 15, C1).
@@ -22,6 +31,7 @@ rule(R, f, N, add(N, call(f, N))) :- example(call(f, N), _), choose(R, 20).
 rule(R, f, N, add(C1, add(N, N))) :- example(call(f, N), _), choose(R, 21, C1).
 rule(R, f, N, add(C1, mul(N, N))) :- example(call(f, N), _), choose(R, 22, C1).
 rule(R, f, N, add(C1, call(f, N))) :- example(call(f, N), _), choose(R, 23, C1).
+*%
 
 rule(R, f, N, mul(N, call(f, sub(N, C1)))) :- example(call(f, N), _), choose(R, 24, C1).
 

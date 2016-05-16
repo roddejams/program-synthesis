@@ -1,6 +1,8 @@
+import controllers.LearningProcessor;
+import models.rules.ChoiceRule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.List;
 
 
 /**
@@ -12,9 +14,9 @@ import static org.junit.Assert.assertEquals;
 public class ApplicationTest {
 
     @Test
-    public void simpleCheck() {
-        int a = 1 + 1;
-        assertEquals(2, a);
+    public void testSkeletonRules() {
+        List<ChoiceRule> rules = LearningProcessor.generateEqSkeletonRules(2, 1);
+        System.out.println(rules);
     }
 
     /*@Test

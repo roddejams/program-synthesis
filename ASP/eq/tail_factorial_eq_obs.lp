@@ -1,5 +1,5 @@
-rule(1, f, (0, N), N) :- example(call(f, (0, N)), _).
-rule(2, f, (N, R), call(f, (sub(N, 1), mul(N, R)))) :- example(call(f, (N, R)), _).
+rule(1, f, (0, N), N) :- example(call(f, (0, N)), _), const_number(N).
+rule(2, f, (N, R), call(f, (sub(N, 1), mul(N, R)))) :- example(call(f, (N, R)), _), const_number(N), const_number(R).
 
 expr_const(0;1).
 num_rules(1..2).
