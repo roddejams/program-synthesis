@@ -1,10 +1,28 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: Thesis.aux
 The style file: plain.bst
+A level-1 auxiliary file: C1/chapter1.aux
+Illegal, another \bibstyle command---line 7 of file C1/chapter1.aux
+ : \bibstyle
+ :          {plain}
+I'm skipping whatever remains of this command
 A level-1 auxiliary file: C2/chapter2.aux
-Illegal, another \bibstyle command---line 27 of file C2/chapter2.aux
+Illegal, another \bibdata command---line 26 of file C2/chapter2.aux
+ : \bibdata
+ :         {References}
+I'm skipping whatever remains of this command
+Illegal, another \bibstyle command---line 33 of file C2/chapter2.aux
  : \bibstyle
  :          {plain}
 I'm skipping whatever remains of this command
 A level-1 auxiliary file: C3/chapter3.aux
+A level-1 auxiliary file: C4/chapter4.aux
+Illegal, another \bibdata command---line 8 of file C4/chapter4.aux
+ : \bibdata
+ :         {References}
+I'm skipping whatever remains of this command
+Illegal, another \bibstyle command---line 9 of file C4/chapter4.aux
+ : \bibstyle
+ :          {plain}
+I'm skipping whatever remains of this command
 Database file #1: References.bib
-(There was 1 error message)
+(There were 5 error messages)

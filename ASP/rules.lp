@@ -73,7 +73,6 @@ value(N, N) :- n_complex(N), const_number(N).
 
 eval_with(Expr, Inputs) :- input(call(F, Inputs)), rule(Index, F, Inputs, Expr), match(F, Index, Inputs).
 eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
-
 eval_with(Args_new, Args_old) :- complex(Args_new), eval_with(call(F, Args_new), Args_old).
 eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
 eval_with(B, Args) :- complex(B), eval_with((A, B), Args).
@@ -122,7 +121,3 @@ input(call(F, Inputs)) :- eval_with(call(F, Args_new), Args_old), value_with(Arg
 
 match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
-
-
-
-

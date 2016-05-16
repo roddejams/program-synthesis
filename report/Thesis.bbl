@@ -1,8 +1,13 @@
 \begin{thebibliography}{1}
 
 \bibitem{clingoguide}
-M.~Gebser, Kaminski R., Kaufmann B., Ostrowski M., Schaub T., and Thiele S.
+M.~Gebser, R.~Kaminski, B.~Kaufmann, M.~Ostrowski, T.~Schaub, and S.~Thiele.
 \newblock {\em A User's guide to gringo, clasp, clingo and iclingo}, 2010.
+
+\bibitem{igordemo}
+M.~Hofmann.
+\newblock {\em Igor II - an Analytical Inductive Functional Programming
+  System}, 2010.
 
 \bibitem{IFPsummary}
 M.~Hofmann, E.~Kitzelmann, and U.~Schmid.

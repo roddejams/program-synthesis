@@ -9,7 +9,7 @@
 \BOOKMARK [2][-]{subsection.2.2.1}{Conditional Constructor Systems}{section.2.2}% 9
 \BOOKMARK [2][-]{subsection.2.2.2}{Overview of current tools}{section.2.2}% 10
 \BOOKMARK [1][-]{section*.13}{References}{chapter.2}% 11
-\BOOKMARK [0][-]{chapter.3}{Method}{}% 12
+\BOOKMARK [0][-]{chapter.3}{The Initial Approach : A Haskell Interpreter in ASP}{}% 12
 \BOOKMARK [1][-]{section.3.1}{A Haskell Interpreter in ASP}{chapter.3}% 13
 \BOOKMARK [2][-]{subsection.3.1.1}{Target Language}{section.3.1}% 14
 \BOOKMARK [2][-]{subsection.3.1.2}{Program Representation}{section.3.1}% 15

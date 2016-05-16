@@ -1,4 +1,4 @@
-\chapter{Method}
+\chapter{The Initial Approach : A Haskell Interpreter in ASP}
 
 \section{A Haskell Interpreter in ASP}
 
@@ -83,10 +83,43 @@ This rule handles the value of "where" expressions. If you have defined a where 
 
 \lstinputlisting[language=Prolog, firstline=64, lastline=66]{../ASP/rules.lp}
 \mbox{} \\
-These rules handle simple values. They mainly exist for correctness, so that a simple "value" can be used to calculate outputs.
+These rules handle simple values. They mainly exist for correctness, so that a simple "value" can be used to calculate outputs. \\
 
-\lstinputlisting[language=Prolog, firstline=68, lastline=70]{../ASP/rules.lp}
+\lstinputlisting[language=Prolog, firstline=68, lastline=72]{../ASP/rules.lp}
 \mbox{} \\
+These rules represent calculating values for non complex expressions. They work similarly to the \lstinline{value_with} predicate described above.\\ %{ \\
+
+\lstinputlisting[language=Prolog, firstline=74, lastline=74]{../ASP/rules.lp}
+\mbox{} \\
+This rule handles initialisation of the \lstinline{eval_with} predicate. Semantically, if there is there an input to a matching rule, then you evaluate the body of that rule. \\ %{
+
+\lstinputlisting[language=Prolog, firstline=79, lastline=84]{../ASP/rules.lp}
+\mbox{} \\
+These rules define rule propagation of the \lstinline{eval_with} predicate. If you are evaluating an arithmetic rule, then you have also have to evaluate all complex sub-expressions. \\ %{
+
+\lstinputlisting[language=Prolog, firstline=75, lastline=78]{../ASP/rules.lp}
+\mbox{} \\
+Similarly, these rules define \lstinline{eval_with} propagation for more complicated expressions. If you call a function, or have more than one expression together than you evaluate all complex sub-expressions \\ %{
+
+\lstinputlisting[language=Prolog, firstline=87, lastline=87]{../ASP/rules.lp}
+\mbox{} \\
+This rule initialises \lstinline{check_if_complex} predicates. If you have to evaluate an expression, you also have to check if it is complex \\%{
+
+\lstinputlisting[language=Prolog, firstline=89, lastline=97]{../ASP/rules.lp}
+\mbox{} \\
+These rules define propagation of \lstinline{check_if_complex} predicates, similarly to \lstinline{eval_with} propagation. \\
+
+\lstinputlisting[language=Prolog, firstline=101, lastline=108]{../ASP/rules.lp}
+\mbox{} \\
+These rules define propagation of \lstinline{complex} predicates. The base case for a complex term is \lstinline{complex(x0;x1;..;xN)} where N is the depth of the learned program. Then, if either sub-expression of an expression is complex, then the entire expression is complex. \\
+
+\lstinputlisting[language=Prolog, firstline=110, lastline=110]{../ASP/rules.lp}
+\mbox{} \\
+This rule introduces \lstinline{n_complex} predicates. If a term is a constant, then it is not complex. \\ %{
+
+\lstinputlisting[language=Prolog, firstline=112, lastline=116]{../ASP/rules.lp}
+\mbox{} \\
+These rules represent propagation of \lstinline{n_complex} terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ %{
 
 \section{Initial Learning}
 
