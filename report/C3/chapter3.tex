@@ -16,41 +16,77 @@ Initially, I chose to target a simple sub language of Haskell with the following
 \item Lists
 \end{itemize}
 
-I chose these terms as I felt they were expressive enough to be able to represent sufficiently complicated test examples.
+I chose these terms as I felt they were expressive enough to be able to represent sufficiently complicated test examples.\\ \\
 
-I then represent each line of the target Haskell program with a Rule with a rule(Num, FuncName, Input, Output) predicate in the head. For example, we can represent the recursive factorial Haskell program
 
-\lstinputlisting[language=Haskell, firstline=5, lastline=7]{../examples/factorial_obs.lp}
-
-Is represented by the ASP program
-
-\lstinputlisting[language=Prolog, firstline=11, lastline=12]{../examples/factorial_obs.lp}
-
-We add the input atom to the body of the rule to constrain the grounding of these rules. \\
+\subsection{Program Representation}
+To represent a generic Haskell program in ASP, first I had to choose various predicates to represent different parts of the program.\\ \\
+For the arithmetic operations present in my target language, I decided to use simple binary predicates. For example, addition is represented by the \lstinline{add(X, Y).} predicate, and subtraction and multiplication follow in the same way. \\ \\%{
+To represent function calls, I have introduced the \lstinline{call(F, Args).} predicate. Here, F is the name of the function being called, and Args represents an (arbitrary length) list of function arguments. \\ \\ %{
+Using these predicates, I can represent the Haskell implementation of the recursive factorial program
+\lstinputlisting[language=Haskell, firstline=5, lastline=7]{../ASP/examples/factorial_obs.lp}
+by the ASP program
+\lstinputlisting[language=Prolog, firstline=11, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
+To explain further, each line (or recursive case) of the target Haskell program is represented by with a rule with a \lstinline{rule(Num, FuncName, Input, Output).} predicate in the head. \\ \\%{
+Because of the vast algorithmic complexity of the combinations of arithmetic operations, I was struggling with performance issues. To sufficiently cover the possible program space, the required number of skeleton rules was overwhelming even for comparatively simple programs. \\ \\
+As a solution to this issue, I make heavy use of \lstinline{where(Var, Args, Body).} predicates. These "where" predicates are semantically identical to the Haskell equivalent, specifying replacement rules for the given variables in the scope of the rule. \\ \\%{
+For example, in the program above, instead of one rule
+\begin{lstlisting}
+rule(2, f, N, mul(N, call(f, sub(N, 1)))).
+\end{lstlisting}
+We instead use
+\lstinputlisting[language=Prolog, firstline=12, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
+nesting each operation in its own clause.
 
 \subsection{Evaluating Rules}
 
-The goal of my interpreter is to be able to evaluate these rules with some given input, to get the correct output. Because we are interpreting Functional Programs we can be sure each input has one output.
+The goal of my interpreter is to be able to evaluate these rules with some given input, to get the correct output.
 
-\lstinputlisting[language=Prolog, firstline=58, lastline=58]{../rules.lp}
+\subsubsection{Internal Predicates}
+As part of the interpreter, I have declared a number of my own predicates, some of which it may not be clear what they represent. As such, this section details them in a succinct manner.
+ 
+\begin{itemize}
+\item \lstinline{input(Expr)} and \lstinline{output(Expr, Val)} : These predicates represent input and output to the learned function. If a function has some input Expr, then it is expected that there is an output predicate with a matching Expr.
+\item \lstinline{match(F, Index, Inputs)} : This predicate represents which function inputs match a respective line in the program. It may be helpful to think of this predicate as a concrete way of stating pattern matching behaviour.
+\item \lstinline{value(Expr, Val)} : This predicate represents the value of a given simple expression, i.e \lstinline{sub(3, 1)} has value 2.
+\item \lstinline{value_with(Expr, Val, Args)} : This predicate represents the value of an expression, given input arguments. The extra argument is necessary due to the inclusion of "where" predicates. As the expression "x1" could have multiple values throughout execution, I have to keep track of the value at each step of execution.
+\item \lstinline{eval_with(Expr, Args)} : This predicate is used to represent which expressions we want to find the value of, because we do not want to find the value of every possible expression, only expressions we care about. As with \lstinline{value_with}, the extra argument is necessary as the values of "where" clauses could change throughout execution. 
+\item \lstinline{complex(Expr)} and \lstinline{n_complex(Expr)} : A predicate is "complex" if it references a "where" variable. This predicate is used to determine if the \lstinline{value_with} or \lstinline{value} predicate should be used.
+\item \lstinline{check_if_complex(Expr)} : Similarly to \lstinline{eval_with}, because we don't want to check if every possible expression is complex, just ones we care about.
+\end{itemize}
 
-This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value.
+%\end{lstlisting}
 
-\lstinputlisting[language=Prolog, firstline=60, lastline=65]{../rules.lp}
+\subsubsection{Computation Rules}
+To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. \\ \\
+To start, I needed a rule to calculate the output, given inputs and a rule to follow.
 
-These rules handle calculating the value of expressions. The eval() predicate is generated whenever you need to calculate the value of an expression.
+\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp} 
+\mbox{} \\
+This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
 
-\lstinputlisting[language=Prolog, firstline=67, lastline=76]{../rules.lp}
+\lstinputlisting[language=Prolog, firstline=56, lastline=58]{../ASP/rules.lp}
+\mbox{} \\
+These rules handle calculating the value of arithmetic expressions. Note the use of a lua function \lstinline{@to_num()}, as a bug workaround. %{
 
-These rules handle which expressions to calculate values for. The most important rule here is to top one, which says that whenever you have an input to some matching rule then you need to evaluate the output of that rule.
+\lstinputlisting[language=Prolog, firstline=60, lastline=60]{../ASP/rules.lp}
+\mbox{} \\
+This rule handles the value of a function call. Given some argument expressions, they have a computed value, which is then used to call the function and is returned as the output. \\
 
-\lstinputlisting[language=Prolog, firstline=78, lastline=78]{../rules.lp}
+\lstinputlisting[language=Prolog, firstline=62, lastline=62]{../ASP/rules.lp}
+\mbox{} \\
+This rule deals with paired expressions. If you have two or more expressions to evaluate at the same time, (when dealing with multiple-argument functions, for example), it calculates the value of both and returns the paired result. \\
 
-This rule generates more input predicated if we have to calculate the value for a call to a function. This allows us to then generate more ground rule predicates and repeat.
+\lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/rules.lp}
+\mbox{} \\
+This rule handles the value of "where" expressions. If you have defined a where variable to define an expression, and that expression has a value, then the "where" variable also has that value.\\
 
-\lstinputlisting[language=Prolog, firstline=80, lastline=81]{../rules.lp}
+\lstinputlisting[language=Prolog, firstline=64, lastline=66]{../ASP/rules.lp}
+\mbox{} \\
+These rules handle simple values. They mainly exist for correctness, so that a simple "value" can be used to calculate outputs.
 
-These rules allow us to match to the most fitting rule. A rule matches some arguments if there is no smaller rule that also matches those arguments. The match2() predicate is there as a placeholder, and will have effect when more complicated matching (e.g guards) will be needed.
+\lstinputlisting[language=Prolog, firstline=68, lastline=70]{../ASP/rules.lp}
+\mbox{} \\
 
 \section{Initial Learning}
 
@@ -59,9 +95,9 @@ I decided to base my (initial) learning task as an ASP encoding similar to ASPAL
 \begin{itemize}
 \item My background knowledge is simply my interpreter from 2.1.2
 \item I characterised the Skeleton Rules as a choice rule where there can be up to a given number of rule predicates with an expression that is structured correctly. 
-\lstinputlisting[language=Prolog, firstline=41, lastline=41]{../rules.lp}
+\lstinputlisting[language=Prolog, firstline=41, lastline=41]{../ASP/rules.lp}
 \item I then add a constraint to remove any answer sets which do not produce the correct output against the given examples.
-\lstinputlisting[language=Prolog, firstline=39, lastline=39]{../rules.lp}
+\lstinputlisting[language=Prolog, firstline=39, lastline=39]{../ASP/rules.lp}
 \end{itemize}
 
 Not described here are my set of Skeleton Rules relating to valid arguments and valid expressions because they simply describe what is defined as valids (as per the Haskell syntax) and I did not deem it important to include here.\\

@@ -51,16 +51,18 @@ input(In) :- example(In, _).
 %value_with(call(tailFac, (x1, x2) ), 6, (2, 3)) :- eval_with(call(F, (x1, x2)), (2, 3)), output(call(F, (3,1)), 6), value_with((x1, x2), (3,1), (3,1)).
 
 
-output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args).%, const(Out).
+output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args).
 
 value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- eval_with(mul(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const_number(@to_num(V1)*@to_num(V2)).
 value_with(sub(A, B), @to_num(V1) - @to_num(V2), Args) :- eval_with(sub(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const_number(@to_num(V1)-@to_num(V2)).
 value_with(add(A, B), @to_num(V1) + @to_num(V2), Args) :- eval_with(add(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const_number(@to_num(V1)+@to_num(V2)).
+
 value_with(call(F, Args_new), Out, Args_old) :- eval_with(call(F, Args_new), Args_old), output(call(F, Inputs), Out), value_with(Args_new, Inputs, Args_old).
+
 value_with((A, B), (V1, V2), Args) :- eval_with((A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args).
-value_with(N, N, Args) :- eval_with(N, Args), const(N).
 value_with(X, V, Args) :- eval_with(X, Args), where(X, Args, Expr), value_with(Expr, V, Args).
 value_with(X, V, Args) :- eval_with(X, Args), value(X, V).
+value_with(N, N, Args) :- eval_with(N, Args), const(N).
 value_with(N, N, Args) :- const_number(N), input(call(F, Args)).
 
 value(mul(A, B), @to_num(V1) * @to_num(V2)) :- const_number(V1), const_number(V2), n_complex(mul(A, B)), value(A, V1), value(B, V2), const_number(@to_num(V1)*@to_num(V2)).
