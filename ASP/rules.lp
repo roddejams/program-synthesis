@@ -51,7 +51,7 @@ input(In) :- example(In, _).
 %value_with(call(tailFac, (x1, x2) ), 6, (2, 3)) :- eval_with(call(F, (x1, x2)), (2, 3)), output(call(F, (3,1)), 6), value_with((x1, x2), (3,1), (3,1)).
 
 
-output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args).%, const(Out).
+output(call(F, Args), Out) :- rule(Index, F, Args, Expr), match(F, Index, Args), value_with(Expr, Out, Args).
 
 value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- eval_with(mul(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const_number(@to_num(V1)*@to_num(V2)).
 value_with(sub(A, B), @to_num(V1) - @to_num(V2), Args) :- eval_with(sub(A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args), const_number(@to_num(V1)-@to_num(V2)).
