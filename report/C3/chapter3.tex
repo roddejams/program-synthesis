@@ -61,23 +61,32 @@ As part of the interpreter, I have declared a number of my own predicates, some 
 To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. \\ \\
 To start, I needed a rule to calculate the output, given inputs and a rule to follow.
 
-\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
+\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp} 
+\mbox{} \\
 This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
 
 \lstinputlisting[language=Prolog, firstline=56, lastline=58]{../ASP/rules.lp}
-These rules handle calculating the value of arithmetic expressions. Note the use of a lua function \lstinline{@to_num()}%{
+\mbox{} \\
+These rules handle calculating the value of arithmetic expressions. Note the use of a lua function \lstinline{@to_num()}, as a bug workaround. %{
 
-\lstinputlisting[language=Prolog, firstline=67, lastline=76]{../ASP/rules.lp}
+\lstinputlisting[language=Prolog, firstline=60, lastline=60]{../ASP/rules.lp}
+\mbox{} \\
+This rule handles the value of a function call. Given some argument expressions, they have a computed value, which is then used to call the function and is returned as the output. \\
 
-These rules handle which expressions to calculate values for. The most important rule here is to top one, which says that whenever you have an input to some matching rule then you need to evaluate the output of that rule.
+\lstinputlisting[language=Prolog, firstline=62, lastline=62]{../ASP/rules.lp}
+\mbox{} \\
+This rule deals with paired expressions. If you have two or more expressions to evaluate at the same time, (when dealing with multiple-argument functions, for example), it calculates the value of both and returns the paired result. \\
 
-\lstinputlisting[language=Prolog, firstline=78, lastline=78]{../ASP/rules.lp}
+\lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/rules.lp}
+\mbox{} \\
+This rule handles the value of "where" expressions. If you have defined a where variable to define an expression, and that expression has a value, then the "where" variable also has that value.\\
 
-This rule generates more input predicated if we have to calculate the value for a call to a function. This allows us to then generate more ground rule predicates and repeat.
+\lstinputlisting[language=Prolog, firstline=64, lastline=66]{../ASP/rules.lp}
+\mbox{} \\
+These rules handle simple values. They mainly exist for correctness, so that a simple "value" can be used to calculate outputs.
 
-\lstinputlisting[language=Prolog, firstline=80, lastline=81]{../ASP/rules.lp}
-
-These rules allow us to match to the most fitting rule. A rule matches some arguments if there is no smaller rule that also matches those arguments. The match2() predicate is there as a placeholder, and will have effect when more complicated matching (e.g guards) will be needed.
+\lstinputlisting[language=Prolog, firstline=68, lastline=70]{../ASP/rules.lp}
+\mbox{} \\
 
 \section{Initial Learning}
 
