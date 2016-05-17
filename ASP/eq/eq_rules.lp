@@ -60,8 +60,8 @@ eq(A, Val - B) :- eq(add(A, B), Val), const_number(B), B < (Val + 1).
 eq(B, Val - A) :- eq(add(A, B), Val), const_number(A), A < (Val + 1).
 eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
 eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
-eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
-eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
+eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val + B).
+eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val + A).
 
 terminates(Expr) :- next_step(Expr, Val), const_number(Val).
 terminates(Expr) :- next_step(Expr, Term_Expr), terminates(Term_Expr).
