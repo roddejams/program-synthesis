@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Rule extends ChoiceRule {
 
-    private final int depth;
-    private int rulePosition = 0;
+    protected final int depth;
+    protected int rulePosition = 0;
 
     public Rule(int ruleNumber, String functionName, List<String> args, String body, int depth) {
         super(ruleNumber, args, body, functionName);
@@ -31,8 +31,8 @@ public class Rule extends ChoiceRule {
 
     public static class RuleBuilder extends ChoiceRuleBuilder{
 
-        private String functionName;
-        private int depth;
+        protected String functionName;
+        protected int depth;
 
         public RuleBuilder withRuleNumber(int ruleNumber) {
             this.ruleNumber = ruleNumber;

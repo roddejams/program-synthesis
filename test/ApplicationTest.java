@@ -2,6 +2,8 @@ import controllers.LearningProcessor;
 import models.rules.ChoiceRule;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 
@@ -14,9 +16,10 @@ import java.util.List;
 public class ApplicationTest {
 
     @Test
-    public void testSkeletonRules() {
+    public void testSkeletonRules() throws IOException {
         List<ChoiceRule> rules = LearningProcessor.generateEqSkeletonRules(2, 1);
-        System.out.println(rules);
+        Path file = LearningProcessor.writeSkeletonRules(rules, 2, 1);
+        System.out.println(file);
     }
 
     /*@Test

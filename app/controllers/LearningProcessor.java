@@ -7,6 +7,7 @@ import models.IOExample;
 import models.IOExamples;
 import models.LearningResult;
 import models.rules.ChoiceRule;
+import models.rules.EqRule;
 import models.rules.Rule;
 import models.rules.Where;
 import org.apache.commons.lang3.StringUtils;
@@ -117,32 +118,56 @@ public class LearningProcessor extends UntypedActor {
         String fnName = "f";
         List<String> args = generateArgs(numArgs);
 
-        ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
-        Rule.RuleBuilder ruleBuilder = new Rule.RuleBuilder().withArgs(args).withName(fnName);
+        EqRule.EqRuleFactory factory = new EqRule.EqRuleFactory();
+        EqRule.EqRuleBuilder ruleBuilder = new EqRule.EqRuleBuilder().withArgs(args).withName(fnName);
 
-        Set<String> vargs = new HashSet<>();
-        vargs.addAll(args);
-        vargs.add("C1");
-
-        for(String arg : vargs) {
-            factory.addRule(ruleBuilder.withBody(arg));
+        // Depth 0
+        factory.addSimpleRule(ruleBuilder.withDepth(0).withBody("C1"));
+        for(String arg : args) {
+            factory.addSimpleRule(ruleBuilder.withDepth(0).withBody(arg));
         }
 
-        for(int i = 1; i <= maxDepth; i++) {
-            List<ChoiceRule> currentRules = factory.getRules();
-            for(String op : arg_ops) {
-                for(String arg : args) {
-                    for(ChoiceRule rule : currentRules) {
-                        if(((Rule) rule).depth() == i - 1) {
-                            String body = rule.body();
-                            factory.addRule(ruleBuilder.withDepth(i).withBody(String.format(op, arg, body)));
-                        }
-                    }
+        //Depth 1
+        factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format("mul(%s, %s)", args.get(0), args.get(0))));
+        for(String op : arg_ops) {
+            factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format(op, args.get(0), "C1")));
+        }
+        //factory.addCallRule(ruleBuilder.withDepth(1).withBody(String.format("call(%s, %s)", fnName, args.get(0))));
+
+        //Depth 2
+        factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("add(%s, mul(%s, %s))", "C1", args.get(0), "C2")));
+
+        factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
+            int numConsts = rule.numConstants();
+            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("mul(%s, %s)", args.get(0), rule.body())));
+            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("mul(%s, %s)", "C" + (numConsts+1), rule.body())));
+            factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format("call(%s, %s)", fnName, rule.body())));
+        });
+
+        factory.getCallRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
+            for (String op : arg_ops) {
+                for (String var : args) {
+                    factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format(op, var, rule.body())));
                 }
+                factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format(op, "C" + (rule.numConstants() + 1), rule.body())));
             }
-        }
+        });
 
-        return factory.getRules();
+        //Depth 3
+        factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 2).forEach(rule -> {
+            factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format("call(%s, %s)", fnName, rule.body())));
+        });
+
+        factory.getCallRules().stream().filter(rule -> ((EqRule) rule).depth() == 2).forEach(rule -> {
+            for (String op : arg_ops) {
+                for (String var : args) {
+                    factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format(op, var, rule.body())));
+                }
+                factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format(op, "C" + (rule.numConstants() + 1), rule.body())));
+            }
+        });
+
+        return factory.getAllRules();
     }
 
     public static List<ChoiceRule> generateSkeletonRules(int maxDepth, int numFuncs, int numArgs) {
@@ -300,7 +325,7 @@ public class LearningProcessor extends UntypedActor {
         return file;
     }
 
-    private static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) throws IOException {
+    public static Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth, int numFuncs) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
         //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
