@@ -127,50 +127,66 @@ public class LearningProcessor extends UntypedActor {
         EqRule.EqRuleBuilder ruleBuilder = new EqRule.EqRuleBuilder().withArgs(args).withName(fnName);
 
         // Depth 0
-        factory.addSimpleRule(ruleBuilder.withDepth(0).withBody("C1"));
+        factory.addSimpleRule(ruleBuilder.withDepth(0).withBody("CX"));
         for(String arg : args) {
             factory.addSimpleRule(ruleBuilder.withDepth(0).withBody(arg));
         }
 
         //Depth 1
-        factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format("mul(%s, %s)", args.get(0), args.get(0))));
-        for(String op : inner_ops) {
-            factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format(op, args.get(0), "C1")));
+        for(String arg : args) {
+            factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format("(%s * %s)", arg, arg)));
+            for (String op : inner_ops) {
+                factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format(op, arg, "CX")));
+            }
         }
-        //factory.addCallRule(ruleBuilder.withDepth(1).withBody(String.format("call(%s, %s)", fnName, args.get(0))));
+
+        Set<Set<String>> powerSet = Sets.powerSet(new HashSet<>(args)).stream().filter(s -> s.size() == 2).collect(Collectors.toSet());
+        for(Set<String> argSet : powerSet) {
+            for (String op : inner_ops) {
+                factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format(op, argSet.toArray())));
+            }
+        }
 
         //Depth 2
-        factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("(%s + (%s * %s))", "C1", args.get(0), "C2")));
-
         factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
-            int numConsts = rule.numConstants();
-            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("(%s * %s)", args.get(0), rule.body())));
-            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("(%s * %s)", "C" + (numConsts+1), rule.body())));
-            factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format("call(%s, %s)", fnName, rule.body())));
-        });
-
-        factory.getCallRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
-            for (String op : arg_ops) {
-                for (String var : args) {
-                    factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format(op, var, rule.body())));
+            for (String op : inner_ops) {
+                for (String arg : args) {
+                    factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format(op, rule.body(), arg)));
+                    factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format(op, rule.body(), "CX")));
                 }
-                factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format(op, "C" + (rule.numConstants() + 1), rule.body())));
             }
         });
 
-        //Depth 3
-        factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 2).forEach(rule -> {
-            factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format("call(%s, %s)", fnName, rule.body())));
-        });
+        Set<String> simpleRules = factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).map(ChoiceRule::body).collect(Collectors.toSet());
+        List<Set<String>> cartesianArguments = Collections.nCopies(numArgs, simpleRules);
+        Set<List<String>> argCombinations = Sets.cartesianProduct(cartesianArguments);
 
-        factory.getCallRules().stream().filter(rule -> ((EqRule) rule).depth() == 2).forEach(rule -> {
-            for (String op : arg_ops) {
-                for (String var : args) {
-                    factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format(op, var, rule.body())));
+        String inputString = StringUtils.repeat("(%s, ", numArgs - 1) + "%s" + StringUtils.repeat(")", numArgs - 1);
+
+        for(List<String> funcArgs : argCombinations) {
+            String filledInputString = String.format(inputString, funcArgs.toArray());
+            factory.addCallRule(ruleBuilder.withBody(String.format("call(%s, %s)", fnName, filledInputString)));
+        }
+
+        //Depth 3+
+        //factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 2).forEach(rule -> {
+        //    factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format("call(%s, %s)", fnName, rule.body())));
+        //});
+
+        if(numArgs == 1) {
+            for (int i = 2; i <= maxDepth; i++) {
+                for (ChoiceRule rule : factory.getCallRules()) {
+                    if (((EqRule) rule).depth() == i - 1) {
+                        for (String op : arg_ops) {
+                            for (String var : args) {
+                                factory.addCallRule(ruleBuilder.withDepth(i).withBody(String.format(op, rule.body(), var)));
+                            }
+                            factory.addCallRule(ruleBuilder.withDepth(i).withBody(String.format(op, rule.body(), "CX")));
+                        }
+                    }
                 }
-                factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format(op, "C" + (rule.numConstants() + 1), rule.body())));
             }
-        });
+        }
 
         return factory.getAllRules();
     }

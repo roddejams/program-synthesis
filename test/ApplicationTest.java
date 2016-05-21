@@ -17,9 +17,9 @@ public class ApplicationTest {
 
     @Test
     public void testSkeletonRules() throws IOException {
-        List<ChoiceRule> rules = LearningProcessor.generateEqSkeletonRules(2, 1);
-        //Path file = LearningProcessor.writeSkeletonRules(rules, 2, 1);
-        System.out.println(rules);
+        List<ChoiceRule> rules = LearningProcessor.generateEqSkeletonRules(3, 2);
+        Path file = LearningProcessor.writeSkeletonRules(rules, 3, 1);
+        System.out.println(file);
     }
 
     /*@Test

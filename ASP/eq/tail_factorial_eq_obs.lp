@@ -1,5 +1,6 @@
-rule(1, f, (0, N), N) :- is_call(call(f, (0, N))), const_number(N).
-rule(2, f, (N, R), call(f, ((N - 1), (N * R)))) :- is_call(call(f, (N, R))), const_number(N), const_number(R).
+%rule(1, f, (0, N), N) :- is_call(call(f, (0, N))), const_number(N).
+%rule(2, f, (N, R), call(f, ((N - 1), (N * R)))) :- is_call(call(f, (N, R))), const_number(N), const_number(R).
+%rule(2, f, (N0, N1), call(f, ((N0 - N1), (N0 + 0)))) :- is_call(call(f, (N0, N1))), const_number(N0), const_number(N1).
 
 expr_const(0;1).
 num_rules(1..2).

@@ -1,4 +1,5 @@
 #hide const_number/1.
+#hide const/1.
 #hide expr_const/1.
 #hide num_rules/1.
 #hide match/3.
@@ -12,11 +13,12 @@
 #hide next_step/2.
 
 const_number(0..10).
+const(-100..100).
 
 %type(call(f, X), Expr) :- X = (sub(3, 1), mul(3, 1)), rule(2, f, @eval(X), Expr).
 
 eq(In, Out) :- example(In, Out).
-:- eq(N1, N2), const_number(N1), const_number(N2), N1 != N2.
+:- eq(N1, N2), const(N1), const(N2), N1 != N2.
 :- eq(mul(0, B), Val), Val > 0.
 :- eq(mul(A, 0), Val), Val > 0.
 :- example(In, Out), not terminates(In).
@@ -28,8 +30,8 @@ eq(A, Val - B) :- eq(add(A, B), Val), const_number(B), B <= Val.
 eq(B, Val - A) :- eq(add(A, B), Val), const_number(A), A <= Val.
 eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
 eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
-eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val + B).
-eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val + A).
+eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
+eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
 
 terminates(Expr) :- next_step(Expr, Val), const_number(Val).
 terminates(Expr) :- next_step(Expr, Term_Expr), terminates(Term_Expr).

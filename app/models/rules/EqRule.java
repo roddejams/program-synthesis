@@ -77,6 +77,16 @@ public class EqRule extends Rule {
             constChoice += String.format(", C%d", i);
         }
 
+        StringBuilder bodyOut = new StringBuilder(body);
+        int constCount = 1;
+
+        //Replace all const locations with correct numbers
+        for (int index = body.indexOf("C"); index >= 0; index = body.indexOf("C", index + 1))
+        {
+            bodyOut.replace(index+1, index+2, Integer.toString(constCount));
+            constCount++;
+        }
+
         String argString = args.toString();
         argString = argString.replace('[', '(');
         argString = argString.replace("]", ")");
@@ -87,7 +97,7 @@ public class EqRule extends Rule {
                 position,
                 functionName,
                 argString,
-                body,
+                bodyOut,
                 functionName,
                 argString,
                 ruleNumber,
