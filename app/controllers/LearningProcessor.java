@@ -36,6 +36,11 @@ public class LearningProcessor extends UntypedActor {
             "mul(%s, %s)",
             "sub(%s, %s)");
 
+    private static final List<String> inner_ops = Arrays.asList(
+            "(%s + %s)",
+            "(%s * %s)",
+            "(%s - %s)");
+
     private LearningResult result;
     private boolean finished = false;
     private Path haskellFile;
@@ -129,18 +134,18 @@ public class LearningProcessor extends UntypedActor {
 
         //Depth 1
         factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format("mul(%s, %s)", args.get(0), args.get(0))));
-        for(String op : arg_ops) {
+        for(String op : inner_ops) {
             factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format(op, args.get(0), "C1")));
         }
         //factory.addCallRule(ruleBuilder.withDepth(1).withBody(String.format("call(%s, %s)", fnName, args.get(0))));
 
         //Depth 2
-        factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("add(%s, mul(%s, %s))", "C1", args.get(0), "C2")));
+        factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("(%s + (%s * %s))", "C1", args.get(0), "C2")));
 
         factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
             int numConsts = rule.numConstants();
-            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("mul(%s, %s)", args.get(0), rule.body())));
-            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("mul(%s, %s)", "C" + (numConsts+1), rule.body())));
+            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("(%s * %s)", args.get(0), rule.body())));
+            factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format("(%s * %s)", "C" + (numConsts+1), rule.body())));
             factory.addCallRule(ruleBuilder.withDepth(2).withBody(String.format("call(%s, %s)", fnName, rule.body())));
         });
 

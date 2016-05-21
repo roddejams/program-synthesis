@@ -1,0 +1,33 @@
+\chapter{Evaluation and Future Work}
+
+\section{Future Work}
+
+Before the end of this term (~11th March) I hope to have a basic learning system in place. I will be able to learn programs with an arbitrary number of arguments, including lists, and these programs will be implemented using the languages features described in Chapter 3.  \\
+In addition, I will aim to have started implementation on the pre and post processing to convert input examples into ASP and the learned rules into Haskell. \\
+
+During the Easter holidays I will first aim to spend some time trying examples and bug fixing on my existing code. Some thought will have to go into coming up with interesting and difficult examples. \\
+
+After this I will start extending my tool to implement other Haskell language features. Most importantly is guards and let / where statements, allowing for more complicated conditionals and program structure. As part of this work I will have to introduce the generation of auxiliary functions to characterise this more complicated program structure. \\
+
+After Easter I will have a lot of options for extending my tool:
+
+\begin{itemize}
+\item Implementing usage of Higher-order functions. This should theoretically not be too difficult but it is hard to say at this time.
+\item Various performance increases, perhaps reducing the grounding of the ASP encoding or extracting more work to the pre/post processing step. As part of this work, I could look into which optimisations applied to existing IFP tools are applicable to my tool (although at this time I think this will be quite limited due to the difference in approach).
+\item Development of a simple GUI or web interface to allow usage of my tool by interested third parties. While this would not have to be particularly complicated (see the MagicHaskeller web interface), it would still be work not directly improving the tool so I will have to evaluate the advantages of such an interface compared to just a command line tool closer to the time.
+\item Extend the input language from I/O examples to accept incomplete programs or specifications. This would be a useful feature to implement since it could be easier for the user to define a specification than a list of examples, however it could be challenging to implement due to the tight coupling of my encoding to the idea of examples as input.
+\end{itemize}
+
+\section{Evaluation}
+
+To evaluate my tool I plan to use a combination of experimental evaluation and feedback from users.\\
+
+For experimental evaluation I would first like to compare my tool to the two IFP systems described in section 2.2.2. This would involve running a number of example specifications through all three tools and time how long each one takes (or if they can compute an answer at all). At some point the existing systems will start to quickly degrade in performance and I hope that my tool will be able to last longer. \\
+Another experimental evaluation that I think would be interesting is to attempt to learn the first year Haskell lab exercises and compare them to the model solutions. This could help highlight any syntax optimisations that could be implemented.\\
+
+For user feedback it could be helpful to display my tool at the project demonstrations fair in May, so first and second year students can come and try my system, suggest improvements and try to find bugs which I may not have thought of. Before this I will have to have implemented at least some rudimentary interface.
+
+\pagebreak
+\renewcommand\bibname{{References}}
+\bibliography{References}
+\bibliographystyle{plain}

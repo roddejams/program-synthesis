@@ -1,42 +1,75 @@
 \select@language {english}
 \gdef \the@ipfilectr {@-1}
-\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}
+\contentsline {chapter}{Abstract}{2}{Doc-Start}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-2}
-\contentsline {chapter}{\numberline {2}Background}{4}{chapter.2}
-\contentsline {section}{\numberline {2.1}Answer Set Programming}{4}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}The Stable Model Semantics}{4}{subsection.2.1.1}
-\contentsline {subsubsection}{Grounding}{4}{section*.2}
-\contentsline {subsubsection}{Safety}{5}{section*.3}
-\contentsline {subsubsection}{Least Herbrand Models}{5}{section*.4}
-\contentsline {subsection}{\numberline {2.1.2}Calculating Answer Sets}{5}{subsection.2.1.2}
-\contentsline {subsubsection}{Reduct}{5}{section*.5}
-\contentsline {subsubsection}{Constraints}{6}{section*.6}
-\contentsline {subsubsection}{Aggregates and Choice Rules}{6}{section*.7}
-\contentsline {subsubsection}{Optimisation Statements}{7}{section*.8}
-\contentsline {subsection}{\numberline {2.1.3}Learning from Answer Sets}{7}{subsection.2.1.3}
-\contentsline {subsubsection}{Cautious Induction}{7}{section*.9}
-\contentsline {subsubsection}{Brave Induction}{7}{section*.10}
-\contentsline {subsubsection}{ASPAL}{8}{section*.11}
-\contentsline {subsection}{\numberline {2.1.4}ASP Solvers}{9}{subsection.2.1.4}
-\contentsline {subsubsection}{Gringo}{9}{section*.12}
-\contentsline {section}{\numberline {2.2}Inductive Functional Programming}{9}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Conditional Constructor Systems}{9}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}Overview of current tools}{10}{subsection.2.2.2}
-\contentsline {section}{{References}}{11}{section*.13}
+\contentsline {chapter}{Acknowledgements}{3}{Doc-Start}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-3}
-\contentsline {chapter}{\numberline {3}The Initial Approach : A Haskell Interpreter in ASP}{12}{chapter.3}
-\contentsline {section}{\numberline {3.1}A Haskell Interpreter in ASP}{12}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Target Language}{12}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Program Representation}{12}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}Evaluating Rules}{13}{subsection.3.1.3}
-\contentsline {subsubsection}{Internal Predicates}{13}{section*.14}
-\contentsline {subsubsection}{Computation Rules}{14}{section*.15}
-\contentsline {section}{\numberline {3.2}Initial Learning}{17}{section.3.2}
+\contentsline {chapter}{\numberline {1}Introduction}{7}{chapter.1}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-4}
-\contentsline {chapter}{\numberline {4}Evaluation and Future Work}{19}{chapter.4}
-\contentsline {section}{\numberline {4.1}Future Work}{19}{section.4.1}
-\contentsline {section}{\numberline {4.2}Evaluation}{20}{section.4.2}
+\contentsline {chapter}{\numberline {2}Background}{8}{chapter.2}
+\contentsline {section}{\numberline {2.1}Answer Set Programming}{8}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}The Stable Model Semantics}{8}{subsection.2.1.1}
+\contentsline {subsubsection}{Grounding}{8}{section*.2}
+\contentsline {subsubsection}{Safety}{9}{section*.3}
+\contentsline {subsubsection}{Least Herbrand Models}{9}{section*.4}
+\contentsline {subsection}{\numberline {2.1.2}Calculating Answer Sets}{9}{subsection.2.1.2}
+\contentsline {subsubsection}{Reduct}{9}{section*.5}
+\contentsline {subsubsection}{Constraints}{10}{section*.6}
+\contentsline {subsubsection}{Aggregates and Choice Rules}{10}{section*.7}
+\contentsline {subsubsection}{Optimisation Statements}{11}{section*.8}
+\contentsline {subsection}{\numberline {2.1.3}Learning from Answer Sets}{11}{subsection.2.1.3}
+\contentsline {subsubsection}{Cautious Induction}{11}{section*.9}
+\contentsline {subsubsection}{Brave Induction}{11}{section*.10}
+\contentsline {subsubsection}{ASPAL}{12}{section*.11}
+\contentsline {subsection}{\numberline {2.1.4}ASP Solvers}{13}{subsection.2.1.4}
+\contentsline {subsubsection}{Gringo}{13}{section*.12}
+\contentsline {section}{\numberline {2.2}Inductive Functional Programming}{13}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Conditional Constructor Systems}{13}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Overview of current tools}{14}{subsection.2.2.2}
+\contentsline {section}{\numberline {2.3}The Target Language, Haskell}{15}{section.2.3}
+\gdef \the@ipfilectr {}
+\gdef \the@ipfilectr {@-5}
+\contentsline {chapter}{\numberline {3}The Initial Approach : A Haskell Interpreter in ASP}{16}{chapter.3}
+\contentsline {section}{\numberline {3.1}A Haskell Interpreter in ASP}{16}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Target Language}{16}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Program Representation}{16}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Evaluating Rules}{17}{subsection.3.1.3}
+\contentsline {subsubsection}{Internal Predicates}{17}{section*.13}
+\contentsline {subsubsection}{Computation Rules}{18}{section*.14}
+\contentsline {section}{\numberline {3.2}Initial Learning}{21}{section.3.2}
+\contentsline {section}{\numberline {3.3}Performance Issues}{22}{section.3.3}
+\gdef \the@ipfilectr {}
+\gdef \the@ipfilectr {@-6}
+\contentsline {chapter}{\numberline {4}A Second Approach : Constraint Based Learning}{23}{chapter.4}
+\contentsline {section}{\numberline {4.1}Top Down Vs. Bottom Up}{23}{section.4.1}
+\contentsline {section}{\numberline {4.2}Learning}{23}{section.4.2}
+\contentsline {section}{\numberline {4.3}Performance}{23}{section.4.3}
+\gdef \the@ipfilectr {}
+\gdef \the@ipfilectr {@-7}
+\contentsline {chapter}{\numberline {5}Front end implementation : Building a working UI}{24}{chapter.5}
+\contentsline {section}{\numberline {5.1}User's Manual}{24}{section.5.1}
+\contentsline {section}{\numberline {5.2}Used Technologies}{24}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Play Framework}{24}{subsection.5.2.1}
+\contentsline {section}{\numberline {5.3}User Feedback and Evaluation}{24}{section.5.3}
+\gdef \the@ipfilectr {}
+\gdef \the@ipfilectr {@-8}
+\contentsline {chapter}{\numberline {6}Critical Evaluation}{25}{chapter.6}
+\contentsline {section}{\numberline {6.1}Testing}{25}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}One Argument Programs}{25}{subsection.6.1.1}
+\contentsline {subsubsection}{Factorial}{25}{section*.15}
+\contentsline {subsection}{\numberline {6.1.2}Two Argument Programs}{25}{subsection.6.1.2}
+\contentsline {subsubsection}{Tail Recursive Factorial}{25}{section*.16}
+\contentsline {section}{\numberline {6.2}Comparison to Existing Tools}{25}{section.6.2}
+\gdef \the@ipfilectr {}
+\gdef \the@ipfilectr {@-9}
+\contentsline {chapter}{\numberline {7}Conclusions and Future Work}{26}{chapter.7}
+\contentsline {section}{\numberline {7.1}Conclusions}{26}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}What worked}{26}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}Areas for improvement}{26}{subsection.7.1.2}
+\contentsline {section}{\numberline {7.2}Future Work}{26}{section.7.2}
+\contentsline {subsection}{\numberline {7.2.1}Learning Improvements}{26}{subsection.7.2.1}
+\contentsline {subsection}{\numberline {7.2.2}UI Features}{26}{subsection.7.2.2}
 \gdef \the@ipfilectr {}
