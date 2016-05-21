@@ -1,12 +1,12 @@
-%rule(1, f, (N0), 1) :- example(call(f, (N0)), _).
-%rule(2, f, (N0), mul(N0, call(f, sub(N0, 1)))) :- example(call(f, (N0)), _).
-%rule(2, f, (N0), sub(0, call(f, add(N0, 0)))) :- example(call(f, (N0)), _).
-%rule(2, f, N, mul(N, call(f, sub(N, 1)))) :- example(call(f, N), _).
+%rule(1, f, (N0), 1) :- example(call(f, (N0)), _), const_number(N0).
+%rule(2, f, N, mul(N, call(f, (N - 1)))) :- example(call(f, N), _), const_number(N).
+
 expr_const(0;1).
 num_rules(1..2).
+num_match(1).
 
-match2(f, 1, Input) :- Input == 0, rule(1, f, Input, _).
-match2(f, 2, Input) :- rule(2, f, Input, _).
+%match2(f, 1, Input) :- Input == 0, rule(1, f, Input, _).
+%match2(f, 2, Input) :- rule(2, f, Input, _).
 
 example(call(f, 0), 1).
 example(call(f, 1), 1).
