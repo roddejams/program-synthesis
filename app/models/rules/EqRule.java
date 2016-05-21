@@ -83,7 +83,7 @@ public class EqRule extends Rule {
 
         String position = rulePosition == 0 ? "R" : String.valueOf(rulePosition);
 
-        return String.format("rule(%s, %s, %s, %s) :- example(call(%s, %s), _), choose(R, %d%s).\n",
+        return String.format("rule(%s, %s, %s, %s) :- is_call(call(%s, %s)), choose(R, %d%s).\n",
                 position,
                 functionName,
                 argString,

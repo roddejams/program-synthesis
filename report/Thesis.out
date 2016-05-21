@@ -1,20 +1,41 @@
-\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
-\BOOKMARK [0][-]{chapter.2}{Background}{}% 2
-\BOOKMARK [1][-]{section.2.1}{Answer Set Programming}{chapter.2}% 3
-\BOOKMARK [2][-]{subsection.2.1.1}{The Stable Model Semantics}{section.2.1}% 4
-\BOOKMARK [2][-]{subsection.2.1.2}{Calculating Answer Sets}{section.2.1}% 5
-\BOOKMARK [2][-]{subsection.2.1.3}{Learning from Answer Sets}{section.2.1}% 6
-\BOOKMARK [2][-]{subsection.2.1.4}{ASP Solvers}{section.2.1}% 7
-\BOOKMARK [1][-]{section.2.2}{Inductive Functional Programming}{chapter.2}% 8
-\BOOKMARK [2][-]{subsection.2.2.1}{Conditional Constructor Systems}{section.2.2}% 9
-\BOOKMARK [2][-]{subsection.2.2.2}{Overview of current tools}{section.2.2}% 10
-\BOOKMARK [1][-]{section*.13}{References}{chapter.2}% 11
-\BOOKMARK [0][-]{chapter.3}{The Initial Approach : A Haskell Interpreter in ASP}{}% 12
-\BOOKMARK [1][-]{section.3.1}{A Haskell Interpreter in ASP}{chapter.3}% 13
-\BOOKMARK [2][-]{subsection.3.1.1}{Target Language}{section.3.1}% 14
-\BOOKMARK [2][-]{subsection.3.1.2}{Program Representation}{section.3.1}% 15
-\BOOKMARK [2][-]{subsection.3.1.3}{Evaluating Rules}{section.3.1}% 16
-\BOOKMARK [1][-]{section.3.2}{Initial Learning}{chapter.3}% 17
-\BOOKMARK [0][-]{chapter.4}{Evaluation and Future Work}{}% 18
-\BOOKMARK [1][-]{section.4.1}{Future Work}{chapter.4}% 19
-\BOOKMARK [1][-]{section.4.2}{Evaluation}{chapter.4}% 20
+\BOOKMARK [0][-]{Doc-Start}{Abstract}{}% 1
+\BOOKMARK [0][-]{Doc-Start}{Acknowledgements}{}% 2
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 3
+\BOOKMARK [0][-]{chapter.2}{Background}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Answer Set Programming}{chapter.2}% 5
+\BOOKMARK [2][-]{subsection.2.1.1}{The Stable Model Semantics}{section.2.1}% 6
+\BOOKMARK [2][-]{subsection.2.1.2}{Calculating Answer Sets}{section.2.1}% 7
+\BOOKMARK [2][-]{subsection.2.1.3}{Learning from Answer Sets}{section.2.1}% 8
+\BOOKMARK [2][-]{subsection.2.1.4}{ASP Solvers}{section.2.1}% 9
+\BOOKMARK [1][-]{section.2.2}{Inductive Functional Programming}{chapter.2}% 10
+\BOOKMARK [2][-]{subsection.2.2.1}{Conditional Constructor Systems}{section.2.2}% 11
+\BOOKMARK [2][-]{subsection.2.2.2}{Overview of current tools}{section.2.2}% 12
+\BOOKMARK [1][-]{section.2.3}{The Target Language, Haskell}{chapter.2}% 13
+\BOOKMARK [0][-]{chapter.3}{The Initial Approach : A Haskell Interpreter in ASP}{}% 14
+\BOOKMARK [1][-]{section.3.1}{A Haskell Interpreter in ASP}{chapter.3}% 15
+\BOOKMARK [2][-]{subsection.3.1.1}{Target Language}{section.3.1}% 16
+\BOOKMARK [2][-]{subsection.3.1.2}{Program Representation}{section.3.1}% 17
+\BOOKMARK [2][-]{subsection.3.1.3}{Evaluating Rules}{section.3.1}% 18
+\BOOKMARK [1][-]{section.3.2}{Initial Learning}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.3}{Performance Issues}{chapter.3}% 20
+\BOOKMARK [0][-]{chapter.4}{A Second Approach : Constraint Based Learning}{}% 21
+\BOOKMARK [1][-]{section.4.1}{Top Down Vs. Bottom Up}{chapter.4}% 22
+\BOOKMARK [1][-]{section.4.2}{Learning}{chapter.4}% 23
+\BOOKMARK [1][-]{section.4.3}{Performance}{chapter.4}% 24
+\BOOKMARK [0][-]{chapter.5}{Front end implementation : Building a working UI}{}% 25
+\BOOKMARK [1][-]{section.5.1}{User's Manual}{chapter.5}% 26
+\BOOKMARK [1][-]{section.5.2}{Used Technologies}{chapter.5}% 27
+\BOOKMARK [2][-]{subsection.5.2.1}{Play Framework}{section.5.2}% 28
+\BOOKMARK [1][-]{section.5.3}{User Feedback and Evaluation}{chapter.5}% 29
+\BOOKMARK [0][-]{chapter.6}{Critical Evaluation}{}% 30
+\BOOKMARK [1][-]{section.6.1}{Testing}{chapter.6}% 31
+\BOOKMARK [2][-]{subsection.6.1.1}{One Argument Programs}{section.6.1}% 32
+\BOOKMARK [2][-]{subsection.6.1.2}{Two Argument Programs}{section.6.1}% 33
+\BOOKMARK [1][-]{section.6.2}{Comparison to Existing Tools}{chapter.6}% 34
+\BOOKMARK [0][-]{chapter.7}{Conclusions and Future Work}{}% 35
+\BOOKMARK [1][-]{section.7.1}{Conclusions}{chapter.7}% 36
+\BOOKMARK [2][-]{subsection.7.1.1}{What worked}{section.7.1}% 37
+\BOOKMARK [2][-]{subsection.7.1.2}{Areas for improvement}{section.7.1}% 38
+\BOOKMARK [1][-]{section.7.2}{Future Work}{chapter.7}% 39
+\BOOKMARK [2][-]{subsection.7.2.1}{Learning Improvements}{section.7.2}% 40
+\BOOKMARK [2][-]{subsection.7.2.2}{UI Features}{section.7.2}% 41
