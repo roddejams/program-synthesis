@@ -64,7 +64,7 @@ public class HomeController extends Controller {
     public Result runLearningTask() {
         Form<IOExamples> formData = formFactory.form(IOExamples.class).bindFromRequest();
         IOExamples examples = formData.get();
-        ActorRef learningActor = system.actorOf(LearningProcessor.props);
+        ActorRef learningActor = system.actorOf(ConstraintLearningProcessor.props);
 
         learningActor.tell(examples, learningActor);
 

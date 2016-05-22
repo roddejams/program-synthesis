@@ -1,4 +1,5 @@
-import controllers.LearningProcessor;
+import controllers.ConstraintLearningProcessor;
+import controllers.HaskellGenerator;
 import models.rules.ChoiceRule;
 import org.junit.Test;
 
@@ -15,12 +16,25 @@ import java.util.List;
 public class ApplicationTest {
 
     @Test
-    public void testSkeletonRules() throws IOException {
-        List<ChoiceRule> rules = LearningProcessor.generateEqSkeletonRules(3, 2);
-        //Path file = LearningProcessor.writeSkeletonRules(rules, 3, 1);
+    public void testSkeletonRules() throws IOException, InterruptedException {
+        ConstraintLearningProcessor proc = new ConstraintLearningProcessor();
+
+        List<ChoiceRule> rules = proc.generateSkeletonRules(3, 2);
+        //Path file = InterpretedLearningProcessor.writeSkeletonRules(rules, 3, 1);
         System.out.println(rules);
     }
 
+    @Test
+    public void testArgExtraction() {
+        List<String> args = HaskellGenerator.extractNestedArgs("mul(call(f, (N0 - C1)), N0)");
+        System.out.println(args);
+    }
+
+    @Test
+    public void testHaskellConversion() {
+        String out = HaskellGenerator.ruleToHaskell("mul(call(f, (N0 - C1)), N0)");
+        System.out.println(out);
+    }
     /*@Test
     public void renderTemplate() {
         Content html = views.html.index.render("Your new application is ready.");

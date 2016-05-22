@@ -1,12 +1,14 @@
 package controllers;
 
 import models.rules.ChoiceRule;
+import models.rules.EqRule;
 import models.rules.Rule;
 import models.rules.Where;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HaskellGenerator {
 
@@ -55,7 +57,19 @@ public class HaskellGenerator {
                 List<String> args = new ArrayList<>(rule.args());
                 int numConsts = rule.numConstants();
 
-                //Replace constants in with learned values
+                StringBuilder bodyOut = new StringBuilder(ruleBody);
+                int constCount = 1;
+
+                //Replace all const locations with correct numbers
+                for (int index = ruleBody.indexOf("C"); index >= 0; index = ruleBody.indexOf("C", index + 1))
+                {
+                    bodyOut.replace(index+1, index+2, Integer.toString(constCount));
+                    constCount++;
+                }
+
+                ruleBody = bodyOut.toString();
+
+                //Replace constants with learned values
                 for(int i = 1; i <= numConsts; i++){
                     String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i+1];
                     ruleBody = ruleBody.replace("C" + i, constVal);
@@ -107,7 +121,13 @@ public class HaskellGenerator {
             inputs = inputs.replace(",", "");
             inputs = inputs.toLowerCase();
 
-            if(rule instanceof Rule) {
+            if(rule instanceof EqRule) {
+                String functionName = ((EqRule) rule).functionName();
+                codeline = String.format("%s %s = %s", functionName, inputs, ruleToHaskell(body));
+
+                int rulePosition = ((EqRule) rule).rulePosition();
+                haskell[rulePosition-1] = codeline;
+            } else if(rule instanceof Rule) {
                 String functionName = ((Rule) rule).functionName();
 
                 if (body.contains("add")) {
@@ -163,7 +183,7 @@ public class HaskellGenerator {
 
                 int rulePosition = ((Rule) rule).rulePosition();
                 haskell[rulePosition-1] = codeline;
-            } else {
+            } else if(rule instanceof Where){
                 String var = ((Where) rule).var();
 
                 if (body.contains("add")) {
@@ -221,6 +241,74 @@ public class HaskellGenerator {
         }
 
         return Arrays.asList(haskell);
+    }
 
+    public static String ruleToHaskell(String body) {
+        List<String> args = extractNestedArgs(body);
+        if(body.startsWith("add")) {
+            String arg1 = ruleToHaskell(args.get(0));
+            String arg2 = ruleToHaskell(args.get(1));
+
+            return String.format("(%s + %s)", arg1, arg2);
+
+        } else if(body.startsWith("mul")) {
+            String arg1 = ruleToHaskell(args.get(0));
+            String arg2 = ruleToHaskell(args.get(1));
+
+            return String.format("(%s * %s)", arg1, arg2);
+
+        } else if(body.startsWith("sub")) {
+            String arg1 = ruleToHaskell(args.get(0));
+            String arg2 = ruleToHaskell(args.get(1));
+
+            return String.format("(%s - %s)", arg1, arg2);
+
+        } else if(body.startsWith("call")) {
+            String funcArgs = args.subList(1, args.size()).stream().map(HaskellGenerator::ruleToHaskell).collect(Collectors.toList()).toString();
+            funcArgs = funcArgs.replace("[", "");
+            funcArgs = funcArgs.replace("]", "");
+            funcArgs = funcArgs.replace(",", "");
+            String calledFunction = args.get(0);
+
+            return String.format("(%s %s)", calledFunction, funcArgs);
+
+        } else {
+            return body.toLowerCase();
+        }
+    }
+
+    public static List<String> extractNestedArgs(String body) {
+        int bracketCount = 0;
+        List<String> args = new ArrayList<>();
+        int argStart = 0;
+        int argEnd;
+
+        for(int i = 0; i < body.length(); i++) {
+            char currChar = body.charAt(i);
+            if(currChar == '(') {
+                if(bracketCount == 0) {
+                    //First opening bracket
+                    argStart = i + 1;
+                }
+                bracketCount++;
+            }
+
+            if(currChar == ')'){
+                bracketCount--;
+                if(bracketCount == 0) {
+                    //Last closing bracket
+                    argEnd = i;
+                    args.add(body.substring(argStart, argEnd).trim());
+                }
+            }
+
+            if(bracketCount == 1 && currChar == ',') {
+                argEnd = i;
+                args.add(body.substring(argStart, argEnd).trim());
+                argStart = argEnd + 1;
+            }
+        }
+
+        return args;
     }
 }
