@@ -142,7 +142,7 @@ public class InterpretedLearningProcessor extends BaseProcessor {
         return vars;
     }
 
-    public Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth) throws IOException {
+    public Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
         //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");

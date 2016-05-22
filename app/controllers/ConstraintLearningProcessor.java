@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import models.IOExamples;
 import models.rules.ChoiceRule;
 import models.rules.EqRule;
+import models.rules.Match;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -102,7 +103,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
     }
 
     @Override
-    public Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth) throws IOException {
+    public Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
         //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
@@ -111,14 +112,34 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
         int maxNumConstants = 0;
+        int maxMatchConstants = 0;
 
         String[] ruleNums = new String[2*maxDepth];
+        String[] matchNums = new String[2*maxDepth];
 
         try {
             Files.write(file, "".getBytes());
 
             for(String arg : generatedRules.get(0).args()) {
                 write(file, String.format("#domain const_number(%s).\n", arg));
+            }
+
+            for(ChoiceRule match : matchRules) {
+                Match matchRule = (Match) match;
+                if (matchRule.getMatchMap().size() > maxMatchConstants) {
+                    maxMatchConstants = matchRule.getMatchMap().size();
+                }
+
+                int numConsts = matchRule.getMatchMap().size();
+                String nums = matchNums[numConsts];
+                if (nums == null) {
+                    matchNums[numConsts] = "" + matchRule.ruleNumber();
+                } else {
+                    nums += ";" + matchRule.ruleNumber();
+                    matchNums[numConsts] = nums;
+                }
+
+                write(file, matchRule.toString());
             }
 
             for (ChoiceRule rule : generatedRules) {
@@ -142,11 +163,39 @@ public class ConstraintLearningProcessor extends BaseProcessor {
                 write(file, rule.toString());
             }
 
+            generateMatchChoices(file, maxMatchConstants, matchNums);
             generateChoiceRule(file, maxNumConstants, ruleNums);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return file;
+    }
+
+    private void generateMatchChoices(Path file, int maxNumConstants, String[] matchNums) throws IOException {
+        write(file, "1 {\n");
+
+        for(int i = 0; i <= maxNumConstants; i++) {
+            String consts = "";
+            String expr_consts = "";
+            for (int j = 0; j < i; j++) {
+                consts += String.format(", C%d", j);
+                expr_consts += String.format(": expr_const(C%d) ", j);
+            }
+
+            //have to check to put a comma or not;
+            String choice = "";
+            if(matchNums[i] != null) {
+                if (i == maxNumConstants) {
+                    choice = String.format("choose_match(R, %s%s) %s\n", matchNums[i], consts, expr_consts);
+                } else {
+                    choice = String.format("choose_match(R, %s%s) %s,\n", matchNums[i], consts, expr_consts);
+                }
+            }
+
+            write(file, choice);
+        }
+
+        write(file, "} 1 :- num_match(R).\n");
     }
 
     protected Path writeExamples(IOExamples examples, int numArgs) throws IOException {
@@ -159,15 +208,18 @@ public class ConstraintLearningProcessor extends BaseProcessor {
             Files.write(file, "".getBytes());
             write(file, "expr_const(0;1).\n");
             write(file, "num_rules(1..2).\n");
+            write(file, "num_match(1).\n");
 
             //Statically write match statements for now. Will learn these later
             if(numArgs == 1) {
-                write(file, "match2(f, 1, Input) :- Input == 0, is_call(call(f, Input)).\n");
-                write(file, "match2(f, 2, Input) :- is_call(call(f, Input)).\n");
+                write(file, "match2(f, (R + 1), Input) :- is_call(call(f, Input)), num_match(R).\n");
+                //write(file, "match2(f, 1, Input) :- Input == 0, is_call(call(f, Input)).\n");
+                //write(file, "match2(f, 2, Input) :- is_call(call(f, Input)).\n");
 
             } else {
-                write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, is_call(call(f, (Arg1, Args))).\n");
-                write(file, "match2(f, 2, (Arg1, Args)) :- is_call(call(f, (Arg1, Args))).\n");
+                write(file, "match2(f, (R + 1), (Arg1, Args)) :- rule(call(f, (Arg1, Args))), num_match(R).\n");
+                //write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, is_call(call(f, (Arg1, Args))).\n");
+                //write(file, "match2(f, 2, (Arg1, Args)) :- is_call(call(f, (Arg1, Args))).\n");
             }
             write(file, examples.toString());
 

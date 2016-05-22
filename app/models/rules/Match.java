@@ -7,15 +7,15 @@ import java.util.Map;
 
 public class Match extends ChoiceRule{
 
-    private Map<String, Integer> matchMap;
+    private Map<String, String> matchMap;
     private int rulePosition;
 
-    public Match(int ruleNumber, List<String> args, String body, String functionName, Map<String, Integer> matchMap) {
+    public Match(int ruleNumber, List<String> args, String body, String functionName, Map<String, String > matchMap) {
         super(ruleNumber, args, body, functionName);
         this.matchMap = matchMap;
     }
 
-    public Map<String, Integer> getMatchMap() {
+    public Map<String, String> getMatchMap() {
         return matchMap;
     }
 
@@ -28,7 +28,7 @@ public class Match extends ChoiceRule{
     }
 
     public static class MatchBuilder extends ChoiceRuleBuilder {
-        private Map<String, Integer> matchMap;
+        private Map<String, String> matchMap;
 
         @Override
         public MatchBuilder withRuleNumber(int ruleNumber) {
@@ -53,7 +53,7 @@ public class Match extends ChoiceRule{
             return this;
         }
 
-        public MatchBuilder withMapping(Map<String, Integer> matchMap) {
+        public MatchBuilder withMapping(Map<String, String> matchMap) {
             this.matchMap = new HashMap<>(matchMap);
             return this;
         }
@@ -74,8 +74,13 @@ public class Match extends ChoiceRule{
         argString = argString.replace('[', '(');
         argString = argString.replace("]", ")");
 
+        String constChoice = "";
+        for(int i = 1; i <= matchMap.size(); i++){
+            constChoice += String.format(", C%d", i);
+        }
+
         if(matchMap.isEmpty()) {
-            return String.format("match2(%s, %s, %s) :- input(call(%s, %s)).\n",
+            return String.format("match2(%s, %s, %s) :- is_call(call(%s, %s)).\n",
                     functionName,
                     ruleNumber,
                     argString,
@@ -84,20 +89,22 @@ public class Match extends ChoiceRule{
         } else {
             String mapString = mapToString(matchMap);
 
-            return String.format("match2(%s, %s, %s) :- %s input(call(%s, %s)).\n",
+            return String.format("match2(%s, %s, %s) :- %s, is_call(call(%s, %s)), choose_match(R, %d%s).\n",
                     functionName,
                     ruleNumber,
                     argString,
                     mapString,
                     functionName,
-                    argString);
+                    argString,
+                    ruleNumber,
+                    constChoice);
         }
     }
 
-    private String mapToString(Map<String, Integer> map) {
+    private String mapToString(Map<String, String> map) {
         String out = "";
 
-        for(Map.Entry<String, Integer> entry : map.entrySet()) {
+        for(Map.Entry<String, String> entry : map.entrySet()) {
             out += String.format("%s == %s", entry.getKey(), entry.getValue());
         }
 

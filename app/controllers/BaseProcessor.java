@@ -1,10 +1,12 @@
 package controllers;
 
 import akka.actor.UntypedActor;
+import com.google.common.collect.ImmutableMap;
 import models.IOExample;
 import models.IOExamples;
 import models.LearningResult;
 import models.rules.ChoiceRule;
+import models.rules.Match;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +19,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class BaseProcessor extends UntypedActor {
@@ -58,14 +61,15 @@ public abstract class BaseProcessor extends UntypedActor {
             //int numFuncs = functionNames.size();
 
             List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numArgs);
+            List<ChoiceRule> matchRules = generateMatchRules(numArgs);
 
-            Path skeletonRulePath = writeSkeletonRules(generatedRules, maxDepth);
+            Path skeletonRulePath = writeSkeletonRules(generatedRules, matchRules, maxDepth);
 
             Path examplesPath = writeExamples(examplesToWrite, numArgs);
 
             List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString(), rulesPath);
 
-            HaskellGenerator generator = new HaskellGenerator(generatedRules);
+            HaskellGenerator generator = new HaskellGenerator(generatedRules, matchRules);
             haskell = generator.generateHaskell(chosenPredicates);
             System.out.println(haskell);
 
@@ -94,7 +98,7 @@ public abstract class BaseProcessor extends UntypedActor {
 
     abstract List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs);
 
-    abstract Path writeSkeletonRules(List<ChoiceRule> generatedRules, int maxDepth) throws IOException;
+    abstract Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException;
 
     abstract Path writeExamples(IOExamples examples, int numArgs) throws IOException;
 
@@ -194,6 +198,21 @@ public abstract class BaseProcessor extends UntypedActor {
         for(String line : haskell) {
             write(haskellFile, line);
         }
+    }
+
+    protected List<ChoiceRule> generateMatchRules(int numArgs) {
+        String fnName = "f";
+        List<String> args = generateArgs(numArgs);
+
+        ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
+        Match.MatchBuilder builder = new Match.MatchBuilder().withArgs(args).withName(fnName);
+
+        for(String arg : args) {
+            Map<String, String> map = ImmutableMap.of(arg, "C1");
+            factory.addRule(builder.withMapping(map));
+        }
+
+        return factory.getRules();
     }
 
     protected static void write(Path file, String line) throws IOException {

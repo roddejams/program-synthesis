@@ -1,9 +1,6 @@
 package controllers;
 
-import models.rules.ChoiceRule;
-import models.rules.EqRule;
-import models.rules.Rule;
-import models.rules.Where;
+import models.rules.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -13,13 +10,15 @@ import java.util.stream.Collectors;
 public class HaskellGenerator {
 
     private List<ChoiceRule> skeletonRules;
+    private List<ChoiceRule> matchRules;
 
     //Temp until match learning is implemented
     private static Map<String, Integer> matchMap_1arg = new HashMap<>();
     private static Map<String, Integer> matchMap_2args = new HashMap<>();
 
-    public HaskellGenerator(List<ChoiceRule> skeletonRules) {
+    public HaskellGenerator(List<ChoiceRule> skeletonRules, List<ChoiceRule> matchRules) {
         this.skeletonRules = skeletonRules;
+        this.matchRules = matchRules;
         matchMap_1arg.put("N0", 0);
         matchMap_2args.put("N0", 0);
     }
@@ -28,8 +27,20 @@ public class HaskellGenerator {
         //Step 1: Get relevant rules from set of skeleton rules.
 
         List<ChoiceRule> chosenRules = new ArrayList<>();
-        for(String pred : chosenPredicates) {
-            if(pred.contains("where")) {
+
+        Map<String, String> matchMap = new HashMap<>();
+        chosenPredicates.stream().filter(pred -> pred.contains("match")).forEach(pred -> {
+            String split = pred.split("\\(")[1].split("\\)")[0].split(",")[1];
+            int ruleNum = Integer.valueOf(split);
+
+            ChoiceRule rule = skeletonRules.get(ruleNum - 1);
+            Match matchRule = (Match) rule;
+
+
+        });
+
+        chosenPredicates.stream().filter(pred -> !pred.contains("match")).forEach(pred -> {
+            if (pred.contains("where")) {
                 //Extract the rule number from the predicate. Should probably use a regex but #yolo
                 String split = pred.split("\\(")[1].split("\\)")[0].split(",")[0];
                 int ruleNum = Integer.valueOf(split);
@@ -40,7 +51,7 @@ public class HaskellGenerator {
                 int numConsts = rule.numConstants();
 
                 //Replace constants with learned values
-                for(int i = 1; i <= numConsts; i++){
+                for (int i = 1; i <= numConsts; i++) {
                     String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i];
                     ruleBody = ruleBody.replace("C" + i, constVal);
                 }
@@ -61,21 +72,20 @@ public class HaskellGenerator {
                 int constCount = 1;
 
                 //Replace all const locations with correct numbers
-                for (int index = ruleBody.indexOf("C"); index >= 0; index = ruleBody.indexOf("C", index + 1))
-                {
-                    bodyOut.replace(index+1, index+2, Integer.toString(constCount));
+                for (int index = ruleBody.indexOf("C"); index >= 0; index = ruleBody.indexOf("C", index + 1)) {
+                    bodyOut.replace(index + 1, index + 2, Integer.toString(constCount));
                     constCount++;
                 }
 
                 ruleBody = bodyOut.toString();
 
                 //Replace constants with learned values
-                for(int i = 1; i <= numConsts; i++){
-                    String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i+1];
+                for (int i = 1; i <= numConsts; i++) {
+                    String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i + 1];
                     ruleBody = ruleBody.replace("C" + i, constVal);
 
-                    for(int j = 0; j < args.size(); j++) {
-                        if(args.get(j).equals("C" + i)) {
+                    for (int j = 0; j < args.size(); j++) {
+                        if (args.get(j).equals("C" + i)) {
                             args.remove(j);
                             args.add(j, constVal);
                         }
@@ -87,12 +97,12 @@ public class HaskellGenerator {
                 ((Rule) rule).setRulePosition(Integer.valueOf(rulePosition));
 
                 //Replace variables with learned match values
-                if(Integer.valueOf(rulePosition) == 1) {
+                if (Integer.valueOf(rulePosition) == 1) {
                     Map<String, Integer> chosenMap = rule.args().size() == 1 ? matchMap_1arg : matchMap_2args;
-                    for(Map.Entry<String, Integer> entry : chosenMap.entrySet()) {
+                    for (Map.Entry<String, Integer> entry : chosenMap.entrySet()) {
                         ruleBody = ruleBody.replace(entry.getKey(), entry.getValue().toString());
-                        for(int i = 0; i < args.size(); i++) {
-                            if(args.get(i).equals(entry.getKey())) {
+                        for (int i = 0; i < args.size(); i++) {
+                            if (args.get(i).equals(entry.getKey())) {
                                 args.remove(i);
                                 args.add(i, entry.getValue().toString());
                             }
@@ -104,7 +114,7 @@ public class HaskellGenerator {
                 rule.updateArgs(args);
                 chosenRules.add(rule);
             }
-        }
+        });
 
         String[] haskell = new String[chosenRules.size()];
         int numRules = (int) chosenRules.stream().filter(r -> r instanceof Rule).count();
