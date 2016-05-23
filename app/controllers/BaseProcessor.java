@@ -155,7 +155,7 @@ public abstract class BaseProcessor extends UntypedActor {
                 examplesPath,
                 skeletonRulePath);
 
-        pb.directory(new File("bin/"));
+        pb.directory(new File("bin"));
 
         Process proc = pb.start();
 

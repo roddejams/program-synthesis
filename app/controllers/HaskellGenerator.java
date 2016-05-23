@@ -13,14 +13,11 @@ public class HaskellGenerator {
     private List<ChoiceRule> matchRules;
 
     //Temp until match learning is implemented
-    private static Map<String, Integer> matchMap_1arg = new HashMap<>();
-    private static Map<String, Integer> matchMap_2args = new HashMap<>();
+    private static Map<String, String> matchMap = new HashMap<>();
 
     public HaskellGenerator(List<ChoiceRule> skeletonRules, List<ChoiceRule> matchRules) {
         this.skeletonRules = skeletonRules;
         this.matchRules = matchRules;
-        matchMap_1arg.put("N0", 0);
-        matchMap_2args.put("N0", 0);
     }
 
     public List<String> generateHaskell(List<String> chosenPredicates) throws IOException {
@@ -28,15 +25,21 @@ public class HaskellGenerator {
 
         List<ChoiceRule> chosenRules = new ArrayList<>();
 
-        Map<String, String> matchMap = new HashMap<>();
         chosenPredicates.stream().filter(pred -> pred.contains("match")).forEach(pred -> {
             String split = pred.split("\\(")[1].split("\\)")[0].split(",")[1];
             int ruleNum = Integer.valueOf(split);
 
-            ChoiceRule rule = skeletonRules.get(ruleNum - 1);
+            ChoiceRule rule = matchRules.get(ruleNum - 1);
             Match matchRule = (Match) rule;
 
+            Map<String, String> learnedMap = matchRule.getMatchMap();
 
+            int i = 2;
+            for (Map.Entry<String, String> pair : learnedMap.entrySet()) {
+                String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i];
+                matchMap.put(pair.getKey(), constVal);
+                i++;
+            }
         });
 
         chosenPredicates.stream().filter(pred -> !pred.contains("match")).forEach(pred -> {
@@ -98,13 +101,12 @@ public class HaskellGenerator {
 
                 //Replace variables with learned match values
                 if (Integer.valueOf(rulePosition) == 1) {
-                    Map<String, Integer> chosenMap = rule.args().size() == 1 ? matchMap_1arg : matchMap_2args;
-                    for (Map.Entry<String, Integer> entry : chosenMap.entrySet()) {
-                        ruleBody = ruleBody.replace(entry.getKey(), entry.getValue().toString());
+                    for (Map.Entry<String, String> entry : matchMap.entrySet()) {
+                        ruleBody = ruleBody.replace(entry.getKey(), entry.getValue());
                         for (int i = 0; i < args.size(); i++) {
                             if (args.get(i).equals(entry.getKey())) {
                                 args.remove(i);
-                                args.add(i, entry.getValue().toString());
+                                args.add(i, entry.getValue());
                             }
                         }
                     }
@@ -133,7 +135,7 @@ public class HaskellGenerator {
 
             if(rule instanceof EqRule) {
                 String functionName = ((EqRule) rule).functionName();
-                codeline = String.format("%s %s = %s", functionName, inputs, ruleToHaskell(body));
+                codeline = String.format("%s %s = %s\n", functionName, inputs, ruleToHaskell(body));
 
                 int rulePosition = ((EqRule) rule).rulePosition();
                 haskell[rulePosition-1] = codeline;
