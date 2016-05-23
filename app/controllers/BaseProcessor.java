@@ -71,7 +71,7 @@ public abstract class BaseProcessor extends UntypedActor {
 
                 Path examplesPath = writeExamples(examplesToWrite, numArgs);
 
-                List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString(), rulesPath);
+                List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
 
                 HaskellGenerator generator = new HaskellGenerator(generatedRules, matchRules);
                 haskell = generator.generateHaskell(chosenPredicates);
@@ -154,7 +154,7 @@ public abstract class BaseProcessor extends UntypedActor {
         return allExamples.stream().filter(example -> !"".equals(example.getOutput())).collect(Collectors.toList());
     }
 
-    protected List<String> doClingo(String skeletonRulePath, String examplesPath, String rulesPath) throws InterruptedException, IOException, LearningException {
+    protected List<String> doClingo(String skeletonRulePath, String examplesPath) throws InterruptedException, IOException, LearningException {
         List<String> chosenPredicates = new ArrayList<>();
 
         //Run clingo
@@ -163,10 +163,8 @@ public abstract class BaseProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-        ProcessBuilder pb = new ProcessBuilder("clingo",
-                rulesPath,
-                examplesPath,
-                skeletonRulePath);
+        String[] procArguments = {"clingo", rulesPath, examplesPath, skeletonRulePath};
+        ProcessBuilder pb = new ProcessBuilder(procArguments);
 
         pb.directory(new File("bin"));
 
