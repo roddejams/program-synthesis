@@ -31,7 +31,6 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
     @Override
     public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs) {
-        String fnName = "f";
         List<String> args = generateArgs(numArgs);
 
         EqRule.EqRuleFactory factory = new EqRule.EqRuleFactory();
@@ -212,15 +211,18 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
             //Statically write match statements for now. Will learn these later
             if(numArgs == 1) {
-                write(file, "match2(f, (R + 1), Input) :- is_call(call(f, Input)), num_match(R).\n");
+                write(file, String.format("match2(%s, (R + 1), Input) :- is_call(call(%s, Input)), num_match(R).\n",
+                        fnName, fnName));
                 //write(file, "match2(f, 1, Input) :- Input == 0, is_call(call(f, Input)).\n");
                 //write(file, "match2(f, 2, Input) :- is_call(call(f, Input)).\n");
 
             } else {
-                write(file, "match2(f, (R + 1), (Arg1, Args)) :- rule(call(f, (Arg1, Args))), num_match(R).\n");
+                write(file, String.format("match2(%s, (R + 1), (Arg1, Args)) :- is_call(call(%s, (Arg1, Args))), num_match(R).\n",
+                        fnName, fnName));
                 //write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, is_call(call(f, (Arg1, Args))).\n");
                 //write(file, "match2(f, 2, (Arg1, Args)) :- is_call(call(f, (Arg1, Args))).\n");
             }
+
             write(file, examples.toString());
 
         } catch (IOException e) {

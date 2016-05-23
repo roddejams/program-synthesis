@@ -31,6 +31,7 @@ $(document).on("click", "#export-btn", function (event) {
                 statusCode:  {
                     200 :function(html) {
                         $($CURR_TAB).html(html);
+                        prettyPrint();
                         clearInterval(interval);
                         btn.button('reset');
                     }
@@ -47,7 +48,7 @@ $(document).on("click", "#save-btn", function (event) {
 
     var $new_name = $($CURR_TAB).find("#funcName").val();
 
-    $('.nav-tabs .active a').text($new_name);
+    $('.nav-tabs .active a').find("#tab-name").text($new_name);
 });
 
 $(document).on("click", ".table-add", function() {

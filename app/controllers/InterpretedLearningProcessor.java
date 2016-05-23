@@ -20,17 +20,14 @@ public class InterpretedLearningProcessor extends BaseProcessor {
 
     public static Props props = Props.create(InterpretedLearningProcessor.class);
 
-    private static List<String> functionNames = Arrays.asList("f");
-
     public InterpretedLearningProcessor() {
         rulesPath = "../ASP/rules.lp";
     }
 
     public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs) {
-
-        String fnName = functionNames.get(0);
         List<String> args = generateArgs(numArgs);
         List<String> vars = generateWhereVars(maxDepth);
+        List<String> functionNames = Arrays.asList(fnName);
 
         ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
         Rule.RuleBuilder ruleBuilder = new Rule.RuleBuilder().withDepth(maxDepth).withName(fnName);

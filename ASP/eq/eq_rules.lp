@@ -23,7 +23,7 @@ eq(In, Out) :- example(In, Out).
 :- eq(mul(A, 0), Val), Val > 0.
 :- example(In, Out), not terminates(In).
 
-is_call(call(f, Expr)):- eq(call(f, Expr), Out).
+is_call(call(F, Expr)):- eq(call(F, Expr), Out).
 
 eq(Expr, Val) :- rule(Index, F, Arg_Expr, Expr), match(F, Index, Arg_Expr), eq(call(F, Arg_Expr), Val).
 eq(A, Val - B) :- eq(add(A, B), Val), const_number(B), B <= Val.

@@ -1,7 +1,17 @@
 @(examplesForm : Form[IOExamples],
   generatedCode: List[String])
 
-<form id="learningForm" method="post" action="" class="form-horizontal">
+<div class="row">
+    <div class="col-md-4">
+        <button type="submit" id="export-btn" class="btn btn-primary" data-loading-text="Running..."><span class="glyphicon glyphicon-triangle-right"></span> Run ASP </button>
+        <button id="save-btn" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Save </button>
+            <!--<div class="col-md-1">
+        </div>
+        <div class="col-md-1 col-md-offset-1" >
+        </div>-->
+    </div>
+</div>
+<div class="row top-buffer">
     <div class="col-md-4">
         <div id="table" class="table-editable">
             <table class="table table-bordered table-hover">
@@ -110,29 +120,18 @@
                 }
             </table>
         </div>
-        <div class="row">
-            <div class="col-md-1">
-                <button type="submit" id="export-btn" class="btn btn-primary" data-loading-text="Running...">Run ASP</button>
-            </div>
-            <div class="col-md-1 col-md-offset-1" >
-                <button id="save-btn" class="btn btn-primary">Save</button>
-            </div>
-        </div>
     </div>
 
-    <div class="col-md-3 col-md-offset-1">
+    <div class="col-md-3">
         <div class="panel panel-default" id="codePanel">
             <div class="panel-heading">
                 <h4>Generated Code</h4>
             </div>
             <div class="panel-body" id="codeBody">
-                <code class="prettyprint">
-                @generatedCode.map { line =>
-                    <p>@line</p>
-                }
-                </code>
+                <pre class="prettyprint lang-hs"> @generatedCode.map {line => @line}</pre>
             </div>
         </div>
     </div>
-</form>
+</div>
+
 

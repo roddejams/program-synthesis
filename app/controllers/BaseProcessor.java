@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public abstract class BaseProcessor extends UntypedActor {
 
     protected String rulesPath;
+    protected String fnName = "f";
 
     protected static final List<String> arg_ops = Arrays.asList(
             "add(%s, %s)",
@@ -46,54 +47,67 @@ public abstract class BaseProcessor extends UntypedActor {
         }
     }
 
-    public void runLearningTask(IOExamples inputExamples) throws IOException, InterruptedException {
-        result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
+    public void runLearningTask(IOExamples inputExamples) {
+        try {
+            result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
+            if(!inputExamples.getName().isEmpty()) {
+                fnName = inputExamples.getName();
+            }
 
-        List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
+            List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
 
-        if(!computedExamples.equals(examples)) {
-            //If there's new examples, relearn.
-            IOExamples examplesToWrite = new IOExamples();
-            examplesToWrite.setExamples(examples);
+            if (!computedExamples.equals(examples)) {
+                //If there's new examples, relearn.
+                IOExamples examplesToWrite = new IOExamples();
+                examplesToWrite.setExamples(examples);
+                examplesToWrite.setName(fnName);
 
-            int numArgs = examples.get(0).getInputs().size();
-            int maxDepth = 3; //TODO: Work out a good way to calc this dynamically
-            //int numFuncs = functionNames.size();
+                int numArgs = examples.get(0).getInputs().size();
+                int maxDepth = 3; //TODO: Work out a good way to calc this dynamically
+                //int numFuncs = functionNames.size();
 
-            List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numArgs);
-            List<ChoiceRule> matchRules = generateMatchRules(numArgs);
+                List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numArgs);
+                List<ChoiceRule> matchRules = generateMatchRules(numArgs);
 
-            Path skeletonRulePath = writeSkeletonRules(generatedRules, matchRules, maxDepth);
+                Path skeletonRulePath = writeSkeletonRules(generatedRules, matchRules, maxDepth);
 
-            Path examplesPath = writeExamples(examplesToWrite, numArgs);
+                Path examplesPath = writeExamples(examplesToWrite, numArgs);
 
-            List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString(), rulesPath);
+                List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString(), rulesPath);
 
-            HaskellGenerator generator = new HaskellGenerator(generatedRules, matchRules);
-            haskell = generator.generateHaskell(chosenPredicates);
-            System.out.println(haskell);
+                HaskellGenerator generator = new HaskellGenerator(generatedRules, matchRules);
+                haskell = generator.generateHaskell(chosenPredicates);
+                System.out.println(haskell);
 
-            //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
-            haskellFile = File.createTempFile("projectout", ".hs").toPath();
-            writeHaskell(haskell, haskellFile);
+                //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
+                haskellFile = File.createTempFile("projectout", ".hs").toPath();
+                writeHaskell(haskell, haskellFile);
+            }
+
+            //Complete examples if necessary
+            if (examples.size() != inputExamples.getExamples().size()) {
+                List<IOExample> completedExamples = completeExamples(inputExamples, haskellFile.toAbsolutePath().toString());
+                computedExamples = completedExamples;
+                examples.addAll(completedExamples);
+
+                IOExamples out = new IOExamples();
+                out.setExamples(examples);
+                out.setName(fnName);
+
+                result = new LearningResult(out, haskell);
+            } else {
+                computedExamples = inputExamples.getExamples();
+                result = new LearningResult(inputExamples, haskell);
+            }
+
+            finished = true;
+        } catch (LearningException e) {
+            finished = true;
+            result = new LearningResult(inputExamples, Arrays.asList(e.getMessage()));
+        } catch (IOException | InterruptedException | NullPointerException e) {
+            finished = true;
+            result = new LearningResult(inputExamples, Arrays.asList("An internal server error occurred :("));
         }
-
-        //Complete examples if necessary
-        if (examples.size() != inputExamples.getExamples().size()) {
-            List<IOExample> completedExamples = completeExamples(inputExamples, haskellFile.toAbsolutePath().toString());
-            computedExamples = completedExamples;
-            examples.addAll(completedExamples);
-
-            IOExamples out = new IOExamples();
-            out.setExamples(examples);
-
-            result = new LearningResult(out, haskell);
-        } else {
-            computedExamples = inputExamples.getExamples();
-            result = new LearningResult(inputExamples, haskell);
-        }
-
-        finished = true;
     }
 
     abstract List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs);
@@ -141,7 +155,7 @@ public abstract class BaseProcessor extends UntypedActor {
         return allExamples.stream().filter(example -> !"".equals(example.getOutput())).collect(Collectors.toList());
     }
 
-    protected static List<String> doClingo(String skeletonRulePath, String examplesPath, String rulesPath) throws InterruptedException, IOException {
+    protected List<String> doClingo(String skeletonRulePath, String examplesPath, String rulesPath) throws InterruptedException, IOException, LearningException {
         List<String> chosenPredicates = new ArrayList<>();
 
         //Run clingo
@@ -162,14 +176,25 @@ public abstract class BaseProcessor extends UntypedActor {
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 
-
         // Print clingo output
         String s;
         while ((s = stdInput.readLine()) != null) {
             System.out.println(s);
             List<String> splitLine = Arrays.asList(s.split("\\s+"));
+            List<String> preds = new ArrayList<>();
 
-            List<String> preds = splitLine.stream().filter(pred -> pred.startsWith("choose")).collect(Collectors.toList());
+            for(String pred : splitLine) {
+                if (pred.startsWith("choose")) {
+                    preds.add(pred);
+                }
+                if (pred.contains("UNSATISFIABLE")) {
+                    throw new LearningException("An error occurred while learning.\n " +
+                            "Either your examples are inconsistent or the learning system is not expressive enough.\n " +
+                            "Please modify your examples and try again.");
+                }
+            }
+
+            //List<String> preds = splitLine.stream().filter(pred -> pred.startsWith("choose")).collect(Collectors.toList());
             if(!preds.isEmpty()) {
                 chosenPredicates = preds;
             }
@@ -192,7 +217,7 @@ public abstract class BaseProcessor extends UntypedActor {
         write(haskellFile, "import System.Environment\n");
         write(haskellFile, "main = do\n");
         write(haskellFile, "\targ:args <- getArgs\n");
-        write(haskellFile, "\tputStrLn (show (f (read arg)))\n");
+        write(haskellFile, String.format("\tputStrLn (show (%s (read arg)))\n", fnName));
         write(haskellFile, "\n");
 
         for(String line : haskell) {
@@ -201,7 +226,6 @@ public abstract class BaseProcessor extends UntypedActor {
     }
 
     protected List<ChoiceRule> generateMatchRules(int numArgs) {
-        String fnName = "f";
         List<String> args = generateArgs(numArgs);
 
         ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
@@ -238,5 +262,11 @@ public abstract class BaseProcessor extends UntypedActor {
             }
         }
         return empty;
+    }
+
+    public class LearningException extends Exception {
+        public LearningException(String message) {
+            super(message);
+        }
     }
 }

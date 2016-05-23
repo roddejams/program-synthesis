@@ -27,10 +27,15 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="@routes.Assets.versioned("javascripts/js/bootstrap.min.js")"></script>
+
 
         <!-- Code prettify used to display Haskell -->
-        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=hs"></script>
+        <script src="@routes.Assets.versioned("javascripts/prettify/prettify.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/prettify/lang-hs.js")"></script>
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/prettify.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/github-v2.css")">
+
+        <script src="@routes.Assets.versioned("javascripts/js/bootstrap.min.js")"></script>
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -50,15 +55,15 @@
                                 <li class="hide">
                                     <a data-toggle="tab" href="#">
                                         <button class="close closeTab" type="button" data-toggle="modal"
-                                        data-target="#closeModal">×</button>
-                                        New Task
+                                        data-target="#closeModal"><small><span class="glyphicon glyphicon-remove"></span></small></button>
+                                        <span id="tab-name"> New Task </span>
                                     </a>
                                 </li>
                                 <li class="active">
                                     <a data-toggle="tab" href="#task-1">
                                         <button class="close closeTab" type="button" data-toggle="modal"
-                                        data-target="#closeModal">×</button>
-                                        New Task
+                                        data-target="#closeModal"><small><span class="glyphicon glyphicon-remove"></span></small></button>
+                                        <span id="tab-name"> New Task </span>
                                     </a>
                                 </li>
                                 <li id="task-add-button">
