@@ -41,6 +41,10 @@ $(document).on("click", "#export-btn", function (event) {
     });
 });
 
+$(document).on("click", "#download-btn", function (event) {
+    event.preventDefault();
+});
+
 $(document).on("click", "#save-btn", function (event) {
     event.preventDefault();
 
