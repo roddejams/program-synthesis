@@ -7,6 +7,7 @@ import models.IOExamples;
 import models.LearningResult;
 import models.rules.ChoiceRule;
 import models.rules.Match;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,10 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class BaseProcessor extends UntypedActor {
@@ -103,10 +101,11 @@ public abstract class BaseProcessor extends UntypedActor {
             finished = true;
         } catch (LearningException e) {
             finished = true;
-            result = new LearningResult(inputExamples, Arrays.asList(e.getMessage()));
+            result = new LearningResult(inputExamples, Collections.singletonList(e.getMessage()));
         } catch (IOException | InterruptedException | NullPointerException e) {
             finished = true;
-            result = new LearningResult(inputExamples, Arrays.asList("An internal server error occurred :("));
+            result = new LearningResult(inputExamples, Collections.singletonList("An internal server error occurred : \n" + ExceptionUtils.getStackTrace(e)));
+            e.printStackTrace();
         }
     }
 
