@@ -11,6 +11,7 @@
 #hide check_terminate/1.
 #hide terminates/1.
 #hide next_step/2.
+#hide const_range/1.
 
 const_number(0..10).
 const(X) :- const_number(X).

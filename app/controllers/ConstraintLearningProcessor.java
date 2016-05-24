@@ -67,7 +67,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
             }
         });
 
-        Set<String> simpleRules = factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).map(ChoiceRule::body).collect(Collectors.toSet());
+        Set<String> simpleRules = factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() <= 1).map(ChoiceRule::body).collect(Collectors.toSet());
         List<Set<String>> cartesianArguments = Collections.nCopies(numArgs, simpleRules);
         Set<List<String>> argCombinations = Sets.cartesianProduct(cartesianArguments);
 
@@ -83,7 +83,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         //    factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format("call(%s, %s)", fnName, rule.body())));
         //});
 
-        if(numArgs == 1) {
+        //if(numArgs == 1) {
             for (int i = 2; i <= maxDepth; i++) {
                 for (ChoiceRule rule : factory.getCallRules()) {
                     if (((EqRule) rule).depth() == i - 1) {
@@ -96,7 +96,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
                     }
                 }
             }
-        }
+        //}
 
         return factory.getAllRules();
     }

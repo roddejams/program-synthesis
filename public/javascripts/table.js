@@ -15,8 +15,14 @@ $(document).on("click", "#export-btn", function (event) {
     btn.button('loading');
 
     var learningForm = $($CURR_TAB).find("#learningForm");
-
-    var posting = $.post("/", learningForm.serialize());
+    
+    var uuid = $($CURR_TAB).data('actor-uuid');
+    var posting;
+    if (typeof uuid != 'undefined' ) {
+       posting = $.post("/" + uuid, learningForm.serialize());
+    } else {
+       posting = $.post("/new", learningForm.serialize());
+    }
 
     posting.done(function(data) {
         console.log(data.uuid);

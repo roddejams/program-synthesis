@@ -61,11 +61,18 @@ public class HomeController extends Controller {
         ));
     }
 
-    public Result runLearningTask() {
+    public Result runLearningTask(String uuid) {
         Form<IOExamples> formData = formFactory.form(IOExamples.class).bindFromRequest();
         IOExamples examples = formData.get();
-        ActorRef learningActor = system.actorOf(ConstraintLearningProcessor.props);
 
+	ActorRef learningActor;
+
+        if(uuid.equals("new")) {        
+	    learningActor = system.actorOf(ConstraintLearningProcessor.props);
+	} else {
+            uuid =  "akka://application/user/" + uuid;
+	    learningActor = system.actorFor(uuid);
+        }
         learningActor.tell(examples, learningActor);
 
         System.out.println(learningActor.path());

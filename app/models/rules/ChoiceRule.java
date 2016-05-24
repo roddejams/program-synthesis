@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class ChoiceRule {
 
-    protected final int numConstants;
+    protected int numConstants;
     protected int ruleNumber;
     protected List<String> args;
     protected String body;

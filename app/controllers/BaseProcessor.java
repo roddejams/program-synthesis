@@ -53,7 +53,10 @@ public abstract class BaseProcessor extends UntypedActor {
             }
 
             List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
-
+		
+ 	    System.out.println("Existing examples : " + computedExamples);
+ 	    System.out.println("Uncompleted examples  : " + examples);
+		
             if (!computedExamples.equals(examples)) {
                 //If there's new examples, relearn.
                 IOExamples examplesToWrite = new IOExamples();
@@ -85,9 +88,9 @@ public abstract class BaseProcessor extends UntypedActor {
             //Complete examples if necessary
             if (examples.size() != inputExamples.getExamples().size()) {
                 List<IOExample> completedExamples = completeExamples(inputExamples, haskellFile.toAbsolutePath().toString());
-                computedExamples = completedExamples;
                 examples.addAll(completedExamples);
 
+                computedExamples = examples;
                 IOExamples out = new IOExamples();
                 out.setExamples(examples);
                 out.setName(fnName);

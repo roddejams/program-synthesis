@@ -37,12 +37,13 @@ public class HaskellGenerator {
             int numConsts = matchRule.numConstants();
             String learnedCondition = matchRule.getCondition();
 
-            for (int i = 2; i <= numConsts + 1; i++) {
-                String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i];
+            for (int i = 1; i <= numConsts; i++) {
+                String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i + 1];
                 learnedCondition = learnedCondition.replace("C" + i, constVal);
             }
-
-            learnedConditions[matchRule.rulePosition() - 1] = learnedCondition;
+	
+	    int rulePosition = Integer.valueOf(pred.split("\\(")[1].split("\\)")[0].split(",")[0]);
+            learnedConditions[rulePosition - 1] = learnedCondition;
         });
 
         chosenPredicates.stream().filter(pred -> !pred.contains("match")).forEach(pred -> {
@@ -136,7 +137,7 @@ public class HaskellGenerator {
         inputs = inputs.replace(",", "");
         inputs = inputs.toLowerCase();
 
-        haskell[0] = String.format("%s %s", functionName, inputs);
+        haskell[0] = String.format("%s %s\n", functionName, inputs);
 
         for(ChoiceRule rule : chosenRules) {
             String body = rule.body();
