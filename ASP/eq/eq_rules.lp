@@ -13,12 +13,14 @@
 #hide next_step/2.
 
 const_number(0..10).
-const(-100..100).
+const(X) :- const_number(X).
+const(e).
+const_range(-100..100).
 
 %type(call(f, X), Expr) :- X = (sub(3, 1), mul(3, 1)), rule(2, f, @eval(X), Expr).
 
 eq(In, Out) :- example(In, Out).
-:- eq(N1, N2), const(N1), const(N2), N1 != N2.
+:- eq(N1, N2), const_range(N1), const_range(N2), N1 != N2.
 :- eq(mul(0, B), Val), Val > 0.
 :- eq(mul(A, 0), Val), Val > 0.
 :- example(In, Out), not terminates(In).
@@ -32,8 +34,10 @@ eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
 eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
 eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
 eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
+eq(X, Val) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).	
+eq(Xs, Vals) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 
-terminates(Expr) :- next_step(Expr, Val), const_number(Val).
+terminates(Expr) :- next_step(Expr, Val), const(Val).
 terminates(Expr) :- next_step(Expr, Term_Expr), terminates(Term_Expr).
 
 next_step(e, In):- example(In, Out).
@@ -44,6 +48,7 @@ next_step(mul(A, B), B) :- check_terminate(mul(A, B)), const_number(A).
 next_step(mul(A, B), A) :- check_terminate(mul(A, B)), const_number(B).
 next_step(sub(A, B), A) :- check_terminate(sub(A, B)), const_number(B).
 next_step(sub(A, B), B) :- check_terminate(sub(A, B)), const_number(A).
+next_step((X, Xs), Xs) 	:- check_terminate((X, Xs)), const_number(X).
 check_terminate(X) :- next_step(_, X).
 
 match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
