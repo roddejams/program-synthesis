@@ -125,11 +125,11 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
             for(ChoiceRule match : matchRules) {
                 Match matchRule = (Match) match;
-                if (matchRule.getCondition().size() > maxMatchConstants) {
-                    maxMatchConstants = matchRule.getCondition().size();
+                if (matchRule.numConstants() > maxMatchConstants) {
+                    maxMatchConstants = matchRule.numConstants();
                 }
 
-                int numConsts = matchRule.getCondition().size();
+                int numConsts = matchRule.numConstants();
                 String nums = matchNums[numConsts];
                 if (nums == null) {
                     matchNums[numConsts] = "" + matchRule.ruleNumber();
