@@ -229,8 +229,16 @@ public abstract class BaseProcessor extends UntypedActor {
         Match.MatchBuilder builder = new Match.MatchBuilder().withArgs(args).withName(fnName);
 
         for(String arg : args) {
-            Map<String, String> map = ImmutableMap.of(arg, "C1");
-            factory.addRule(builder.withMapping(map));
+            factory.addRule(builder.withCondition(String.format("%s == %s", arg, "C1")));
+        }
+
+        for(String arg : args) {
+            for(String arg2 : args) {
+                if(!arg.equals(arg2)) {
+                    factory.addRule(builder.withCondition(String.format("%s == %s", arg, arg2)));
+                    factory.addRule(builder.withCondition(String.format("%s < %s", arg, arg2)));
+                }
+            }
         }
 
         return factory.getRules();

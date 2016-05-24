@@ -14,6 +14,7 @@ public class HaskellGenerator {
 
     //Temp until match learning is implemented
     private static Map<String, String> matchMap = new HashMap<>();
+    private String[] learnedConditions;
 
     public HaskellGenerator(List<ChoiceRule> skeletonRules, List<ChoiceRule> matchRules) {
         this.skeletonRules = skeletonRules;
@@ -24,6 +25,7 @@ public class HaskellGenerator {
         //Step 1: Get relevant rules from set of skeleton rules.
 
         List<ChoiceRule> chosenRules = new ArrayList<>();
+        learnedConditions = new String[chosenPredicates.size() - 1];
 
         chosenPredicates.stream().filter(pred -> pred.contains("match")).forEach(pred -> {
             String split = pred.split("\\(")[1].split("\\)")[0].split(",")[1];
@@ -32,14 +34,15 @@ public class HaskellGenerator {
             ChoiceRule rule = matchRules.get(ruleNum - 1);
             Match matchRule = (Match) rule;
 
-            Map<String, String> learnedMap = matchRule.getMatchMap();
+            int numConsts = matchRule.numConstants();
+            String learnedCondition = matchRule.getCondition();
 
-            int i = 2;
-            for (Map.Entry<String, String> pair : learnedMap.entrySet()) {
+            for (int i = 2; i <= numConsts + 1; i++) {
                 String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i];
-                matchMap.put(pair.getKey(), constVal);
-                i++;
+                learnedCondition = learnedCondition.replace("C" + i, constVal);
             }
+
+            learnedConditions[matchRule.rulePosition() - 1] = learnedCondition;
         });
 
         chosenPredicates.stream().filter(pred -> !pred.contains("match")).forEach(pred -> {
@@ -118,30 +121,40 @@ public class HaskellGenerator {
             }
         });
 
-        String[] haskell = new String[chosenRules.size()];
+        String[] haskell;
         int numRules = (int) chosenRules.stream().filter(r -> r instanceof Rule).count();
 
         //Step 2: Turn rules into haskell.
+
+        ChoiceRule baseRule = chosenRules.get(0);
+
+        haskell = new String[chosenRules.size() + 1];
+        String inputs = baseRule.args().toString();
+        String functionName = ((EqRule) baseRule).functionName();
+        inputs = inputs.replace("[", "");
+        inputs = inputs.replace("]", "");
+        inputs = inputs.replace(",", "");
+        inputs = inputs.toLowerCase();
+
+        haskell[0] = String.format("%s %s", functionName, inputs);
 
         for(ChoiceRule rule : chosenRules) {
             String body = rule.body();
             String codeline = "";
 
-            String inputs = rule.args().toString();
-            inputs = inputs.replace("[", "");
-            inputs = inputs.replace("]", "");
-            inputs = inputs.replace(",", "");
-            inputs = inputs.toLowerCase();
-
             if(rule instanceof EqRule) {
-                String functionName = ((EqRule) rule).functionName();
-                codeline = String.format("%s %s = %s\n", functionName, inputs, ruleToHaskell(body));
-
+                int numEqRules = chosenRules.size();
                 int rulePosition = ((EqRule) rule).rulePosition();
-                haskell[rulePosition-1] = codeline;
-            } else if(rule instanceof Rule) {
-                String functionName = ((Rule) rule).functionName();
 
+                if(rulePosition == numEqRules) {
+                    codeline = String.format("\t| otherwise = %s", ruleToHaskell(body));
+                } else {
+                    String condition = learnedConditions[rulePosition - 1];
+                    codeline = String.format("\t| %s = %s\n", ruleToHaskell(condition), ruleToHaskell(body));
+                }
+
+                haskell[rulePosition] = codeline;
+            } else if(rule instanceof Rule) {
                 if (body.contains("add")) {
                     String arg1 = body.split("\\(")[1].split(",")[0].toLowerCase().trim();
                     String arg2 = body.split("\\(")[1].split(",")[1].split("\\)")[0].toLowerCase().trim();

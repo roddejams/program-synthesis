@@ -7,16 +7,17 @@ import java.util.Map;
 
 public class Match extends ChoiceRule{
 
-    private Map<String, String> matchMap;
+    private String condition;
     private int rulePosition;
 
-    public Match(int ruleNumber, List<String> args, String body, String functionName, Map<String, String > matchMap) {
+    public Match(int ruleNumber, List<String> args, String body, String functionName, String condition) {
         super(ruleNumber, args, body, functionName);
-        this.matchMap = matchMap;
+        numConstants = StringUtils.countMatches(condition, "C");
+        this.condition = condition;
     }
 
-    public Map<String, String> getMatchMap() {
-        return matchMap;
+    public String getCondition() {
+        return condition;
     }
 
     public int rulePosition() {
@@ -28,7 +29,7 @@ public class Match extends ChoiceRule{
     }
 
     public static class MatchBuilder extends ChoiceRuleBuilder {
-        private Map<String, String> matchMap;
+        private String condition;
 
         @Override
         public MatchBuilder withRuleNumber(int ruleNumber) {
@@ -53,18 +54,14 @@ public class Match extends ChoiceRule{
             return this;
         }
 
-        public MatchBuilder withMapping(Map<String, String> matchMap) {
-            this.matchMap = new HashMap<>(matchMap);
+        public MatchBuilder withCondition(String condition) {
+            this.condition = condition;
             return this;
         }
 
         @Override
         public Match build() {
-            return new Match(ruleNumber, args, null, functionName, matchMap);
-        }
-
-        public Match buildDefault() {
-            return new Match(ruleNumber, args, null, functionName, new HashMap<>());
+            return new Match(ruleNumber, args, null, functionName, condition);
         }
     }
 
@@ -75,11 +72,11 @@ public class Match extends ChoiceRule{
         argString = argString.replace("]", ")");
 
         String constChoice = "";
-        for(int i = 1; i <= matchMap.size(); i++){
+        for(int i = 1; i <= numConstants; i++){
             constChoice += String.format(", C%d", i);
         }
 
-        if(matchMap.isEmpty()) {
+        if(condition.isEmpty()) {
             return String.format("match2(%s, %s, %s) :- is_call(call(%s, %s)).\n",
                     functionName,
                     ruleNumber,
@@ -87,13 +84,12 @@ public class Match extends ChoiceRule{
                     functionName,
                     argString);
         } else {
-            String mapString = mapToString(matchMap);
 
             return String.format("match2(%s, %s, %s) :- %s, is_call(call(%s, %s)), choose_match(R, %d%s).\n",
                     functionName,
                     ruleNumber,
                     argString,
-                    mapString,
+                    condition,
                     functionName,
                     argString,
                     ruleNumber,
