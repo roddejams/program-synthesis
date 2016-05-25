@@ -2,18 +2,44 @@
 
 <form id="learningForm" method="post" action="" class="form-horizontal">
     <div class="row">
-        <div class="col-md-2">
-            @helper.inputText(examplesForm("name"),
-                'id -> "funcName",
-                'class -> "form-control",
-                'placeholder -> "f",
-                '_label -> "Function Name")
+        <div class="col-md-6">
+            <div class="col-md-4">
+                @helper.inputText(examplesForm("name"),
+                    'id -> "funcName",
+                    'class -> "form-control",
+                    'placeholder -> "f",
+                    '_label -> "Function Name")
+            </div>
+            <div class="col-md-4">
+                <label for="numArgs">
+                    No. Args
+                </label>
+                <input class="form-control" id="numArgs" value="1">
+            </div>
+            <div class="col-md-12">
+                <button type="submit" id="export-btn" class="btn btn-primary" data-loading-text="Running..."><span class="glyphicon glyphicon-triangle-right"></span> Run ASP </button>
+                <button id="save-btn" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Save </button>
+                <button id="download-btn" class="btn btn-primary"><span class="glyphicon glyphicon-cloud-download"></span> Download </button>
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="numArgs">
-                No. Args
-            </label>
-            <input class="form-control" id="numArgs" value="1">
+        <div class="col-md-6">
+            <div class="panel panel-default" id="langBiasPanel">
+                <div class="panel-heading">
+                    <h4>Language Bias</h4>
+                </div>
+                <div class="panel-body" id="langBiasBody">
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Addition</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Subtraction</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Multiplication</label>
+                    </div>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Equality</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Less Than</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Greater Than</label>
+                    </div>
+                </div>
+            </div>
         </div>
         <!--<div class="col-md-2">
             <label for="numFuncs">

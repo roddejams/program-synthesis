@@ -2,11 +2,7 @@
   generatedCode: List[String])
 
 <div class="row">
-    <div class="col-md-4">
-        <button type="submit" id="export-btn" class="btn btn-primary" data-loading-text="Running..."><span class="glyphicon glyphicon-triangle-right"></span> Run ASP </button>
-        <button id="save-btn" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Save </button>
-        <button id="download-btn" class="btn btn-primary"><span class="glyphicon glyphicon-cloud-download"></span> Download </button>
-    </div>
+
 </div>
 <div class="row top-buffer">
     <div class="col-md-6">
@@ -119,7 +115,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-6">
         <div class="panel panel-default" id="codePanel">
             <div class="panel-heading">
                 <h4>Generated Code</h4>
@@ -128,16 +124,6 @@
                 <pre class="prettyprint lang-hs"> @generatedCode.map {line => @line}</pre>
             </div>
         </div>
-    </div>  
-    <div class="col-md-3">
-	<div class="panel panel-default" id="langBiasPanel">
-	    <div class="panel-heading">
-		<h4>Language Bias</h4>
-	    </div>
-	    <div class="panel-body" id="langBiasBody">
-	
-	    </div>
-	</div>
     </div>
 </div>
 
