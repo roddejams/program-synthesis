@@ -12,30 +12,34 @@
 \BOOKMARK [2][-]{subsection.2.2.2}{Overview of current tools}{section.2.2}% 12
 \BOOKMARK [1][-]{section.2.3}{The Target Language, Haskell}{chapter.2}% 13
 \BOOKMARK [0][-]{chapter.3}{The Initial Approach : A Haskell Interpreter in ASP}{}% 14
-\BOOKMARK [1][-]{section.3.1}{A Haskell Interpreter in ASP}{chapter.3}% 15
-\BOOKMARK [2][-]{subsection.3.1.1}{Target Language}{section.3.1}% 16
-\BOOKMARK [2][-]{subsection.3.1.2}{Program Representation}{section.3.1}% 17
-\BOOKMARK [2][-]{subsection.3.1.3}{Evaluating Rules}{section.3.1}% 18
-\BOOKMARK [1][-]{section.3.2}{Initial Learning}{chapter.3}% 19
-\BOOKMARK [1][-]{section.3.3}{Performance Issues}{chapter.3}% 20
-\BOOKMARK [0][-]{chapter.4}{A Second Approach : Constraint Based Learning}{}% 21
-\BOOKMARK [1][-]{section.4.1}{Top Down Vs. Bottom Up}{chapter.4}% 22
-\BOOKMARK [1][-]{section.4.2}{Learning}{chapter.4}% 23
-\BOOKMARK [1][-]{section.4.3}{Performance}{chapter.4}% 24
-\BOOKMARK [0][-]{chapter.5}{Front end implementation : Building a working UI}{}% 25
-\BOOKMARK [1][-]{section.5.1}{User's Manual}{chapter.5}% 26
-\BOOKMARK [1][-]{section.5.2}{Used Technologies}{chapter.5}% 27
-\BOOKMARK [2][-]{subsection.5.2.1}{Play Framework}{section.5.2}% 28
-\BOOKMARK [1][-]{section.5.3}{User Feedback and Evaluation}{chapter.5}% 29
-\BOOKMARK [0][-]{chapter.6}{Critical Evaluation}{}% 30
-\BOOKMARK [1][-]{section.6.1}{Testing}{chapter.6}% 31
-\BOOKMARK [2][-]{subsection.6.1.1}{One Argument Programs}{section.6.1}% 32
-\BOOKMARK [2][-]{subsection.6.1.2}{Two Argument Programs}{section.6.1}% 33
-\BOOKMARK [1][-]{section.6.2}{Comparison to Existing Tools}{chapter.6}% 34
-\BOOKMARK [0][-]{chapter.7}{Conclusions and Future Work}{}% 35
-\BOOKMARK [1][-]{section.7.1}{Conclusions}{chapter.7}% 36
-\BOOKMARK [2][-]{subsection.7.1.1}{What worked}{section.7.1}% 37
-\BOOKMARK [2][-]{subsection.7.1.2}{Areas for improvement}{section.7.1}% 38
-\BOOKMARK [1][-]{section.7.2}{Future Work}{chapter.7}% 39
-\BOOKMARK [2][-]{subsection.7.2.1}{Learning Improvements}{section.7.2}% 40
-\BOOKMARK [2][-]{subsection.7.2.2}{UI Features}{section.7.2}% 41
+\BOOKMARK [1][-]{section.3.1}{Target Language}{chapter.3}% 15
+\BOOKMARK [2][-]{subsection.3.1.1}{Program Representation}{section.3.1}% 16
+\BOOKMARK [1][-]{section.3.2}{Evaluating Rules}{chapter.3}% 17
+\BOOKMARK [1][-]{section.3.3}{A Worked Example : The Fibonacci Program}{chapter.3}% 18
+\BOOKMARK [0][-]{chapter.4}{Learning from Examples}{}% 19
+\BOOKMARK [1][-]{section.4.1}{Additional Rules}{chapter.4}% 20
+\BOOKMARK [1][-]{section.4.2}{Skeleton Rules}{chapter.4}% 21
+\BOOKMARK [1][-]{section.4.3}{Multiple Choices and Optimisation}{chapter.4}% 22
+\BOOKMARK [1][-]{section.4.4}{A Worked Example : Learning Fibonacci}{chapter.4}% 23
+\BOOKMARK [1][-]{section.4.5}{Performance Issues}{chapter.4}% 24
+\BOOKMARK [0][-]{chapter.5}{A Second Approach : Constraint Based Learning}{}% 25
+\BOOKMARK [1][-]{section.5.1}{Top Down Vs. Bottom Up}{chapter.5}% 26
+\BOOKMARK [1][-]{section.5.2}{Learning}{chapter.5}% 27
+\BOOKMARK [1][-]{section.5.3}{Performance}{chapter.5}% 28
+\BOOKMARK [0][-]{chapter.6}{Front end implementation : Building a working UI}{}% 29
+\BOOKMARK [1][-]{section.6.1}{User's Manual}{chapter.6}% 30
+\BOOKMARK [1][-]{section.6.2}{Used Technologies}{chapter.6}% 31
+\BOOKMARK [2][-]{subsection.6.2.1}{Play Framework}{section.6.2}% 32
+\BOOKMARK [1][-]{section.6.3}{User Feedback and Evaluation}{chapter.6}% 33
+\BOOKMARK [0][-]{chapter.7}{Critical Evaluation}{}% 34
+\BOOKMARK [1][-]{section.7.1}{Testing}{chapter.7}% 35
+\BOOKMARK [2][-]{subsection.7.1.1}{One Argument Programs}{section.7.1}% 36
+\BOOKMARK [2][-]{subsection.7.1.2}{Two Argument Programs}{section.7.1}% 37
+\BOOKMARK [1][-]{section.7.2}{Comparison to Existing Tools}{chapter.7}% 38
+\BOOKMARK [0][-]{chapter.8}{Conclusions and Future Work}{}% 39
+\BOOKMARK [1][-]{section.8.1}{Conclusions}{chapter.8}% 40
+\BOOKMARK [2][-]{subsection.8.1.1}{What worked}{section.8.1}% 41
+\BOOKMARK [2][-]{subsection.8.1.2}{Areas for improvement}{section.8.1}% 42
+\BOOKMARK [1][-]{section.8.2}{Future Work}{chapter.8}% 43
+\BOOKMARK [2][-]{subsection.8.2.1}{Learning Improvements}{section.8.2}% 44
+\BOOKMARK [2][-]{subsection.8.2.2}{UI Features}{section.8.2}% 45

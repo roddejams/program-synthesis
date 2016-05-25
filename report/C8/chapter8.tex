@@ -1,0 +1,56 @@
+\chapter{Learning from Examples}
+
+This chapter will detail how I use the interpreter discussed in chapter 3 to perform learning. The tool enumerates all possible rules, then chooses the ones which cover all of the examples.
+
+\section{Additional Rules}
+Together with my interpreter, I need the following addition predicates and rules :
+\begin{itemize}
+\item \lstinline{example(Input, Output)} : This predicate represents an Input / Output pair.
+\item \lstinline{choose(R, N)} : This predicate represents the choice of a rule, with depth R, that covers all of the examples.
+\item \lstinline{input(In) :- example(In, _).} : This rule generates the initial inputs for my interpreter.
+\item \lstinline{:- not output(In, Out), example(In, Out).}  : This constraint represents that you cannot have an example which does not produce a matching output. In other words, this rule rule will removes rules which do not cover the examples.
+\end{itemize}
+%\end{lstlisting}
+
+\section{Skeleton Rules}
+To know what rules are possible to learn, I enumerate all possible combinations of rules, to provide a set for the learning task to choose from. While it may seem that the possible search space is very large, this is only partly true, due to the optimisations allowed by use of \lstinline{where} clauses. \\ \\ %{
+Each skeleton rule has the following format:
+
+\lstinline{rule(R, F, Args, Expr) :- input(call(f, Args)), choose(R, N).} %{
+\mbox{} \\
+
+
+\subsection{Rule combinations}
+The depth of the search space is reliant on three main factors : number of arguments, range of allowable constants and target language complexity. My initially small target language means that I only have to enumerate over addition, subtraction, multiplication and function calls, but as I add more expressions (i.e boolean functions), the size of the skeleton rules increases respectively. \\ \\
+Similarly, the number of arguments of the target function increases as I have to enumerate all possible pairs. For example, for a simple predicate like addition I need to include : (where X, Y are arguments, C is an arbitrary learned constant, and x1 and x2 are where variables) 
+
+\begin{multicols}{2}
+\begin{itemize}
+\item \lstinline{add(X, X)}
+\item \lstinline{add(X, Y)}
+\item \lstinline{add(X, C)}
+\item \lstinline{add(X, x1)}
+\item \lstinline{add(X, x2)}
+\item \lstinline{add(Y, Y)}
+\item \lstinline{add(Y, C)}
+\item \lstinline{add(Y, x1)}
+\item \lstinline{add(Y, x2)}
+\item \lstinline{add(C, x1)}
+\item \lstinline{add(C, x2)}
+\item \lstinline{add(x1, x2)}
+%\end{lstlisting}
+\end{itemize}
+\end{multicols}
+
+Even in this simple example, there are 12 possible rules. As addition is commutative, I have omitted any rules where the ordering is reversed. More optimisations like this can be seen in the next section.
+A full list of the skeleton rules generated for both one and two argument functions can be seen in the appendix.
+
+\section{Multiple Choices and Optimisation}
+
+\section{A Worked Example : Learning Fibonacci}
+
+\section{Performance Issues}
+\pagebreak
+%\renewcommand\bibname{{References}}
+%\bibliography{References}
+%\bibliographystyle{plain}
