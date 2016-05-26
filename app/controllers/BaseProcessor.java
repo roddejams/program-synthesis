@@ -54,9 +54,6 @@ public abstract class BaseProcessor extends UntypedActor {
 
             List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
 		
- 	    System.out.println("Existing examples : " + computedExamples);
- 	    System.out.println("Uncompleted examples  : " + examples);
-		
             if (!computedExamples.equals(examples)) {
                 //If there's new examples, relearn.
                 IOExamples examplesToWrite = new IOExamples();
