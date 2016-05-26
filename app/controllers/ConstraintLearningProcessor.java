@@ -24,13 +24,8 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         rulesPath = "../ASP/eq/eq_rules.lp";
     }
 
-    private static final List<String> inner_ops = Arrays.asList(
-            "(%s + %s)",
-            "(%s * %s)",
-            "(%s - %s)");
-
     @Override
-    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs) {
+    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> inner_ops, boolean useTailRecursion) {
         List<String> args = generateArgs(numArgs);
 
         EqRule.EqRuleFactory factory = new EqRule.EqRuleFactory();
@@ -44,7 +39,9 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
         //Depth 1
         for(String arg : args) {
-            factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format("(%s * %s)", arg, arg)));
+            if(inner_ops.contains("(%s * %s)")) {
+                factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format("(%s * %s)", arg, arg)));
+            }
             for (String op : inner_ops) {
                 factory.addSimpleRule(ruleBuilder.withDepth(1).withBody(String.format(op, arg, "CX")));
             }
@@ -83,7 +80,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         //    factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format("call(%s, %s)", fnName, rule.body())));
         //});
 
-        if(numArgs == 1) {
+        if(!useTailRecursion) {
             for (int i = 2; i <= maxDepth; i++) {
                 for (ChoiceRule rule : factory.getCallRules()) {
                     if (((EqRule) rule).depth() == i - 1) {
@@ -197,7 +194,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         write(file, "} 1 :- num_match(R).\n");
     }
 
-    protected Path writeExamples(IOExamples examples, int numArgs) throws IOException {
+    protected Path writeExamples(IOExamples examples, int numArgs, boolean containsDiv) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         //Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
         Path file = File.createTempFile("examples", ".lp").toPath();
@@ -205,7 +202,11 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
         try {
             Files.write(file, "".getBytes());
-            write(file, "expr_const(0;1).\n");
+            if(containsDiv) {
+                write(file, "expr_const(1;2).\n");
+            } else {
+                write(file, "expr_const(0;1;2).\n");
+            }
             write(file, "num_rules(1..2).\n");
             write(file, "num_match(1).\n");
 

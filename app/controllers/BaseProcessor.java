@@ -1,7 +1,6 @@
 package controllers;
 
 import akka.actor.UntypedActor;
-import com.google.common.collect.ImmutableMap;
 import models.IOExample;
 import models.IOExamples;
 import models.LearningResult;
@@ -17,7 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class BaseProcessor extends UntypedActor {
@@ -28,7 +30,8 @@ public abstract class BaseProcessor extends UntypedActor {
     protected static final List<String> arg_ops = Arrays.asList(
             "add(%s, %s)",
             "mul(%s, %s)",
-            "sub(%s, %s)");
+            "sub(%s, %s)",
+            "div(%s, %s)");
 
     protected LearningResult result;
     protected boolean finished = false;
@@ -64,14 +67,23 @@ public abstract class BaseProcessor extends UntypedActor {
                 int maxDepth = 3; //TODO: Work out a good way to calc this dynamically
                 //int numFuncs = functionNames.size();
 
-                List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numArgs);
+                List<String> chosenOps = inputExamples.getChosenArithmeticOps();
+                if(chosenOps.isEmpty()) {
+                    throw new LearningException("Error : The language bias cannot be empty");
+                }
+
+                List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numArgs, chosenOps, inputExamples.isUseTailRecursion());
                 List<ChoiceRule> matchRules = generateMatchRules(numArgs);
 
                 Path skeletonRulePath = writeSkeletonRules(generatedRules, matchRules, maxDepth);
 
-                Path examplesPath = writeExamples(examplesToWrite, numArgs);
+                Path examplesPath = writeExamples(examplesToWrite, numArgs, chosenOps.contains("(%s / %s)"));
 
                 List<String> chosenPredicates = doClingo(skeletonRulePath.toAbsolutePath().toString(), examplesPath.toAbsolutePath().toString());
+
+                if(chosenPredicates.isEmpty()) {
+                    throw new LearningException("Error : Learning returned no results. Please try again");
+                }
 
                 HaskellGenerator generator = new HaskellGenerator(generatedRules, matchRules);
                 haskell = generator.generateHaskell(chosenPredicates);
@@ -88,7 +100,7 @@ public abstract class BaseProcessor extends UntypedActor {
                 examples.addAll(completedExamples);
 
                 computedExamples = examples;
-                IOExamples out = new IOExamples();
+                IOExamples out = new IOExamples(inputExamples);
                 out.setExamples(examples);
                 out.setName(fnName);
 
@@ -109,11 +121,11 @@ public abstract class BaseProcessor extends UntypedActor {
         }
     }
 
-    abstract List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs);
+    abstract List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> ops, boolean useTailRecursion);
 
     abstract Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException;
 
-    abstract Path writeExamples(IOExamples examples, int numArgs) throws IOException;
+    abstract Path writeExamples(IOExamples examples, int numArgs, boolean containsDiv) throws IOException;
 
     protected List<IOExample> completeExamples(IOExamples inputExamples, String haskellFileLocation) throws IOException, InterruptedException {
         //Get uncompleted examples
@@ -163,7 +175,7 @@ public abstract class BaseProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-        String[] procArguments = {"./clingo", rulesPath, examplesPath, skeletonRulePath};
+        String[] procArguments = {"clingo", rulesPath, examplesPath, skeletonRulePath};
         ProcessBuilder pb = new ProcessBuilder(procArguments);
 
         pb.directory(new File("bin"));

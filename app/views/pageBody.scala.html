@@ -1,6 +1,6 @@
 @(examplesForm: Form[IOExamples], generatedCode: List[String])
 
-<form id="learningForm" method="post" action="" class="form-horizontal">
+<form id="learningForm" method="post" action="" class="form-horizontal" xmlns="http://www.w3.org/1999/html">
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-4">
@@ -29,14 +29,33 @@
                 </div>
                 <div class="panel-body" id="langBiasBody">
                     <div>
-                        <label class="checkbox-inline"><input type="checkbox" value="">Addition</label>
-                        <label class="checkbox-inline"><input type="checkbox" value="">Subtraction</label>
-                        <label class="checkbox-inline"><input type="checkbox" value="">Multiplication</label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="@examplesForm("useAddition").name" value="true" @if(examplesForm("useAddition").valueOr("false") == "true"){checked="checked"}>
+                            Addition
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="@examplesForm("useSubtraction").name" value="true" @if(examplesForm("useSubtraction").valueOr("false") == "true"){checked="checked"}>
+                            Subtraction
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="@examplesForm("useMultiplication").name" value="true" @if(examplesForm("useMultiplication").valueOr("false") == "true"){checked="checked"}>
+                            Multiplication
+                        </label>
+                        <!--<label class="checkbox-inline">
+                            <input type="checkbox" name="@examplesForm("useDivision").name" value="true" @if(examplesForm("useDivision").valueOr("false") == "true"){checked="checked"}>
+                            Division
+                        </label>-->
                     </div>
                     <div>
                         <label class="checkbox-inline"><input type="checkbox" value="">Equality</label>
                         <label class="checkbox-inline"><input type="checkbox" value="">Less Than</label>
                         <label class="checkbox-inline"><input type="checkbox" value="">Greater Than</label>
+                    </div>
+                    <div>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="@examplesForm("useTailRecursion").name" value="true" @if(examplesForm("useTailRecursion").valueOr("false") == "true"){checked="checked"}>
+                            Limit learning to tail recursion
+                        </label>
                     </div>
                 </div>
             </div>

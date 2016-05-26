@@ -50,6 +50,11 @@ public class HomeController extends Controller {
      */
     public Result index() {
         IOExamples examples = new IOExamples();
+        examples.setUseAddition(true);
+        examples.setUseSubtraction(true);
+        examples.setUseMultiplication(true);
+        examples.setUseDivision(true);
+        examples.setUseTailRecursion(false);
         Form<IOExamples> formData = formFactory.form(IOExamples.class).fill(examples);
         List<String> emptyHaskell = new ArrayList<>();
 
@@ -65,14 +70,15 @@ public class HomeController extends Controller {
         Form<IOExamples> formData = formFactory.form(IOExamples.class).bindFromRequest();
         IOExamples examples = formData.get();
 
-	ActorRef learningActor;
+	    ActorRef learningActor;
 
         if(uuid.equals("new")) {        
-	    learningActor = system.actorOf(ConstraintLearningProcessor.props);
-	} else {
+	        learningActor = system.actorOf(ConstraintLearningProcessor.props);
+	    } else {
             uuid =  "akka://application/user/" + uuid;
-	    learningActor = system.actorFor(uuid);
+	        learningActor = system.actorFor(uuid);
         }
+
         learningActor.tell(examples, learningActor);
 
         System.out.println(learningActor.path());

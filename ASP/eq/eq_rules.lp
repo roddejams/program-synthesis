@@ -1,7 +1,19 @@
+#begin_lua
+function to_num(x)
+  if Val.type(x) == Val.NUM then
+    return x
+  else
+    return 1
+  end
+end
+#end_lua.
+
+
 #hide const_number/1.
 #hide const/1.
 #hide expr_const/1.
 #hide num_rules/1.
+#hide num_match/1.
 #hide match/3.
 #hide match2/3.
 #hide smaller_match/3.
@@ -24,6 +36,8 @@ eq(In, Out) :- example(In, Out).
 :- eq(N1, N2), const_range(N1), const_range(N2), N1 != N2.
 :- eq(mul(0, B), Val), Val > 0.
 :- eq(mul(A, 0), Val), Val > 0.
+%:- eq(div(A, 0), Val).
+%:- eq(div(0, B), Val).
 :- example(In, Out), not terminates(In).
 
 is_call(call(F, Expr)):- eq(call(F, Expr), Out).
@@ -31,11 +45,13 @@ is_call(call(F, Expr)):- eq(call(F, Expr), Out).
 eq(Expr, Val) :- rule(Index, F, Arg_Expr, Expr), match(F, Index, Arg_Expr), eq(call(F, Arg_Expr), Val).
 eq(A, Val - B) :- eq(add(A, B), Val), const_number(B), B <= Val.
 eq(B, Val - A) :- eq(add(A, B), Val), const_number(A), A <= Val.
-eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
-eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
+eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), Val #mod @to_num(B) == 0, B > 0.
+eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), Val #mod @to_num(A) == 0, A > 0.
 eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
 eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
-eq(X, Val) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).	
+%eq(A, Val * B) :- eq(div(A, B), Val), const_number(Val), const_number(B), const_number(Val * B).
+%eq(B, Val * A) :- eq(div(A, B), Val), const_number(Val), const_number(A), const_number(Val * A).
+eq(X, Val) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 eq(Xs, Vals) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 
 terminates(Expr) :- next_step(Expr, Val), const(Val).
@@ -49,6 +65,8 @@ next_step(mul(A, B), B) :- check_terminate(mul(A, B)), const_number(A).
 next_step(mul(A, B), A) :- check_terminate(mul(A, B)), const_number(B).
 next_step(sub(A, B), A) :- check_terminate(sub(A, B)), const_number(B).
 next_step(sub(A, B), B) :- check_terminate(sub(A, B)), const_number(A).
+%next_step(div(A, B), A) :- check_terminate(div(A, B)), const_number(B).
+%next_step(div(A, B), B) :- check_terminate(div(A, B)), const_number(A).
 next_step((X, Xs), Xs) 	:- check_terminate((X, Xs)), const_number(X).
 check_terminate(X) :- next_step(_, X).
 

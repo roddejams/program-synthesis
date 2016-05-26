@@ -24,7 +24,7 @@ public class InterpretedLearningProcessor extends BaseProcessor {
         rulesPath = "../ASP/rules.lp";
     }
 
-    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs) {
+    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> chosenOps, boolean useTailRecursion) {
         List<String> args = generateArgs(numArgs);
         List<String> vars = generateWhereVars(maxDepth);
         List<String> functionNames = Arrays.asList(fnName);
