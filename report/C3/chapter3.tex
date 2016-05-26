@@ -1,10 +1,8 @@
 \chapter{The Initial Approach : A Haskell Interpreter in ASP}
 
-\section{A Haskell Interpreter in ASP}
-
 As a way of better understanding how to represent the target language of the tool, my first step was to implement an Interpreter for the simple target language of my tool.
 
-\subsection{Target Language}
+\section{Target Language}
 
 Initially, I chose to target a simple sub language of Haskell with the following terms :
 
@@ -26,7 +24,7 @@ To represent function calls, I have introduced the \lstinline{call(F, Args).} pr
 Using these predicates, I can represent the Haskell implementation of the recursive factorial program
 \lstinputlisting[language=Haskell, firstline=5, lastline=7]{../ASP/examples/factorial_obs.lp}
 by the ASP program
-\lstinputlisting[language=Prolog, firstline=11, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
+\lstinputlisting[language=Prolog, firstline=11, lastline=15]{../ASP/examples/factorial_obs_with_where.lp}
 To explain further, each line (or recursive case) of the target Haskell program is represented by with a rule with a \lstinline{rule(Num, FuncName, Input, Output).} predicate in the head. \\ \\%{
 Because of the vast algorithmic complexity of the combinations of arithmetic operations, I was struggling with performance issues. To sufficiently cover the possible program space, the required number of skeleton rules was overwhelming even for comparatively simple programs. \\ \\
 As a solution to this issue, I make heavy use of \lstinline{where(Var, Args, Body).} predicates. These "where" predicates are semantically identical to the Haskell equivalent, specifying replacement rules for the given variables in the scope of the rule. \\ \\%{
@@ -38,7 +36,7 @@ We instead use
 \lstinputlisting[language=Prolog, firstline=12, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
 nesting each operation in its own clause.
 
-\subsection{Evaluating Rules}
+\section{Evaluating Rules}
 
 The goal of my interpreter is to be able to evaluate these rules with some given input, to get the correct output.
 
@@ -47,7 +45,7 @@ As part of the interpreter, I have declared a number of my own predicates, some 
  
 \begin{itemize}
 \item \lstinline{input(Expr)} and \lstinline{output(Expr, Val)} : These predicates represent input and output to the learned function. If a function has some input Expr, then it is expected that there is an output predicate with a matching Expr.
-\item \lstinline{match(F, Index, Inputs)} : This predicate represents which function inputs match a respective line in the program. It may be helpful to think of this predicate as a concrete way of stating pattern matching behaviour.
+\item \lstinline{match(F, Index, Inputs)} : This predicate represents which function inputs match a respective line in the program. It may be helpful to think of this predicate as a concrete way of stating pattern matching behaviour. Since I am trying to learn Haskell programs, I need some way to match cases, either one of the base cases or the recursive case.
 \item \lstinline{value(Expr, Val)} : This predicate represents the value of a given simple expression, i.e \lstinline{sub(3, 1)} has value 2.
 \item \lstinline{value_with(Expr, Val, Args)} : This predicate represents the value of an expression, given input arguments. The extra argument is necessary due to the inclusion of "where" predicates. As the expression "x1" could have multiple values throughout execution, I have to keep track of the value at each step of execution.
 \item \lstinline{eval_with(Expr, Args)} : This predicate is used to represent which expressions we want to find the value of, because we do not want to find the value of every possible expression, only expressions we care about. As with \lstinline{value_with}, the extra argument is necessary as the values of "where" clauses could change throughout execution. 
@@ -64,6 +62,14 @@ To start, I needed a rule to calculate the output, given inputs and a rule to fo
 \lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp} 
 \mbox{} \\
 This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
+
+\lstinputlisting[language=Prolog, firstline=120, lastline=120]{../ASP/rules.lp}
+\mbox{} \\
+This rule represents generation of more input predicates. If you have to evaluate a function call, and the arguments have value \lstinline{Inputs}, then you take the function call argument \lstinline{Inputs} as additional function input. \\
+
+\lstinputlisting[language=Prolog, firstline=122, lastline=123]{../ASP/rules.lp}
+\mbox{} \\
+These rules handle choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it.
 
 \lstinputlisting[language=Prolog, firstline=56, lastline=58]{../ASP/rules.lp}
 \mbox{} \\
@@ -121,23 +127,10 @@ This rule introduces \lstinline{n_complex} predicates. If a term is a constant, 
 \mbox{} \\
 These rules represent propagation of \lstinline{n_complex} terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ %{
 
-\section{Initial Learning}
+\section{A Worked Example : The Fibonacci Program}
 
-I decided to base my (initial) learning task as an ASP encoding similar to ASPAL, with the goal to learn the correct rule() predicates given a number of input/output example pairs:
+I will now attempt to illustrate this approach through a worked example. \\
 
-\begin{itemize}
-\item My background knowledge is simply my interpreter from 2.1.2
-\item I characterised the Skeleton Rules as a choice rule where there can be up to a given number of rule predicates with an expression that is structured correctly. 
-\lstinputlisting[language=Prolog, firstline=41, lastline=41]{../ASP/rules.lp}
-\item I then add a constraint to remove any answer sets which do not produce the correct output against the given examples.
-\lstinputlisting[language=Prolog, firstline=39, lastline=39]{../ASP/rules.lp}
-\end{itemize}
-
-Not described here are my set of Skeleton Rules relating to valid arguments and valid expressions because they simply describe what is defined as valids (as per the Haskell syntax) and I did not deem it important to include here.\\
-
-Currently I can only learn very simple functions (without variables) because of errors in my Interpreter, relating to the ground rule predicates that are generated. However this should not be too difficult to fix. 
-
-\section{Performance Issues}
 \pagebreak
 %\renewcommand\bibname{{References}}
 %\bibliography{References}
