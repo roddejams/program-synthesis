@@ -36,6 +36,8 @@ eq(In, Out) :- example(In, Out).
 :- eq(N1, N2), const_range(N1), const_range(N2), N1 != N2.
 :- eq(mul(0, B), Val), Val > 0.
 :- eq(mul(A, 0), Val), Val > 0.
+:- eq(mul(A, B), Val), const_number(B), B > 0, Val #mod @to_num(B) != 0.
+:- eq(mul(A, B), Val), const_number(A), A > 0, Val #mod @to_num(A) != 0.
 %:- eq(div(A, 0), Val).
 %:- eq(div(0, B), Val).
 :- example(In, Out), not terminates(In).
@@ -45,8 +47,8 @@ is_call(call(F, Expr)):- eq(call(F, Expr), Out).
 eq(Expr, Val) :- rule(Index, F, Arg_Expr, Expr), match(F, Index, Arg_Expr), eq(call(F, Arg_Expr), Val).
 eq(A, Val - B) :- eq(add(A, B), Val), const_number(B), B <= Val.
 eq(B, Val - A) :- eq(add(A, B), Val), const_number(A), A <= Val.
-eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), Val #mod @to_num(B) == 0, B > 0.
-eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), Val #mod @to_num(A) == 0, A > 0.
+eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
+eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
 eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
 eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
 %eq(A, Val * B) :- eq(div(A, B), Val), const_number(Val), const_number(B), const_number(Val * B).

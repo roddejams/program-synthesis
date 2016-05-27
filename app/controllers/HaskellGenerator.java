@@ -11,6 +11,7 @@ public class HaskellGenerator {
 
     private List<ChoiceRule> skeletonRules;
     private List<ChoiceRule> matchRules;
+    private List<ChoiceRule> chosenRules = new ArrayList<>();
 
     //Temp until match learning is implemented
     private static Map<String, String> matchMap = new HashMap<>();
@@ -24,7 +25,6 @@ public class HaskellGenerator {
     public List<String> generateHaskell(List<String> chosenPredicates) throws IOException {
         //Step 1: Get relevant rules from set of skeleton rules.
 
-        List<ChoiceRule> chosenRules = new ArrayList<>();
         learnedConditions = new String[chosenPredicates.size() - 1];
 
         chosenPredicates.stream().filter(pred -> pred.contains("match")).forEach(pred -> {
@@ -267,6 +267,10 @@ public class HaskellGenerator {
         }
 
         return Arrays.asList(haskell);
+    }
+
+    public List<ChoiceRule> getChosenRules() {
+        return chosenRules;
     }
 
     public static String ruleToHaskell(String body) {

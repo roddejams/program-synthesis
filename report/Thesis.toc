@@ -44,38 +44,40 @@
 \contentsline {chapter}{\numberline {4}Learning from Examples}{22}{chapter.4}
 \contentsline {section}{\numberline {4.1}Additional Rules}{22}{section.4.1}
 \contentsline {section}{\numberline {4.2}Skeleton Rules}{22}{section.4.2}
-\contentsline {section}{\numberline {4.3}Multiple Choices and Optimisation}{23}{section.4.3}
-\contentsline {section}{\numberline {4.4}A Worked Example : Learning Fibonacci}{23}{section.4.4}
-\contentsline {section}{\numberline {4.5}Performance Issues}{23}{section.4.5}
+\contentsline {subsection}{\numberline {4.2.1}Choice Rules}{23}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Rule combinations}{23}{subsection.4.2.2}
+\contentsline {section}{\numberline {4.3}Multiple Solutions and Optimisation}{24}{section.4.3}
+\contentsline {section}{\numberline {4.4}A Worked Example : Learning Fibonacci}{24}{section.4.4}
+\contentsline {section}{\numberline {4.5}Performance Issues}{24}{section.4.5}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-7}
-\contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{24}{chapter.5}
-\contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{24}{section.5.1}
-\contentsline {section}{\numberline {5.2}Learning}{24}{section.5.2}
-\contentsline {section}{\numberline {5.3}Performance}{24}{section.5.3}
+\contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{25}{chapter.5}
+\contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{25}{section.5.1}
+\contentsline {section}{\numberline {5.2}Learning}{25}{section.5.2}
+\contentsline {section}{\numberline {5.3}Performance}{25}{section.5.3}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-8}
-\contentsline {chapter}{\numberline {6}Front end implementation : Building a working UI}{25}{chapter.6}
-\contentsline {section}{\numberline {6.1}User's Manual}{25}{section.6.1}
-\contentsline {section}{\numberline {6.2}Used Technologies}{25}{section.6.2}
-\contentsline {subsection}{\numberline {6.2.1}Play Framework}{25}{subsection.6.2.1}
-\contentsline {section}{\numberline {6.3}User Feedback and Evaluation}{25}{section.6.3}
+\contentsline {chapter}{\numberline {6}Front end implementation : Building a working UI}{26}{chapter.6}
+\contentsline {section}{\numberline {6.1}User's Manual}{26}{section.6.1}
+\contentsline {section}{\numberline {6.2}Used Technologies}{26}{section.6.2}
+\contentsline {subsection}{\numberline {6.2.1}Play Framework}{26}{subsection.6.2.1}
+\contentsline {section}{\numberline {6.3}User Feedback and Evaluation}{26}{section.6.3}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-9}
-\contentsline {chapter}{\numberline {7}Critical Evaluation}{26}{chapter.7}
-\contentsline {section}{\numberline {7.1}Testing}{26}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}One Argument Programs}{26}{subsection.7.1.1}
-\contentsline {subsubsection}{Factorial}{26}{section*.15}
-\contentsline {subsection}{\numberline {7.1.2}Two Argument Programs}{26}{subsection.7.1.2}
-\contentsline {subsubsection}{Tail Recursive Factorial}{26}{section*.16}
-\contentsline {section}{\numberline {7.2}Comparison to Existing Tools}{26}{section.7.2}
+\contentsline {chapter}{\numberline {7}Critical Evaluation}{27}{chapter.7}
+\contentsline {section}{\numberline {7.1}Testing}{27}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}One Argument Programs}{27}{subsection.7.1.1}
+\contentsline {subsubsection}{Factorial}{27}{section*.15}
+\contentsline {subsection}{\numberline {7.1.2}Two Argument Programs}{27}{subsection.7.1.2}
+\contentsline {subsubsection}{Tail Recursive Factorial}{27}{section*.16}
+\contentsline {section}{\numberline {7.2}Comparison to Existing Tools}{27}{section.7.2}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-10}
-\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{27}{chapter.8}
-\contentsline {section}{\numberline {8.1}Conclusions}{27}{section.8.1}
-\contentsline {subsection}{\numberline {8.1.1}What worked}{27}{subsection.8.1.1}
-\contentsline {subsection}{\numberline {8.1.2}Areas for improvement}{27}{subsection.8.1.2}
-\contentsline {section}{\numberline {8.2}Future Work}{27}{section.8.2}
-\contentsline {subsection}{\numberline {8.2.1}Learning Improvements}{27}{subsection.8.2.1}
-\contentsline {subsection}{\numberline {8.2.2}UI Features}{27}{subsection.8.2.2}
+\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{28}{chapter.8}
+\contentsline {section}{\numberline {8.1}Conclusions}{28}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}What worked}{28}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}Areas for improvement}{28}{subsection.8.1.2}
+\contentsline {section}{\numberline {8.2}Future Work}{28}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Learning Improvements}{28}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}UI Features}{28}{subsection.8.2.2}
 \gdef \the@ipfilectr {}

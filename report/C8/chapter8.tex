@@ -6,7 +6,7 @@ This chapter will detail how I use the interpreter discussed in chapter 3 to per
 Together with my interpreter, I need the following addition predicates and rules :
 \begin{itemize}
 \item \lstinline{example(Input, Output)} : This predicate represents an Input / Output pair.
-\item \lstinline{choose(R, N)} : This predicate represents the choice of a rule, with depth R, that covers all of the examples.
+\item \lstinline{choose(R, N)} and \lstinline{choose_where(N)} : These predicates represent the choice of a rule, with depth R, that covers all of the examples.
 \item \lstinline{input(In) :- example(In, _).} : This rule generates the initial inputs for my interpreter.
 \item \lstinline{:- not output(In, Out), example(In, Out).}  : This constraint represents that you cannot have an example which does not produce a matching output. In other words, this rule rule will removes rules which do not cover the examples.
 \end{itemize}
@@ -14,11 +14,25 @@ Together with my interpreter, I need the following addition predicates and rules
 
 \section{Skeleton Rules}
 To know what rules are possible to learn, I enumerate all possible combinations of rules, to provide a set for the learning task to choose from. While it may seem that the possible search space is very large, this is only partly true, due to the optimisations allowed by use of \lstinline{where} clauses. \\ \\ %{
-Each skeleton rule has the following format:
+Each skeleton rule has one of the following formats: \\
 
 \lstinline{rule(R, F, Args, Expr) :- input(call(f, Args)), choose(R, N).} %{
 \mbox{} \\
 
+\lstinline{where(Var, Args, Expr) :- input(call(f, Args)), choose_where(N).} %{
+\mbox{} \\ \\
+Where \lstinline{Expr} is one of the possible rule bodies. %{
+
+\subsection{Choice Rules}
+To run the interpreter on all possible rule combinations, I make use of ASP choice rules. For example, the statement :
+
+\lstinputlisting[language=Prolog, firstline=47, lastline=50]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\mbox{} \\
+Represents the learning task choosing exactly one of the skeleton rules for each of the possible program rules (or recursive case). Additionally, I need a choice rule for every potential where rule : 
+
+\lstinputlisting[language=Prolog, firstline=52, lastline=55]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\mbox{} \\
+Here, it is not guaranteed for a where rule to be chosen, as they may not all be necessary in different learning tasks. 
 
 \subsection{Rule combinations}
 The depth of the search space is reliant on three main factors : number of arguments, range of allowable constants and target language complexity. My initially small target language means that I only have to enumerate over addition, subtraction, multiplication and function calls, but as I add more expressions (i.e boolean functions), the size of the skeleton rules increases respectively. \\ \\
@@ -45,7 +59,17 @@ Similarly, the number of arguments of the target function increases as I have to
 Even in this simple example, there are 12 possible rules. As addition is commutative, I have omitted any rules where the ordering is reversed. More optimisations like this can be seen in the next section.
 A full list of the skeleton rules generated for both one and two argument functions can be seen in the appendix.
 
-\section{Multiple Choices and Optimisation}
+\section{Multiple Solutions and Optimisation}
+While learning, it is not uncommon to have multiple solutions, usually due to multiple semantically equivalent base cases. I may get two answer sets as output, one having learned \lstinline{rule(1, F, 0, 1)}, and the other with \lstinline{rule(1, F, 0, 0+1)}. \\ \\
+To attempt at dealing with this, I have implemented a basic optimisation system, by prioritising rules with shorter bodies. In general, rules with lower rule number are shorter, so I used the minimisation rule :
+
+\lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\mbox{}\\
+Which prioritises rules with lower rule numbers.\\ \\
+As a second optimisation, I wanted to prefer less complicated results, and answer sets with fewer \lstinline{where} clauses represent less complicated functions, as the depth of the function is lower. Because of this, I use the minimisation rule : %{
+
+\lstinputlisting[language=Prolog, firstline=64, lastline=64]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\mbox{}\\
 
 \section{A Worked Example : Learning Fibonacci}
 

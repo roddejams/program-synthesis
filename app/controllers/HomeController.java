@@ -5,6 +5,7 @@ import akka.actor.ActorSystem;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.IOExamples;
 import models.LearningResult;
+import models.rules.ChoiceRule;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -18,7 +19,9 @@ import views.html.pageBody;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static akka.pattern.Patterns.ask;
@@ -36,6 +39,9 @@ public class HomeController extends Controller {
     FormFactory formFactory;
     private final ActorSystem system;
     private final static int TIMEOUT = 180000; // 180 sec timeout;
+
+    private List<String> selectedFunctionNames = new ArrayList<>();
+    private Map<String, List<ChoiceRule>> learnedFunctions = new HashMap<>();
 
     @Inject
     public HomeController(ActorSystem system) {
@@ -83,14 +89,6 @@ public class HomeController extends Controller {
 
         System.out.println(learningActor.path());
 
-        /*return ok(main.render(
-                "A Haskell Code Generator from I/O Examples",
-                formData,
-                emptyHaskell,
-                true,
-                "\"" + learningActor.path().name() + "\""
-        ));*/
-
         ObjectNode result = Json.newObject();
         result.put("uuid", learningActor.path().name());
 
@@ -105,6 +103,8 @@ public class HomeController extends Controller {
             StatusResult result = (StatusResult) response;
             if(result.finished) {
                 LearningResult learned = result.result;
+                learnedFunctions.put(learned.getCompletedExamples().getName(), learned.getGeneratedASP());
+
                 Form<IOExamples> returnedData = formFactory.form(IOExamples.class).fill(learned.getCompletedExamples());
 
                 return ok(pageBody.render(returnedData, learned.getGeneratedHaskell()));
@@ -113,6 +113,15 @@ public class HomeController extends Controller {
                 return Results.status(202);
             }
         });
+    }
+
+    public Result addRuleToBackground(String name) {
+        if(learnedFunctions.keySet().contains(name)) {
+            selectedFunctionNames.add(name);
+        }
+
+        //TODO: Write to learned_functions.lp
+        return ok();
     }
 
     public Result removeActor(String uuid) {

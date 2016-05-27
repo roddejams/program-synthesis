@@ -50,13 +50,15 @@ choose(R, 1;6..10, C0) : expr_const(C0)
 } 1 :- num_rules(R).
 
 0 {
-choose_where(17..19;24..28;30), 
+choose_where(17..19;24..28;30),
 choose_where(20..23;29, C1) : expr_const(C1)
 } 1.
 
 0 {
-choose_where(31..33;38), 
+choose_where(31..33;38),
 choose_where(34..37;39, C1) : expr_const(C1)
 } 1.
 
-#minimise[choose_where(R)=100, choose_where(R, C)=100].
+
+#minimise [choose(_, N)=N, choose(_, N, _)=N ].
+#minimise[choose_where(R)=1, choose_where(R, C)=1].

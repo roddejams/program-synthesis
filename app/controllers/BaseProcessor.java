@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+
 public abstract class BaseProcessor extends UntypedActor {
 
     protected String rulesPath;
@@ -49,8 +51,10 @@ public abstract class BaseProcessor extends UntypedActor {
     }
 
     public void runLearningTask(IOExamples inputExamples) {
+        List<ChoiceRule> chosenRules = new ArrayList<>();
+
         try {
-            result = new LearningResult(inputExamples, new ArrayList<>()); // To be returned while not finished;
+            result = new LearningResult(inputExamples, new ArrayList<>(), new ArrayList<>()); // To be returned while not finished;
             if(!inputExamples.getName().isEmpty()) {
                 fnName = inputExamples.getName();
             }
@@ -87,6 +91,8 @@ public abstract class BaseProcessor extends UntypedActor {
 
                 HaskellGenerator generator = new HaskellGenerator(generatedRules, matchRules);
                 haskell = generator.generateHaskell(chosenPredicates);
+                chosenRules = generator.getChosenRules();
+
                 System.out.println(haskell);
 
                 //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
@@ -104,19 +110,19 @@ public abstract class BaseProcessor extends UntypedActor {
                 out.setExamples(examples);
                 out.setName(fnName);
 
-                result = new LearningResult(out, haskell);
+                result = new LearningResult(out, haskell, chosenRules);
             } else {
                 computedExamples = inputExamples.getExamples();
-                result = new LearningResult(inputExamples, haskell);
+                result = new LearningResult(inputExamples, haskell, chosenRules);
             }
 
             finished = true;
         } catch (LearningException e) {
             finished = true;
-            result = new LearningResult(inputExamples, Collections.singletonList(e.getMessage()));
+            result = new LearningResult(inputExamples, Collections.singletonList(e.getMessage()), emptyList());
         } catch (IOException | InterruptedException | NullPointerException e) {
             finished = true;
-            result = new LearningResult(inputExamples, Collections.singletonList("An internal server error occurred : \n" + ExceptionUtils.getStackTrace(e)));
+            result = new LearningResult(inputExamples, Collections.singletonList("An internal server error occurred : \n" + ExceptionUtils.getStackTrace(e)), emptyList());
             e.printStackTrace();
         }
     }
@@ -245,12 +251,10 @@ public abstract class BaseProcessor extends UntypedActor {
         }
 
         for(String arg : args) {
-            for(String arg2 : args) {
-                if(!arg.equals(arg2)) {
-                    factory.addRule(builder.withCondition(String.format("%s == %s", arg, arg2)));
-                    factory.addRule(builder.withCondition(String.format("%s < %s", arg, arg2)));
-                }
-            }
+            args.stream().filter(arg2 -> !arg.equals(arg2)).forEach(arg2 -> {
+                factory.addRule(builder.withCondition(String.format("%s == %s", arg, arg2)));
+                factory.addRule(builder.withCondition(String.format("%s < %s", arg, arg2)));
+            });
         }
 
         return factory.getRules();
