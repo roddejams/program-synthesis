@@ -20,7 +20,7 @@ end
 #hide rule/4.
 #hide eq/2.
 #hide is_call/1.
-#hide check_terminate/1.
+#hide is_next_step/1.
 #hide terminates/1.
 #hide next_step/2.
 #hide const_range/1.
@@ -51,26 +51,26 @@ eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
 eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
 eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
 eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
-%eq(A, Val * B) :- eq(div(A, B), Val), const_number(Val), const_number(B), const_number(Val * B).
-%eq(B, Val * A) :- eq(div(A, B), Val), const_number(Val), const_number(A), const_number(Val * A).
 eq(X, Val) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 eq(Xs, Vals) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
+%eq(A, Val * B) :- eq(div(A, B), Val), const_number(Val), const_number(B), const_number(Val * B).
+%eq(B, Val * A) :- eq(div(A, B), Val), const_number(Val), const_number(A), const_number(Val * A).
 
 terminates(Expr) :- next_step(Expr, Val), const(Val).
 terminates(Expr) :- next_step(Expr, Term_Expr), terminates(Term_Expr).
 
 next_step(e, In):- example(In, Out).
-next_step(call(F, Args), Expr) :- check_terminate(call(F, Args)), rule(Index, F, Args, Expr), match(F, Index, Args).
-next_step(add(A, B), B) :- check_terminate(add(A, B)), const_number(A).
-next_step(add(A, B), A) :- check_terminate(add(A, B)), const_number(B).
-next_step(mul(A, B), B) :- check_terminate(mul(A, B)), const_number(A).
-next_step(mul(A, B), A) :- check_terminate(mul(A, B)), const_number(B).
-next_step(sub(A, B), A) :- check_terminate(sub(A, B)), const_number(B).
-next_step(sub(A, B), B) :- check_terminate(sub(A, B)), const_number(A).
-%next_step(div(A, B), A) :- check_terminate(div(A, B)), const_number(B).
-%next_step(div(A, B), B) :- check_terminate(div(A, B)), const_number(A).
-next_step((X, Xs), Xs) 	:- check_terminate((X, Xs)), const_number(X).
-check_terminate(X) :- next_step(_, X).
+next_step(call(F, Args), Expr) :- is_next_step(call(F, Args)), rule(Index, F, Args, Expr), match(F, Index, Args).
+next_step(add(A, B), B) :- is_next_step(add(A, B)), const_number(A).
+next_step(add(A, B), A) :- is_next_step(add(A, B)), const_number(B).
+next_step(mul(A, B), B) :- is_next_step(mul(A, B)), const_number(A).
+next_step(mul(A, B), A) :- is_next_step(mul(A, B)), const_number(B).
+next_step(sub(A, B), A) :- is_next_step(sub(A, B)), const_number(B).
+next_step(sub(A, B), B) :- is_next_step(sub(A, B)), const_number(A).
+%next_step(div(A, B), A) :- is_next_step(div(A, B)), const_number(B).
+%next_step(div(A, B), B) :- is_next_step(div(A, B)), const_number(A).
+next_step((X, Xs), Xs) 	:- is_next_step((X, Xs)), const_number(X).
+is_next_step(X) :- next_step(_, X).
 
 match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const_number(Index).
