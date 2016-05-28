@@ -198,7 +198,7 @@ public class InterpretedLearningProcessor extends BaseProcessor {
         return file;
     }
 
-    protected Path writeExamples(IOExamples examples, int numArgs) throws IOException {
+    protected Path writeExamples(IOExamples examples, int numArgs, boolean containsDiv) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         //Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
         Path file = File.createTempFile("examples", ".lp").toPath();
