@@ -75,8 +75,52 @@ As a second optimisation, I wanted to prefer less complicated results, and answe
 \mbox{}\\
 
 \section{A Worked Example : Learning GCD}
+In the last chapter, I went through the steps that the interpreter takes to produce results when given Euler's algorithm to calculate the greatest common divisor. In this section, I will detail how I then learn that program. As a reminder, this function is defined in Haskell as :
+
+\begin{lstlisting}
+gcd x y
+	| x == y = x
+	| x > y	 = gcd (x - y) y
+	| x < y	 = gcd x (y - x)
+\end{lstlisting}
+\mbox{}\\
+As input to the learning task I need to specify some examples. I chose the examples 
+
+\lstinputlisting[language=Prolog, firstline=32, lastline=36]{../ASP/eq/gcd.lp}
+\mbox{}\\
+Because they seem to cover all of the cases I need to learn. \\ \\
+In addition to this, I will need to enumerate all of the possible \lstinline{rule} and \lstinline{where} bodies as part of the skeleton rules. I will not list the entire set of skeleton rules here, but instead highlight some which will be in use later : 
+
+TODO: Put skeleton rules in here.
+
+After running the learning task with these inputs, I get as output the terms :
+
+TODO: Put uncomplete output here.
+
+These rules represent the learned Haskell program:
+
+TODO: Put haskell here.
+
+What is interesting is that this is not a correct implementation of Euler's algorithm! However, this result is still returned as it covers all of the examples. For example, the example \lstinline{example(call(gcd, (9, 6)), 3)} generates a \lstnline{input(call(gcd, (9, 6)))} term. This term is then ran through the interpreter with the chose rules, and returns \lstinline{output(call(gcd, (9, 6)), 3)}. As this does not contradict the example, those rules are valid. \\ \\%{
+As an attempt to fix this problem, I can add some extra examples. By adding these two examples :\\
+
+\lstinputlisting[language=Prolog, firstline=37, lastline=38]{../ASP/eq/gcd.lp}
+\mbox{}\\
+These examples are cases where the previous result would not work, and help generalise the target function. \\ \\
+After running these examples as input, I get the following terms as a result :
+
+TODO: Add terms
+
+These terms translate to the haskell program :
+
+TODO: Add Haskell
+
+As required.
 
 \section{Performance Issues}
+Unfortunately, this learning task suffers from extreme difficulty scaling. While the number of skeleton rules is relatively small, the problem comes when considering combinations of \lstinline{rule} and \lstinline{where} terms.\\ \\ %Add specific maths here?%
+For the example described above, the output ground program is over _ lines long, and takes 
+
 \pagebreak
 %\renewcommand\bibname{{References}}
 %\bibliography{References}

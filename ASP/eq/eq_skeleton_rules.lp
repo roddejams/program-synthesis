@@ -1,5 +1,5 @@
 #domain const_number(N0).
-match2(f, 1, (N0)) :- N0 == C1, is_call(call(f, (N0))), choose_match(R, 1, C1).
+match_guard(f, 1, (N0)) :- N0 == C1, is_call(call(f, (N0))), choose_match(R, 1, C1).
 rule(R, f, (N0), C1) :- is_call(call(f, (N0))), choose(R, 1, C1).
 rule(R, f, (N0), N0) :- is_call(call(f, (N0))), choose(R, 2).
 rule(R, f, (N0), (N0 * N0)) :- is_call(call(f, (N0))), choose(R, 3).

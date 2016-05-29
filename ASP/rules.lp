@@ -10,7 +10,7 @@ end
 
 %%%%
 
-const_number(0..10).
+const_number(0..9).
 const(C) :- const_number(C).
 const(e).
 
@@ -19,10 +19,10 @@ const(e).
 #hide const(N).
 #hide const_number(N).
 #hide rule(R, F, Args, Expr).
-%#hide match(F, Index, Args).
+#hide match(F, Index, Args).
 #hide match_guard(F, Index, Args).
 #hide smaller_match(F, Index, Args).
-%#hide eval_with(Expr, Args).
+#hide eval_with(Expr, Args).
 #hide value_with(Expr, Out, Args).
 #hide num_rules(N).
 #hide check_if_complex(Expr).
@@ -34,7 +34,7 @@ const(e).
 
 #hide input(In).
 #hide where(X, Args, Expr).
-%#hide output(In, Out).
+#hide output(In, Out).
 %%%%
 
 %%%% LANGUAGE BIAS %%%%
