@@ -144,28 +144,28 @@ And the corresponding \lstinline{match} rules are :\\ %{
 \lstinputlisting[language=Haskell, firstline=28, lastline=30]{../ASP/eq/gcd.lp} 
 
 \subsection{A Simple Input}
-To start with, I will work through a simple example which matches the base case, \lstinline{gcd(2, 2)}. This input is represented in ASP as the term \lstinline{input(call(gcd, (2, 2)))}, meaning function \lstinline{gcd} is called with \lstinline{(2, 2)} as the arguments. \\ \\
-The first predicates generated are related to matching. As $(2 == 2)$, the first \lstinline{match_guard} rule is applied and a the term \lstinline{match_guard(gcd, 1, (2, 2))} is added to the output.\\ \\
+To start with, I will work through a simple example which matches the base case, \lstinline{gcd(3, 3)}. This input is represented in ASP as the term \lstinline{input(call(gcd, (3, 3)))}, meaning function \lstinline{gcd} is called with \lstinline{(3, 3)} as the arguments. \\ \\
+The first predicates generated are related to matching. As \lstinline{(3 == 3)}, the first \lstinline{match_guard} rule is applied and a the term \lstinline{match_guard(gcd, 1, (3, 3))} is added to the output.\\ \\ %{
 The rule next applied is \\
 
 \lstinputlisting[language=Prolog, firstline=122, lastline=122]{../ASP/rules.lp}
 \mbox{} \\
-As the relevant ground \lstinline{rule} and \lstinline{match_guard} terms exist, and there are no smaller matches, (as 1 is the smallest Index), I generate a \lstinline{match(gcd, 1, (2, 2))} term for the output. \\ \\ %{
+As the relevant ground \lstinline{rule} and \lstinline{match_guard} terms exist, and there are no smaller matches, (as 1 is the smallest Index), I generate a \lstinline{match(gcd, 1, (3, 3))} term for the output. \\ \\ %{
 Next, the tool has to decide what to evaluate, by generating \lstinline{eval_with} terms. The rule applied is :\\ %{
 
 \lstinputlisting[language=Prolog, firstline=74, lastline=74]{../ASP/rules.lp}
 \mbox{} \\
-Because the tool knows the ground \lstinline{rule} term \lstinline{rule(1, gcd, (2, 2), 2)}, it \lstinline{match} that rule with the term \lstinline{match(gcd, 1, (2, 2))} and it knows the \lstinline{input} term \lstinline{input(call(gcd, (2, 2)))}, it can apply this rule and get the expected term, \lstinline{eval_with(2, (2, 2))}, as part of the output. Semantically, this makes sense, as we want to evaluate the body of the called function, with respective arguments. \\ \\%{
+Because the tool knows the ground \lstinline{rule} term \lstinline{rule(1, gcd, (3, 3), 3)}, it \lstinline{match} that rule with the term \lstinline{match(gcd, 1, (3, 3))} and it knows the \lstinline{input} term \lstinline{input(call(gcd, (3, 3)))}, it can apply this rule and get the expected term, \lstinline{eval_with(3, (3, 3))}, as part of the output. Semantically, this makes sense, as we want to evaluate the body of the called function, with respective arguments. \\ \\%{
 Now, the tool can work out values, through application of the rule \\
 
 \lstinputlisting[language=Prolog, firstline=65, lastline=65]{../ASP/rules.lp}
 \mbox{} \\
-The tool just generated the term \lstinline{eval_with(2, (2, 2))}, and it knows that 2 is a constant, so it can output that \lstinline{value_with(2, 2, (2, 2))}. \\ \\
+The tool just generated the term \lstinline{eval_with(3, (3, 3))}, and it knows that 3 is a constant, so it can output that \lstinline{value_with(3, 3, (3, 3))}. \\ \\
 Finally, we can generate output. Using the rule \\
 
 \lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
 \mbox{} \\
-In the same way to earlier rule applications, the tool knows the relevant ground \lstinline{rule(1, gcd, (2, 2), 2)} and \lstinline{match(gcd, 1, (2, 2))} terms, and we just generated the \lstinline{value_with(2, 2, (2, 2))} term. Therefore, the tool can return \lstinline{output(call(gcd, (2, 2)), 2)}, as expected.
+In the same way to earlier rule applications, the tool knows the relevant ground \lstinline{rule(1, gcd, (3, 3), 3)} and \lstinline{match(gcd, 1, (3, 3))} terms, and we just generated the \lstinline{value_with(3, 3, (3, 3))} term. Therefore, the tool can return \lstinline{output(call(gcd, (3, 3)), 3)}, as expected.
 
 \subsection{A More Complex Example}
 Now I will detail a more complicated example, where the tool visits where rules and more complicated expressions. As input, I will use \lstinline{gcd(9, 6)}, which is represented in ASP as the term \lstinline{input(call(gcd, (9, 6)))}. \\ \\
@@ -206,7 +206,7 @@ This produces the term \lstinline{eval_with(x1, (9, 6))}. Because it has to now 
 
 \lstinputlisting[language=Prolog, firstline=75, lastline=75]{../ASP/rules.lp}
 \mbox{} \\
-As I have already defined the body of the where rule referenced by \lstinline{x1} to be \lstinline{where(x1, (X, Y), sub(X, Y))}, the tool then takes the ground version of this definition and applies the rule to get the term \lstinline{eval_with(sub(9, 6), (9,6))}. \\ \\%{
+As I have already defined the body of the where rule referenced by \lstinline{x1} to be \lstinline{where(x1, (A, B), sub(A, B))}, the tool then takes the ground version of this definition and applies the rule to get the term \lstinline{eval_with(sub(9, 6), (9,6))}. \\ \\%{
 This rule is why the tool needs to pass the relevant arguments around as it evaluates terms. If the \lstinline{(9, 6)} was missing, then the tool would not know which ground version of the rule to use.\\ %{
 The tool has now reached the end of evaluating, because \lstinline{eval_with(sub(9, 6), (9, 6))} is not complex. In the same way the tool checked for complexity, checking if an expression is not complex relies on \lstinline{check_if_complex} terms. Once again, I use the rule\\
 
@@ -237,7 +237,22 @@ Remember that the overall goal of this was to be able to evaluate the term \lsti
 
 \lstinputlisting[language=Prolog, firstline=120, lastline=120]{../ASP/rules.lp}
 \mbox{} \\
-Which generates a new \lstinline{input(call(gcd, (3, 6)))} term, effectively starting the process again for a new input. This input is processed in a very similar way to the last one, with the only difference being that the third rule is matched, as \lstinline{3 < 6}. This means that the rule body to be evaluated produces the term \lstinline{eval_with(call(gcd, (3, x2)))}. 
+Which generates a new \lstinline{input(call(gcd, (3, 6)))} term, effectively starting the process again for a new input. This input is processed in a very similar way to the last one, with the only difference being that the third rule is matched, as \lstinline{3 < 6}. This means that the rule body to be evaluated produces the term \lstinline{eval_with(call(gcd, (3, x2)))}. \\ \\%{
+Once again, this evaluation proceeds by attempting to calculate the value of the arguments, more specifically the complex one, \lstinline{x2}. Using the definition, \lstinline{where(x2, (A, B), sub(B, A))}, the tool can generate the ground term \lstinline{value_with(x2, 3, (3, 6))}. This term is then combined with the non complex argument to produce the term \lstinline{value_with((3, x2), (3, 3), (3, 6))}. Then, it generates a new input predicate again by applying the rule \\ 
+
+\lstinputlisting[language=Prolog, firstline=120, lastline=120]{../ASP/rules.lp}
+\mbox{} \\
+Now, we reach the base case, as the input generated is \lstinline{input(call(gcd, (3, 3)))}. As I explained in the first example, this input generates an output term in the Answer Set of \lstinline{output(call(gcd, (3, 3)), 3)}. It reaches this conclusion by matching to the base case, which is defined to return the first argument. \\ \\
+With this \lstinline{output} term, the tool can now traverse back up the call stack, to compute a final result. By applying the following rule \\ %{
+
+\lstinputlisting[language=Prolog, firstline=60, lastline=60]{../ASP/rules.lp}
+\mbox{} \\
+I can generate the term \lstinline{value_with(call(gcd, (3, x2)), 3, (3, 6))}. This then allows me to use the rule : \\%{
+
+\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
+\mbox{} \\
+Which gives a corresponding \lstinline{output} term \lstinline{output(call(gcd, (3, 6)), 3)}. Once again, I can use this output to generate the term \lstinline{value_with(call(gcd, (x1, 6)), 3)}, and then use this term to generate the final \lstinline{output} term, \lstinline{output(call(gcd, (9, 6)), 3)}, as expected! \\ %{
+TODO: PUT DIAGRAM HERE.
 
 \pagebreak
 %\renewcommand\bibname{{References}}
