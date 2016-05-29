@@ -15,22 +15,22 @@ end
 #hide num_rules/1.
 #hide num_match/1.
 #hide match/3.
-#hide match2/3.
+#hide match_guard/3.
 #hide smaller_match/3.
 #hide rule/4.
-#hide eq/2.
+%#hide eq/2.
 #hide is_call/1.
 #hide is_next_step/1.
-#hide terminates/1.
-#hide next_step/2.
+%#hide terminates/1.
+%#hide next_step/2.
 #hide const_range/1.
 
-const_number(0..10).
+const_number(0..12).
 const(X) :- const_number(X).
 const(e).
 const_range(-100..100).
 
-%type(call(f, X), Expr) :- X = (sub(3, 1), mul(3, 1)), rule(2, f, @eval(X), Expr).
+
 
 eq(In, Out) :- example(In, Out).
 :- eq(N1, N2), const_range(N1), const_range(N2), N1 != N2.
@@ -72,5 +72,5 @@ next_step(sub(A, B), B) :- is_next_step(sub(A, B)), const_number(A).
 next_step((X, Xs), Xs) 	:- is_next_step((X, Xs)), const_number(X).
 is_next_step(X) :- next_step(_, X).
 
-match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
+match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match_guard(F, Index, Inputs).
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const_number(Index).

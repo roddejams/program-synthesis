@@ -91,12 +91,78 @@ This rule handles the next step of function calls. The next step of a function c
 These rules generate \lstinline{next_step} predicates for arithmetic. The next step of an arithmetic expression is the argument that is not constant. //%{ 
 
 \section{Learning}
-The actual learning task operates in a similar way to my initial approach. By enumerating all possible rule bodies, I can use a choice rule to try generating answer sets with each one, keeping the answer sets which are satisfiable. However, because I am no longer using 
+The actual learning task operates in a similar way to my initial approach. By enumerating all possible rule bodies, I can use a choice rule to try generating answer sets with each one, keeping the answer sets which are satisfiable. However, because I am no longer using \lstinline{where} clauses, the skeleton rules now contain full bodies. This means that unfortunately the number of skeleton rules becomes large, numbering in the thousands for even simple tasks. To avoid this scaling poorly once again, I decided to implement a number of simple optimisations.%{
 
+\subsection{Using inbuilt arithmetic}
+As part of my first approach, I decided to represent arithmetic with my own predicates \lstinline{add(A, B)}, \lstinline{sub(A, B)} and \lstinline{mul(A, B)} because I needed to evaluate expressions that the grounder would not be able to compute (i.e the value of function calls or where variables). \\ \\ %{
+However, in my new approach I decided to make partial use of the clingo inbuilt arithmetic. If inside function arguments, or the rule body has no function calls at all, then I know all sub expressions will be arithmetic and I make use of the simple \lstinline{+, -} and \lstinline{*}. \\ \\
+The main advantage of this approach is that it vastly reduces the ground output. As the inbuilt operations are computed by the grounder, if two different expressions compute the same output number, then they are not repeated in the ground output. For example, \lstinline{X + X} and \lstinline{2 * X} are semantically equivalent, so only produce one output rule.
+
+\section{A Worked Example : Greatest common divisor}
+Once again I will use Euler's algorithm for the Greatest Common Divisor to illustrate this new approach. Because my tool still does not have modulo as part of its target language, I will still attempt to learn the simplified definition :
+
+\lstinputlisting[language=Haskell, firstline=2, lastline=5]{../ASP/eq/gcd.lp} 
+\mbox{} \\
+As input, I will be using the following examples : \\
+
+\lstinputlisting[language=Prolog, firstline=20, lastline=25]{../ASP/eq/gcd.lp} 
+\mbox{} \\
+Which cover both cases $(X < Y)$ and $(X > Y)$ while also not being too simplistic. \\ \\
+After running the learning task, the resulting Answer Set contains the terms: \\
+
+\begin{lstlisting}
+choose(1,2).
+choose(2,150).
+choose(3,190).
+\end{lstlisting}
+\mbox{} \\
+These terms correspond to the following skeleton rules : \\
+
+\begin{lstlisting}
+rule(R, gcd, (N0, N1), N0) :- is_call(call(gcd, (N0, N1))), choose(R, 2). 
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 150).
+rule(R, gcd, (N0, N1), call(gcd, (N1, N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 190).
+\end{lstlisting}
+\mbox{} \\
+Which then corresponds to the Haskell program :
+
+\begin{lstlisting}
+gcd x y
+	| x == y = x
+	| x > y	 = gcd (x - y) y
+	| x < y	 = gcd y x
+\end{lstlisting}
+\mbox{} \\
+What is interesting is that whilst it has not learned the exact target program, the learned program is still correct. This is due to the optimisations I have implemented preferring rules with shorter bodies.\\ \\
+To see why I get this result, it is useful to look at the corresponding \lstinline{eq} predicates for each example. \\ \\%{
+The example \lstinline{example(call(gcd,(8,12)),4)} produces the terms :\\ %{
+\begin{multicols}{2}
+\begin{lstlisting}
+eq(call(gcd,(8,12)),4). 
+eq(call(gcd,(12,8)),4).
+eq(call(gcd,(4,8)),4).
+eq(call(gcd,(8,4)),4).
+eq(call(gcd,(4,4)),4).
+eq(4, 4).
+next_step(e,call(gcd,(8,12))).
+next_step(call(gcd,(8,12)),call(gcd,(12,8))).
+next_step(call(gcd,(12,8)),call(gcd,(4,8))).
+next_step(call(gcd,(4,8)),call(gcd,(8,4))).
+next_step(call(gcd,(8,4)),call(gcd,(4,4))).
+next_step(call(gcd,(4,4)),4).
+\end{lstlisting}
+\end{multicols}
+
+Because these terms are all created without constraints failing, the respective rule bodies are returned as a solution.
 
 \section{Performance}
+While this new approach does perform better than the old one, it still suffers from a lot of the same issues limiting performance. \\ \\
+Because of the large number of combinations of skeleton rules, they can still grow very large very quickly, lowering the performance of my tool. In addition, expanding the language bias to different types also has an adverse effect on this.
 
-
+\subsection{Reducing the language bias}
+As a way to deal with the explosive expansion of skeleton rules, I decided to implement a way to help contain this by artificially limiting the language bias. \\ \\
+By removing operations from the bias that I know will not be used in the output functions, I can remove a large number of skeleton rules that will have no effect on the output of the learning task. In a similar way, I can limit learning to only tail recursive programs, meaning that my skeleton rules only use inbuilt arithmetic operations, further increasing performance. \\ \\
+Of course, this method for improving performance is limited by the knowledge of the user. If they have no idea what the output function will look like, this is completely unhelpful. 
 
 \pagebreak
 %\renewcommand\bibname{{References}}

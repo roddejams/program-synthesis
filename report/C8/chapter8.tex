@@ -59,6 +59,9 @@ Similarly, the number of arguments of the target function increases as I have to
 Even in this simple example, there are 12 possible rules. As addition is commutative, I have omitted any rules where the ordering is reversed. More optimisations like this can be seen in the next section.
 A full list of the skeleton rules generated for both one and two argument functions can be seen in the appendix.
 
+\subsection{Learning Match Rules}
+
+
 \section{Multiple Solutions and Optimisation}
 While learning, it is not uncommon to have multiple solutions, usually due to multiple semantically equivalent base cases. I may get two answer sets as output, one having learned \lstinline{rule(1, F, 0, 1)}, and the other with \lstinline{rule(1, F, 0, 0+1)}. \\ \\
 To attempt at dealing with this, I have implemented a basic optimisation system, by prioritising rules with shorter bodies. In general, rules with lower rule number are shorter, so I used the minimisation rule :

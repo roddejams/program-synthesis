@@ -1,11 +1,11 @@
 #domain const_number(N0).
 #domain const_number(N1).
-match2(gcd, 1, (N0, N1)) :- N0 == C1, is_call(call(gcd, (N0, N1))), choose_match(R, 1, C1).
-match2(gcd, 2, (N0, N1)) :- N1 == C1, is_call(call(gcd, (N0, N1))), choose_match(R, 2, C1).
-match2(gcd, 3, (N0, N1)) :- N0 == N1, is_call(call(gcd, (N0, N1))), choose_match(R, 3).
-match2(gcd, 4, (N0, N1)) :- N0 < N1, is_call(call(gcd, (N0, N1))), choose_match(R, 4).
-match2(gcd, 5, (N0, N1)) :- N1 == N0, is_call(call(gcd, (N0, N1))), choose_match(R, 5).
-match2(gcd, 6, (N0, N1)) :- N1 < N0, is_call(call(gcd, (N0, N1))), choose_match(R, 6).
+%match_guard(gcd, 1, (N0, N1)) :- N0 == C1, is_call(call(gcd, (N0, N1))), choose_match(R, 1, C1).
+%match_guard(gcd, 2, (N0, N1)) :- N1 == C1, is_call(call(gcd, (N0, N1))), choose_match(R, 2, C1).
+%match_guard(gcd, 3, (N0, N1)) :- N0 == N1, is_call(call(gcd, (N0, N1))), choose_match(R, 3).
+%match_guard(gcd, 4, (N0, N1)) :- N0 < N1, is_call(call(gcd, (N0, N1))), choose_match(R, 4).
+%match_guard(gcd, 5, (N0, N1)) :- N1 == N0, is_call(call(gcd, (N0, N1))), choose_match(R, 5).
+%match_guard(gcd, 6, (N0, N1)) :- N1 < N0, is_call(call(gcd, (N0, N1))), choose_match(R, 6).
 rule(R, gcd, (N0, N1), C1) :- is_call(call(gcd, (N0, N1))), choose(R, 1, C1).
 rule(R, gcd, (N0, N1), N0) :- is_call(call(gcd, (N0, N1))), choose(R, 2).
 rule(R, gcd, (N0, N1), N1) :- is_call(call(gcd, (N0, N1))), choose(R, 3).
@@ -348,10 +348,11 @@ rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), C1))) :- is_call(call(gcd, (N0, N1)
 rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 340, C1).
 rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 341, C1).
 rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 342).
-1 {
-choose_match(R, 3;4;5;6) ,
-choose_match(R, 1;2, C0) : expr_const(C0) 
-} 1 :- num_match(R).
+
+%1 {
+%choose_match(R, 3;4;5;6) ,
+%choose_match(R, 1;2, C0) : expr_const(C0) 
+%} 1 :- num_match(R).
 1 {
 choose(R, 2;3;4;8;12;13;14;15;17;19;21;23;25;63;65;67;69;71;73;111;113;115;117;119;121;123;125;127;129;131;133;135;137;139;141;143;145;147;148;149;150;151;152;160;161;162;163;164;165;166;174;175;176;177;178;179;180;188;189;190;191;192;193;194;202;203;204;205;206;207;208;216;217;218;219;220;221;222;230;329;330;331;332;333;334;342) ,
 choose(R, 1;5;6;7;9;10;11;16;18;20;22;24;26;27;29;31;33;35;37;39;41;43;45;47;49;51;53;55;57;59;61;64;66;68;70;72;74;75;77;79;81;83;85;87;89;91;93;95;97;99;101;103;105;107;109;112;114;116;118;120;122;124;126;128;130;132;134;136;138;140;142;144;146;153;154;155;156;157;158;159;167;168;169;170;171;172;173;181;182;183;184;185;186;187;195;196;197;198;199;200;201;209;210;211;212;213;214;215;223;224;225;226;227;228;229;231;232;233;234;235;236;244;245;246;247;248;249;250;258;259;260;261;262;263;264;272;273;274;275;276;277;278;286;287;288;289;290;291;292;300;301;302;303;304;305;306;314;315;316;317;318;319;320;328;335;336;337;338;339;340;341, C0) : expr_const(C0) ,

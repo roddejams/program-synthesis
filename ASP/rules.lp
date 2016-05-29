@@ -19,10 +19,10 @@ const(e).
 #hide const(N).
 #hide const_number(N).
 #hide rule(R, F, Args, Expr).
-#hide match(F, Index, Args).
-#hide match2(F, Index, Args).
+%#hide match(F, Index, Args).
+#hide match_guard(F, Index, Args).
 #hide smaller_match(F, Index, Args).
-#hide eval_with(Expr, Args).
+%#hide eval_with(Expr, Args).
 #hide value_with(Expr, Out, Args).
 #hide num_rules(N).
 #hide check_if_complex(Expr).
@@ -34,7 +34,7 @@ const(e).
 
 #hide input(In).
 #hide where(X, Args, Expr).
-#hide output(In, Out).
+%#hide output(In, Out).
 %%%%
 
 %%%% LANGUAGE BIAS %%%%
@@ -119,5 +119,5 @@ n_complex(add(A, B))     :- n_complex(A), n_complex(B), check_if_complex(add(A, 
 
 input(call(F, Inputs)) :- eval_with(call(F, Args_new), Args_old), value_with(Args_new, Inputs, Args_old).
 
-match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match2(F, Index, Inputs).
+match(F, Index, Inputs) :- not smaller_match(F, Index, Inputs), rule(Index, F, Inputs, _), match_guard(F, Index, Inputs).
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
