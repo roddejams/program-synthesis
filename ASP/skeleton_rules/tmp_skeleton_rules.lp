@@ -1,3 +1,9 @@
+match_guard(gcd, R, (N0, N1)) :- N0 == C1, input(call(gcd, (N0, N1))), choose_match(R, 1, C1).
+match_guard(gcd, R, (N0, N1)) :- N1 == C1, input(call(gcd, (N0, N1))), choose_match(R, 2, C1).
+match_guard(gcd, R, (N0, N1)) :- N0 == N1, input(call(gcd, (N0, N1))), choose_match(R, 3).
+match_guard(gcd, R, (N0, N1)) :- N0 < N1, input(call(gcd, (N0, N1))), choose_match(R, 4).
+match_guard(gcd, R, (N0, N1)) :- N1 == N0, input(call(gcd, (N0, N1))), choose_match(R, 5).
+match_guard(gcd, R, (N0, N1)) :- N1 < N0, input(call(gcd, (N0, N1))), choose_match(R, 6).
 rule(R, gcd, (N0, N1), N0) :- input(call(gcd, (N0, N1))), choose(R, 1).
 rule(R, gcd, (N0, N1), N1) :- input(call(gcd, (N0, N1))), choose(R, 2).
 rule(R, gcd, (N0, N1), add(N0, N0)) :- input(call(gcd, (N0, N1))), choose(R, 3).
@@ -33,9 +39,9 @@ rule(R, gcd, (N0, N1), call(gcd, (N1, x0))) :- input(call(gcd, (N0, N1))), choos
 rule(R, gcd, (N0, N1), call(gcd, (N0, x1))) :- input(call(gcd, (N0, N1))), choose(R, 31).
 rule(R, gcd, (N0, N1), call(gcd, (N1, x1))) :- input(call(gcd, (N0, N1))), choose(R, 32).
 rule(R, gcd, (N0, N1), call(gcd, (x0, N1))) :- input(call(gcd, (N0, N1))), choose(R, 76).
-rule(R, gcd, (N0, N1), call(gcd, (x0, N0))) :- input(call(gcd, (N0, N1))), choose(R, 76).
-rule(R, gcd, (N0, N1), call(gcd, (x1, N1))) :- input(call(gcd, (N0, N1))), choose(R, 76).
-rule(R, gcd, (N0, N1), call(gcd, (x1, N0))) :- input(call(gcd, (N0, N1))), choose(R, 76).
+rule(R, gcd, (N0, N1), call(gcd, (x0, N0))) :- input(call(gcd, (N0, N1))), choose(R, 79).
+rule(R, gcd, (N0, N1), call(gcd, (x1, N1))) :- input(call(gcd, (N0, N1))), choose(R, 80).
+rule(R, gcd, (N0, N1), call(gcd, (x1, N0))) :- input(call(gcd, (N0, N1))), choose(R, 81).
 
 where(x0, (N0, N1), add(N0, N0)) :- input(call(gcd, (N0, N1))), choose_where(33).
 where(x0, (N0, N1), add(N1, N1)) :- input(call(gcd, (N0, N1))), choose_where(34).
@@ -82,16 +88,20 @@ where(x1, (N0, N1), sub(N0, N1)) :- input(call(gcd, (N0, N1))), choose_where(74)
 where(x1, (N0, N1), sub(N1, N0)) :- input(call(gcd, (N0, N1))), choose_where(77).
 where(x1, (N0, N1), call(gcd, (N0, N1))) :- input(call(gcd, (N0, N1))), choose_where(75).
 1 {
-choose(R, 1;2;3;4;7;9;10;11;12;15;17;18;19;20;23;25;26;27;28;29;30;31;32;76;78) ,
-choose(R, 5;6;8;13;14;16;21;22;24, C0) : expr_const(C0) 
+choose(R, 1;2;3;4;7;9;10;11;12;15;17;18;19;20;23;25;26;27;28;29;30;31;32;76;78;79;80;81) ,
+choose(R, 5;6;8;13;14;16;21;22;24, C0) : expr_const(C0)
 } 1 :- num_rules(R).
 #minimise [choose_where(R)=1, choose_where(R, _)=1 ].
 #minimise [choose(1, R)=R, choose(1, R, _)=R].
 0 {
 choose_where(33;34;37;39;40;41;42;45;47;48;49;50;53;55;56;57;58;59) ,
-choose_where(35;36;38;43;44;46;51;52;54, C0) : expr_const(C0) 
+choose_where(35;36;38;43;44;46;51;52;54, C0) : expr_const(C0)
 } 1.
 0 {
 choose_where(60;61;64;65;66;69;70;71;74;75;77) ,
-choose_where(62;63;67;68;72;73, C0) : expr_const(C0) 
+choose_where(62;63;67;68;72;73, C0) : expr_const(C0)
 } 1.
+1 {
+choose_match(R, 3;4;5;6) ,
+choose_match(R, 1;2, C0) : expr_const(C0)
+} 1 :- num_match(R).

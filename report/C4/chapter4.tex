@@ -88,7 +88,7 @@ This rule handles the next step of function calls. The next step of a function c
 
 \lstinputlisting[language=Prolog, firstline=64, lastline=69]{../ASP/eq/eq_rules.lp} 
 \mbox{} \\
-These rules generate \lstinline{next_step} predicates for arithmetic. The next step of an arithmetic expression is the argument that is not constant. //%{ 
+These rules generate \lstinline{next_step} predicates for arithmetic. The next step of an arithmetic expression is the argument that is not constant. %{
 
 \section{Learning}
 The actual learning task operates in a similar way to my initial approach. By enumerating all possible rule bodies, I can use a choice rule to try generating answer sets with each one, keeping the answer sets which are satisfiable. However, because I am no longer using \lstinline{where} clauses, the skeleton rules now contain full bodies. This means that unfortunately the number of skeleton rules becomes large, numbering in the thousands for even simple tasks. To avoid this scaling poorly once again, I decided to implement a number of simple optimisations.%{
@@ -152,7 +152,7 @@ next_step(call(gcd,(8,4)),call(gcd,(4,4))).
 next_step(call(gcd,(4,4)),4).
 \end{lstlisting}
 \end{multicols}
-
+\mbox{}\\
 Because these terms are all created without constraints failing, the respective rule bodies are returned as a solution.
 
 \section{Performance}

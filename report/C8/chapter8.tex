@@ -60,7 +60,27 @@ Even in this simple example, there are 12 possible rules. As addition is commuta
 A full list of the skeleton rules generated for both one and two argument functions can be seen in the appendix.
 
 \subsection{Learning Match Rules}
+Until now, I have been assuming that the tool knows about the specific rule guard matching behaviour before learning takes place. While this is helpful initially, for this tool to work I need to also learn the respective match rules. Luckily, this is not particularly complicated. \\ \\
+As guard rules have to return booleans, this reduces the number of operations to the integer comparators, \lstinline{equals (==)} and \lstinline{less than (<)}. I choose to omit \lstinline{greater than (>)} as I can replace all occurrences of it with \lstinline{(<)} without loss of generality.\\ \\
+Using these operations, the skeleton rules for match terms are given by : \\
 
+\begin{lstlisting}
+match_guard(gcd, R, (N0, N1)) :- N0 == C1, input(call(gcd, (N0, N1))), choose_match(R, 1, C1).
+match_guard(gcd, R, (N0, N1)) :- N1 == C1, input(call(gcd, (N0, N1))), choose_match(R, 2, C1).
+match_guard(gcd, R, (N0, N1)) :- N0 == N1, input(call(gcd, (N0, N1))), choose_match(R, 3).
+match_guard(gcd, R, (N0, N1)) :- N0 < N1, input(call(gcd, (N0, N1))), choose_match(R, 4).
+match_guard(gcd, R, (N0, N1)) :- N1 == N0, input(call(gcd, (N0, N1))), choose_match(R, 5).
+match_guard(gcd, R, (N0, N1)) :- N1 < N0, input(call(gcd, (N0, N1))), choose_match(R, 6).
+\end{lstlisting}
+\mbox{}\\
+To choose these rules, I once again make use of a choice rule, which makes sure we choose exactly as many skeleton match rules as the user defines. \\
+
+\begin{lstlisting}
+1 {
+choose_match(R, 3;4;5;6) ,
+choose_match(R, 1;2, C0) : expr_const(C0)
+} 1 :- num_match(R).
+\end{lstlisting}
 
 \section{Multiple Solutions and Optimisation}
 While learning, it is not uncommon to have multiple solutions, usually due to multiple semantically equivalent base cases. I may get two answer sets as output, one having learned \lstinline{rule(1, F, 0, 1)}, and the other with \lstinline{rule(1, F, 0, 0+1)}. \\ \\
@@ -69,10 +89,9 @@ To attempt at dealing with this, I have implemented a basic optimisation system,
 \lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/skeleton_rules/own_rules_1arg.lp}
 \mbox{}\\
 Which prioritises rules with lower rule numbers.\\ \\
-As a second optimisation, I wanted to prefer less complicated results, and answer sets with fewer \lstinline{where} clauses represent less complicated functions, as the depth of the function is lower. Because of this, I use the minimisation rule : %{
+As a second optimisation, I wanted to prefer less complicated results, and answer sets with fewer \lstinline{where} clauses represent less complicated functions, as the depth of the function is lower. Because of this, I use the minimisation rule : \\ %{
 
 \lstinputlisting[language=Prolog, firstline=64, lastline=64]{../ASP/skeleton_rules/own_rules_1arg.lp}
-\mbox{}\\
 
 \section{A Worked Example : Learning GCD}
 In the last chapter, I went through the steps that the interpreter takes to produce results when given Euler's algorithm to calculate the greatest common divisor. In this section, I will detail how I then learn that program. As a reminder, this function is defined in Haskell as :
@@ -84,42 +103,96 @@ gcd x y
 	| x < y	 = gcd x (y - x)
 \end{lstlisting}
 \mbox{}\\
-As input to the learning task I need to specify some examples. I chose the examples 
+As input to the learning task I need to specify some examples. I initially chose the examples \\
 
 \lstinputlisting[language=Prolog, firstline=32, lastline=36]{../ASP/eq/gcd.lp}
 \mbox{}\\
-Because they seem to cover all of the cases I need to learn. \\ \\
-In addition to this, I will need to enumerate all of the possible \lstinline{rule} and \lstinline{where} bodies as part of the skeleton rules. I will not list the entire set of skeleton rules here, but instead highlight some which will be in use later : 
+Because they seem to cover all of the cases I need to learn. In addition to this, I will need to enumerate all of the possible \lstinline{rule} and \lstinline{where} bodies as part of the skeleton rules. I will not list the entire set of skeleton rules here, but instead highlight some which will be in use later : \\
 
-TODO: Put skeleton rules in here.
+\begin{lstlisting}
+rule(R, gcd, (N0, N1), N0) :- input(call(gcd, (N0, N1))), choose(R, 1).
+rule(R, gcd, (N0, N1), N1) :- input(call(gcd, (N0, N1))), choose(R, 2).
+rule(R, gcd, (N0, N1), sub(N0, N1)) :- input(call(gcd, (N0, N1))), choose(R, 23).
+rule(R, gcd, (N0, N1), call(gcd, (N1, x0))) :- input(call(gcd, (N0, N1))), choose(R, 30).
+rule(R, gcd, (N0, N1), call(gcd, (x1, N0))) :- input(call(gcd, (N0, N1))), choose(R, 81).
 
-After running the learning task with these inputs, I get as output the terms :
+where(x0, (N0, N1), sub(N0, N1)) :- input(call(gcd, (N0, N1))), choose_where(53).
+where(x1, (N0, N1), sub(N1, N0)) :- input(call(gcd, (N0, N1))), choose_where(77).
 
-TODO: Put uncomplete output here.
+match_guard(gcd, R, (N0, N1)) :- N0 == N1, input(call(gcd, (N0, N1))), choose_match(R, 3).
+match_guard(gcd, R, (N0, N1)) :- N0 < N1, input(call(gcd, (N0, N1))), choose_match(R, 4).
+match_guard(gcd, R, (N0, N1)) :- N1 < N0, input(call(gcd, (N0, N1))), choose_match(R, 6).
+\end{lstlisting}
+\mbox{}\\
+After running the learning task with these inputs, I get as output the terms : \\
 
-These rules represent the learned Haskell program:
+\begin{multicols}{2}
+\begin{lstlisting}
+choose(1, 1).
+choose(2, 23).
+choose(3, 2).
+choose_match(1, 4).
+choose_match(2, 6).
+choose_match(3, 3).
+\end{lstlisting}
+\end{multicols}
+\mbox{}\\
+These rules represent the learned Haskell program: \\
 
-TODO: Put haskell here.
-
-What is interesting is that this is not a correct implementation of Euler's algorithm! However, this result is still returned as it covers all of the examples. For example, the example \lstinline{example(call(gcd, (9, 6)), 3)} generates a \lstnline{input(call(gcd, (9, 6)))} term. This term is then ran through the interpreter with the chose rules, and returns \lstinline{output(call(gcd, (9, 6)), 3)}. As this does not contradict the example, those rules are valid. \\ \\%{
+\begin{lstlisting}
+gcd x y
+	| x == y = y
+	| x > y  = x - y
+	| x < y  = x
+\end{lstlisting}
+\mbox{}\\
+What is interesting is that this is not a correct implementation of Euler's algorithm! However, this result is still returned as it covers all of the examples. For example, the example \lstinline{example(call(gcd, (9, 6)), 3)} generates a \lstinline{input(call(gcd, (9, 6)))} term. This term is then ran through the interpreter with the chose rules, and returns \lstinline{output(call(gcd, (9, 6)), 3)}. As this does not contradict the example, those rules are valid. \\ \\%{
 As an attempt to fix this problem, I can add some extra examples. By adding these two examples :\\
 
 \lstinputlisting[language=Prolog, firstline=37, lastline=38]{../ASP/eq/gcd.lp}
 \mbox{}\\
 These examples are cases where the previous result would not work, and help generalise the target function. \\ \\
-After running these examples as input, I get the following terms as a result :
+After running these examples as input, I get the following terms as a result : \\
 
-TODO: Add terms
-
+\begin{lstlisting}
+choose(1, 1).
+choose(2, 81).
+choose(3, 30).
+choose_where(77).
+choose_where(53).
+choose_match(1, 3).
+choose_match(2, 4).
+choose_match(3, 6).
+\end{lstlisting}
+\mbox{} \\
 These terms translate to the haskell program :
 
-TODO: Add Haskell
-
+\begin{lstlisting}
+gcd x y
+	| x == y = x
+	| x > y  = gcd y x0
+	| x < y  = gcd x1 x
+	
+	where x0 = x - y
+	where x1 = y - x
+\end{lstlisting}
+\mbox{}\\
 As required.
 
 \section{Performance Issues}
-Unfortunately, this learning task suffers from extreme difficulty scaling. While the number of skeleton rules is relatively small, the problem comes when considering combinations of \lstinline{rule} and \lstinline{where} terms.\\ \\ %Add specific maths here?%
-For the example described above, the output ground program is over _ lines long, and takes 
+Unfortunately, this learning task suffers from extreme difficulty scaling. While the number of skeleton rules is relatively small, the problem comes when considering combinations of \lstinline{rule} and \lstinline{where} terms.\\ \\ %Add specific maths here?
+For the example described above, the output ground program is 366879 lines long, and takes over 500 seconds to run, which is far too long, especially for someone using a front-end user interface.
+
+\subsection{Potential Optimisations}
+However, there are many potential optimisations I could make here, to increase performance. The first involves limiting the range of available constants. As default, I restricted integer constants to 0 - 10, defining this using the term \lstinline{const_number(0..10)}. However, it may be more efficient to limit the maximum integer size to the largest constant found in the examples. This would allow for great increase in performance, especially if working on expressions such as lists, where the value inside of the list usually does not matter. \\ \\ %{
+However, this would limit internal values inside the program. If a program requires an internal variable whose value is greater than any of the examples, then my tool would fail. But, it is important to consider if there are very many programs in which this would occur, especially considering my limited language bias. \\ \\
+Other potential optimisations include
+\begin{itemize}
+\item Removing redundant skeleton rules
+\item Using clingo's built in arithmetic for simple expressions.
+\item Finding the optimal number of potential where rules.
+\end{itemize}
+In the end, I did not choose to implement any of these optimisations, and instead opted to implement an entirely new approach, as detailed in the next chapter.
 
 \pagebreak
 %\renewcommand\bibname{{References}}

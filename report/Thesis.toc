@@ -50,42 +50,43 @@
 \contentsline {subsection}{\numberline {4.2.2}Rule combinations}{28}{subsection.4.2.2}
 \contentsline {subsection}{\numberline {4.2.3}Learning Match Rules}{29}{subsection.4.2.3}
 \contentsline {section}{\numberline {4.3}Multiple Solutions and Optimisation}{29}{section.4.3}
-\contentsline {section}{\numberline {4.4}A Worked Example : Learning Fibonacci}{29}{section.4.4}
-\contentsline {section}{\numberline {4.5}Performance Issues}{29}{section.4.5}
+\contentsline {section}{\numberline {4.4}A Worked Example : Learning GCD}{30}{section.4.4}
+\contentsline {section}{\numberline {4.5}Performance Issues}{32}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Potential Optimisations}{32}{subsection.4.5.1}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-7}
-\contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{30}{chapter.5}
-\contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{30}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}Dealing with termination}{31}{subsection.5.1.1}
-\contentsline {section}{\numberline {5.2}ASP Representation}{31}{section.5.2}
-\contentsline {section}{\numberline {5.3}Learning}{33}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Using inbuilt arithmetic}{33}{subsection.5.3.1}
-\contentsline {section}{\numberline {5.4}A Worked Example : Greatest common divisor}{34}{section.5.4}
-\contentsline {section}{\numberline {5.5}Performance}{35}{section.5.5}
-\contentsline {subsection}{\numberline {5.5.1}Reducing the language bias}{35}{subsection.5.5.1}
+\contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{33}{chapter.5}
+\contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{33}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Dealing with termination}{34}{subsection.5.1.1}
+\contentsline {section}{\numberline {5.2}ASP Representation}{34}{section.5.2}
+\contentsline {section}{\numberline {5.3}Learning}{36}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Using inbuilt arithmetic}{36}{subsection.5.3.1}
+\contentsline {section}{\numberline {5.4}A Worked Example : Greatest common divisor}{37}{section.5.4}
+\contentsline {section}{\numberline {5.5}Performance}{38}{section.5.5}
+\contentsline {subsection}{\numberline {5.5.1}Reducing the language bias}{38}{subsection.5.5.1}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-8}
-\contentsline {chapter}{\numberline {6}Front end implementation : Building a working UI}{36}{chapter.6}
-\contentsline {section}{\numberline {6.1}User's Manual}{36}{section.6.1}
-\contentsline {section}{\numberline {6.2}Used Technologies}{36}{section.6.2}
-\contentsline {subsection}{\numberline {6.2.1}Play Framework}{36}{subsection.6.2.1}
-\contentsline {section}{\numberline {6.3}User Feedback and Evaluation}{36}{section.6.3}
+\contentsline {chapter}{\numberline {6}Front end implementation : Building a working UI}{39}{chapter.6}
+\contentsline {section}{\numberline {6.1}User's Manual}{39}{section.6.1}
+\contentsline {section}{\numberline {6.2}Used Technologies}{39}{section.6.2}
+\contentsline {subsection}{\numberline {6.2.1}Play Framework}{39}{subsection.6.2.1}
+\contentsline {section}{\numberline {6.3}User Feedback and Evaluation}{39}{section.6.3}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-9}
-\contentsline {chapter}{\numberline {7}Critical Evaluation}{37}{chapter.7}
-\contentsline {section}{\numberline {7.1}Testing}{37}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}One Argument Programs}{37}{subsection.7.1.1}
-\contentsline {subsubsection}{Factorial}{37}{section*.15}
-\contentsline {subsection}{\numberline {7.1.2}Two Argument Programs}{37}{subsection.7.1.2}
-\contentsline {subsubsection}{Tail Recursive Factorial}{37}{section*.16}
-\contentsline {section}{\numberline {7.2}Comparison to Existing Tools}{37}{section.7.2}
+\contentsline {chapter}{\numberline {7}Critical Evaluation}{40}{chapter.7}
+\contentsline {section}{\numberline {7.1}Testing}{40}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}One Argument Programs}{40}{subsection.7.1.1}
+\contentsline {subsubsection}{Factorial}{40}{section*.15}
+\contentsline {subsection}{\numberline {7.1.2}Two Argument Programs}{40}{subsection.7.1.2}
+\contentsline {subsubsection}{Tail Recursive Factorial}{40}{section*.16}
+\contentsline {section}{\numberline {7.2}Comparison to Existing Tools}{40}{section.7.2}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-10}
-\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{38}{chapter.8}
-\contentsline {section}{\numberline {8.1}Conclusions}{38}{section.8.1}
-\contentsline {subsection}{\numberline {8.1.1}What worked}{38}{subsection.8.1.1}
-\contentsline {subsection}{\numberline {8.1.2}Areas for improvement}{38}{subsection.8.1.2}
-\contentsline {section}{\numberline {8.2}Future Work}{38}{section.8.2}
-\contentsline {subsection}{\numberline {8.2.1}Learning Improvements}{38}{subsection.8.2.1}
-\contentsline {subsection}{\numberline {8.2.2}UI Features}{38}{subsection.8.2.2}
+\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{41}{chapter.8}
+\contentsline {section}{\numberline {8.1}Conclusions}{41}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}What worked}{41}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}Areas for improvement}{41}{subsection.8.1.2}
+\contentsline {section}{\numberline {8.2}Future Work}{41}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Learning Improvements}{41}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}UI Features}{41}{subsection.8.2.2}
 \gdef \the@ipfilectr {}
