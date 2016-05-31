@@ -12,6 +12,7 @@ public class HaskellGenerator {
     private List<ChoiceRule> skeletonRules;
     private List<ChoiceRule> matchRules;
     private List<ChoiceRule> chosenRules = new ArrayList<>();
+    private List<ChoiceRule> chosenMatches = new ArrayList<>();
 
     //Temp until match learning is implemented
     private static Map<String, String> matchMap = new HashMap<>();
@@ -40,9 +41,13 @@ public class HaskellGenerator {
             for (int i = 1; i <= numConsts; i++) {
                 String constVal = pred.split("\\(")[1].split("\\)")[0].split(",")[i + 1];
                 learnedCondition = learnedCondition.replace("C" + i, constVal);
+
             }
-	
-	    int rulePosition = Integer.valueOf(pred.split("\\(")[1].split("\\)")[0].split(",")[0]);
+
+            matchRule.updateCondition(learnedCondition);
+            chosenMatches.add(matchRule);
+
+	        int rulePosition = Integer.valueOf(pred.split("\\(")[1].split("\\)")[0].split(",")[0]);
             learnedConditions[rulePosition - 1] = learnedCondition;
         });
 
@@ -270,7 +275,10 @@ public class HaskellGenerator {
     }
 
     public List<ChoiceRule> getChosenRules() {
-        return chosenRules;
+        List<ChoiceRule> rulesAndMatches = new ArrayList<>();
+        rulesAndMatches.addAll(chosenRules);
+        rulesAndMatches.addAll(matchRules);
+        return rulesAndMatches;
     }
 
     public static String ruleToHaskell(String body) {

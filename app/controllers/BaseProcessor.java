@@ -56,7 +56,7 @@ public abstract class BaseProcessor extends UntypedActor {
         try {
             result = new LearningResult(inputExamples, new ArrayList<>(), new ArrayList<>()); // To be returned while not finished;
             if(!inputExamples.getName().isEmpty()) {
-                fnName = inputExamples.getName();
+                fnName = inputExamples.getName().toLowerCase();
             }
 
             List<IOExample> examples = removeUncompletedExamples(inputExamples.getExamples());
@@ -127,7 +127,7 @@ public abstract class BaseProcessor extends UntypedActor {
         }
     }
 
-    abstract List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> ops, boolean useTailRecursion);
+    abstract List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> ops, boolean useTailRecursion) throws LearningException;
 
     abstract Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException;
 
@@ -245,6 +245,8 @@ public abstract class BaseProcessor extends UntypedActor {
 
         ChoiceRule.RuleFactory factory = new ChoiceRule.RuleFactory();
         Match.MatchBuilder builder = new Match.MatchBuilder().withArgs(args).withName(fnName);
+
+        factory.addRule(builder.withCondition(""));
 
         for(String arg : args) {
             factory.addRule(builder.withCondition(String.format("%s == %s", arg, "C1")));

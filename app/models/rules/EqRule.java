@@ -104,4 +104,32 @@ public class EqRule extends Rule {
                 constChoice
         );
     }
+
+    @Override
+    public String toLearnableString() {
+        StringBuilder bodyOut = new StringBuilder(body);
+        int constCount = 1;
+
+        //Replace all const locations with correct numbers
+        for (int index = body.indexOf("C"); index >= 0; index = body.indexOf("C", index + 1))
+        {
+            bodyOut.replace(index+1, index+2, Integer.toString(constCount));
+            constCount++;
+        }
+
+        String argString = args.toString();
+        argString = argString.replace('[', '(');
+        argString = argString.replace("]", ")");
+
+        String position = rulePosition == 0 ? "R" : String.valueOf(rulePosition);
+
+        return String.format("rule(%s, %s, %s, %s) :- is_call(call(%s, %s)).\n",
+                position,
+                functionName,
+                argString,
+                bodyOut,
+                functionName,
+                argString
+        );
+    }
 }

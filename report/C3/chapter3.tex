@@ -11,11 +11,10 @@ Initially, I chose to target a simple sub language of Haskell with the following
 \item Subtraction
 \item Multiplication
 \item Function Calls (including recursion) with any number of arguments.
-\item Lists
+%\item Lists
 \end{itemize}
 
-I chose these terms as I felt they were expressive enough to be able to represent sufficiently complicated test examples.\\ \\
-
+I chose these terms as I felt they were expressive enough to be able to represent sufficiently complicated test examples, while not overcomplicating my first attempt at writing the interpreter. 
 
 \subsection{Program Representation}
 To represent a generic Haskell program in ASP, first I had to choose various predicates to represent different parts of the program.\\ \\
@@ -127,6 +126,8 @@ This rule introduces \lstinline{n_complex} predicates. If a term is a constant, 
 \lstinputlisting[language=Prolog, firstline=112, lastline=116]{../ASP/rules.lp}
 \mbox{} \\
 These rules represent propagation of \lstinline{n_complex} terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ %{
+
+\pagebreak
 
 \section{A Worked Example : Greatest Common Divisor}
 
@@ -251,8 +252,8 @@ I can generate the term \lstinline{value_with(call(gcd, (3, x2)), 3, (3, 6))}. T
 
 \lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
 \mbox{} \\
-Which gives a corresponding \lstinline{output} term \lstinline{output(call(gcd, (3, 6)), 3)}. Once again, I can use this output to generate the term \lstinline{value_with(call(gcd, (x1, 6)), 3)}, and then use this term to generate the final \lstinline{output} term, \lstinline{output(call(gcd, (9, 6)), 3)}, as expected! \\ %{
-TODO: PUT DIAGRAM HERE.
+Which gives a corresponding \lstinline{output} term \lstinline{output(call(gcd, (3, 6)), 3)}. Once again, I can use this output to generate the term \lstinline{value_with(call(gcd, (x1, 6)), 3)}, and then use this term to generate the final \lstinline{output} term, \lstinline{output(call(gcd, (9, 6)), 3)}, as expected! \\ \\%{
+TODO: Put Diagram here. Derivation / Expression tree pictures, with eval-with and value-with branches.
 
 \pagebreak
 %\renewcommand\bibname{{References}}

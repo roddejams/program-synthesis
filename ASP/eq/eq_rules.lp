@@ -18,11 +18,11 @@ end
 #hide match_guard/3.
 #hide smaller_match/3.
 #hide rule/4.
-%#hide eq/2.
+#hide eq/2.
 #hide is_call/1.
 #hide is_next_step/1.
-%#hide terminates/1.
-%#hide next_step/2.
+#hide terminates/1.
+#hide next_step/2.
 #hide const_range/1.
 
 const_number(0..12).

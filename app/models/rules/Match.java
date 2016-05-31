@@ -1,8 +1,8 @@
 package models.rules;
 
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +27,10 @@ public class Match extends ChoiceRule{
 
     public void setRulePosition(int position) {
         rulePosition = position;
+    }
+
+    public void updateCondition(String condition) {
+        this.condition = condition;
     }
 
     public static class MatchBuilder extends ChoiceRuleBuilder {
@@ -78,7 +82,34 @@ public class Match extends ChoiceRule{
         }
 
         if(condition.isEmpty()) {
-            return String.format("match2(%s, %s, %s) :- is_call(call(%s, %s)).\n",
+            return String.format("match_guard(%s, R, %s) :- is_call(call(%s, %s)), choose_match(R, %d%s).\n",
+                    functionName,
+                    argString,
+                    functionName,
+                    argString,
+                    ruleNumber,
+                    constChoice);
+        } else {
+
+            return String.format("match_guard(%s, R, %s) :- %s, is_call(call(%s, %s)), choose_match(R, %d%s).\n",
+                    functionName,
+                    argString,
+                    condition,
+                    functionName,
+                    argString,
+                    ruleNumber,
+                    constChoice);
+        }
+    }
+
+    @Override
+    public String toLearnableString() {
+        String argString = args.toString();
+        argString = argString.replace('[', '(');
+        argString = argString.replace("]", ")");
+
+        if (condition.isEmpty()) {
+            return String.format("match_guard(%s, %s, %s) :- is_call(call(%s, %s)).\n",
                     functionName,
                     ruleNumber,
                     argString,
@@ -86,15 +117,13 @@ public class Match extends ChoiceRule{
                     argString);
         } else {
 
-            return String.format("match2(%s, %s, %s) :- %s, is_call(call(%s, %s)), choose_match(R, %d%s).\n",
+            return String.format("match_guard(%s, %s, %s) :- %s, is_call(call(%s, %s)).\n",
                     functionName,
                     ruleNumber,
                     argString,
                     condition,
                     functionName,
-                    argString,
-                    ruleNumber,
-                    constChoice);
+                    argString);
         }
     }
 

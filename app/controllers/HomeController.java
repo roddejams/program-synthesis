@@ -18,6 +18,12 @@ import views.html.pageBody;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +60,7 @@ public class HomeController extends Controller {
      * this method will be called when the application receives a
      * <code>GET</code> request with a path of <code>/</code>.
      */
-    public Result index() {
+    public Result index() throws IOException {
         IOExamples examples = new IOExamples();
         examples.setUseAddition(true);
         examples.setUseSubtraction(true);
@@ -63,6 +69,9 @@ public class HomeController extends Controller {
         examples.setUseTailRecursion(false);
         Form<IOExamples> formData = formFactory.form(IOExamples.class).fill(examples);
         List<String> emptyHaskell = new ArrayList<>();
+
+        Path ruleFile = Paths.get("ASP/learned_functions.lp");
+        Files.write(ruleFile, "".getBytes());
 
         return ok(main.render(
                 "A Haskell Code Generator from I/O Examples",
@@ -78,7 +87,7 @@ public class HomeController extends Controller {
 
 	    ActorRef learningActor;
 
-        if(uuid.equals("new")) {        
+        if(uuid.equals("new_task")) {
 	        learningActor = system.actorOf(ConstraintLearningProcessor.props);
 	    } else {
             uuid =  "akka://application/user/" + uuid;
@@ -115,12 +124,31 @@ public class HomeController extends Controller {
         });
     }
 
-    public Result addRuleToBackground(String name) {
+    public Result addRuleToBackground(String name) throws IOException {
+        name = name.toLowerCase();
         if(learnedFunctions.keySet().contains(name)) {
             selectedFunctionNames.add(name);
         }
 
-        //TODO: Write to learned_functions.lp
+        Path ruleFile = Paths.get("ASP/learned_functions.lp");
+        Files.write(ruleFile, "".getBytes());
+
+        String firstline = "% ";
+        for(String fnName : selectedFunctionNames) {
+            firstline += fnName + " ";
+        }
+        firstline += "\n";
+
+        write(ruleFile, firstline);
+
+        for(String fnName : selectedFunctionNames) {
+            List<ChoiceRule> rules = learnedFunctions.get(fnName);
+            for(ChoiceRule rule : rules) {
+                write(ruleFile, rule.toLearnableString());
+            }
+        }
+
+        System.out.println("Added rule to background : " + name);
         return ok();
     }
 
@@ -136,5 +164,9 @@ public class HomeController extends Controller {
             return notFound();
         }
         return ok();
+    }
+
+    protected static void write(Path file, String line) throws IOException {
+        Files.write(file, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
     }
 }

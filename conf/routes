@@ -6,6 +6,7 @@
 GET     /                    controllers.HomeController.index()
 GET     /status/:uuid        controllers.HomeController.getStatus(uuid: String)
 POST    /:uuid               controllers.HomeController.runLearningTask(uuid: String)
+POST    /add/:name           controllers.HomeController.addRuleToBackground(name: String)
 DELETE  /:uuid               controllers.HomeController.removeActor(uuid: String)
 
 # Map static resources from the /public folder to the /assets URL path

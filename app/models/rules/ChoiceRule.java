@@ -21,6 +21,10 @@ public abstract class ChoiceRule {
         this.functionName = functionName;
     }
 
+    public String toLearnableString() {
+        return "learnable!";
+    }
+
     public int numConstants() {
         return numConstants;
     }

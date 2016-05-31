@@ -211,12 +211,12 @@ public class InterpretedLearningProcessor extends BaseProcessor {
 
             //Statically write match statements for now. Will learn these later
             if(numArgs == 1) {
-                write(file, "match2(f, 1, Input) :- Input == 0, input(call(f, Input)).\n");
-                write(file, "match2(f, 2, Input) :- input(call(f, Input)).\n");
+                write(file, "match_guard(f, 1, Input) :- Input == 0, input(call(f, Input)).\n");
+                write(file, "match_guard(f, 2, Input) :- input(call(f, Input)).\n");
 
             } else {
-                write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, input(call(f, (Arg1, Args))).\n");
-                write(file, "match2(f, 2, (Arg1, Args)) :- input(call(f, (Arg1, Args))).\n");
+                write(file, "match_guard(f, 1, (Arg1, Args)) :- Arg1 == 0, input(call(f, (Arg1, Args))).\n");
+                write(file, "match_guard(f, 2, (Arg1, Args)) :- input(call(f, (Arg1, Args))).\n");
             }
             write(file, examples.toString());
 

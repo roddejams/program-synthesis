@@ -8,8 +8,7 @@ import models.rules.EqRule;
 import models.rules.Match;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,13 +19,36 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
     public static Props props = Props.create(ConstraintLearningProcessor.class);
 
-    public ConstraintLearningProcessor() {
+    public ConstraintLearningProcessor() throws LearningException {
         rulesPath = "../ASP/eq/eq_rules.lp";
     }
 
+    private List<String> getLearnedFunctions() throws LearningException {
+        List<String> learnedFunctions = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("ASP/learned_functions.lp"))) {
+            String line = br.readLine();
+            if(line != null) {
+                String[] fnNames = line.split("\\s+");
+
+                System.out.println(Arrays.asList(fnNames));
+
+                for (int i = 1; i < fnNames.length; i++) {
+                    learnedFunctions.add(fnNames[i]);
+                }
+            }
+
+            return learnedFunctions;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new LearningException(e.getMessage());
+        }
+    }
+
     @Override
-    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> inner_ops, boolean useTailRecursion) {
+    public List<ChoiceRule> generateSkeletonRules(int maxDepth, int numArgs, List<String> inner_ops, boolean useTailRecursion) throws LearningException {
         List<String> args = generateArgs(numArgs);
+        List<String> learnedFunctions = getLearnedFunctions();
 
         EqRule.EqRuleFactory factory = new EqRule.EqRuleFactory();
         EqRule.EqRuleBuilder ruleBuilder = new EqRule.EqRuleBuilder().withArgs(args).withName(fnName);
@@ -73,6 +95,21 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         for(List<String> funcArgs : argCombinations) {
             String filledInputString = String.format(inputString, funcArgs.toArray());
             factory.addCallRule(ruleBuilder.withBody(String.format("call(%s, %s)", fnName, filledInputString)));
+        }
+
+        for(String function : learnedFunctions) {
+            if(!Objects.equals(function, fnName)) {
+                simpleRules = factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() <= 1).map(ChoiceRule::body).collect(Collectors.toSet());
+                cartesianArguments = Collections.nCopies(numArgs, simpleRules);
+                argCombinations = Sets.cartesianProduct(cartesianArguments);
+
+                inputString = StringUtils.repeat("(%s, ", numArgs - 1) + "%s" + StringUtils.repeat(")", numArgs - 1);
+
+                for (List<String> funcArgs : argCombinations) {
+                    String filledInputString = String.format(inputString, funcArgs.toArray());
+                    factory.addCallRule(ruleBuilder.withBody(String.format("call(%s, %s)", function, filledInputString)));
+                }
+            }
         }
 
         //Depth 3+
@@ -208,22 +245,23 @@ public class ConstraintLearningProcessor extends BaseProcessor {
                 write(file, "expr_const(0;1;2).\n");
             }
             write(file, "num_rules(1..2).\n");
-            write(file, "num_match(1).\n");
+            write(file, "num_match(1..2).\n");
 
-            //Statically write match statements for now. Will learn these later
+            //Statically write match statements for now. Will learn these later*
+            /*
             if(numArgs == 1) {
-                write(file, String.format("match2(%s, (R + 1), Input) :- is_call(call(%s, Input)), num_match(R).\n",
+                write(file, String.format("match_guard(%s, (R + 1), Input) :- is_call(call(%s, Input)), num_match(R).\n",
                         fnName, fnName));
                 //write(file, "match2(f, 1, Input) :- Input == 0, is_call(call(f, Input)).\n");
                 //write(file, "match2(f, 2, Input) :- is_call(call(f, Input)).\n");
 
             } else {
-                write(file, String.format("match2(%s, (R + 1), (Arg1, Args)) :- is_call(call(%s, (Arg1, Args))), num_match(R).\n",
+                write(file, String.format("match_guard(%s, (R + 1), (Arg1, Args)) :- is_call(call(%s, (Arg1, Args))), num_match(R).\n",
                         fnName, fnName));
                 //write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, is_call(call(f, (Arg1, Args))).\n");
                 //write(file, "match2(f, 2, (Arg1, Args)) :- is_call(call(f, (Arg1, Args))).\n");
             }
-
+            */
             write(file, examples.toString());
 
         } catch (IOException e) {

@@ -21,7 +21,7 @@ $(document).on("click", "#export-btn", function (event) {
     if (typeof uuid != 'undefined' ) {
        posting = $.post("/" + uuid, learningForm.serialize());
     } else {
-       posting = $.post("/new", learningForm.serialize());
+       posting = $.post("/new_task", learningForm.serialize());
     }
 
     posting.done(function(data) {
@@ -59,6 +59,10 @@ $(document).on("click", "#save-btn", function (event) {
     var $new_name = $($CURR_TAB).find("#funcName").val();
 
     $('.nav-tabs .active a').find("#tab-name").text($new_name);
+
+    if($($CURR_TAB).find("#add-box").is(":checked")) {
+        var posting = $.post("/add/" + $new_name);
+    }
 });
 
 $(document).on("click", ".table-add", function() {
