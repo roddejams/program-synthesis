@@ -66,8 +66,6 @@ rule(R, f, (N0), sub(call(f, (N0 * C1)), N0)) :- is_call(call(f, (N0))), choose(
 rule(R, f, (N0), sub(call(f, (N0 * C1)), C2)) :- is_call(call(f, (N0))), choose(R, 64, C1, C2).
 rule(R, f, (N0), div(call(f, (N0 * C1)), N0)) :- is_call(call(f, (N0))), choose(R, 65, C1).
 rule(R, f, (N0), div(call(f, (N0 * C1)), C2)) :- is_call(call(f, (N0))), choose(R, 66, C1, C2).
-
-rule(R, f, (N0), add(C1, call(fac, N0))) :- is_call(call(f, (N0))), choose(R, 67, C1).
 1 {
 choose_match(R, 1, C0) : expr_const(C0)
 } 1 :- num_match(R).
@@ -76,4 +74,4 @@ choose(R, 2;3;7;9;11;32;43;45;47;49) ,
 choose(R, 1;4;5;6;8;10;12;13;15;17;19;21;23;25;27;29;31;33;34;35;37;39;41;44;46;48;50;51;53;55;57;59;61;63;65;67, C0) : expr_const(C0) ,
 choose(R, 14;16;18;20;22;24;26;28;30;36;38;40;42;52;54;56;58;60;62;64;66, C0, C1) : expr_const(C0) : expr_const(C1)
 } 1 :- num_rules(R).
-#minimise [choose(_, R)=R, choose(_, R, _)=R, choose(_, R, _, _)=R ].
+#minimise [choose(1, R)=R, choose(1, R, _)=R, choose(1, R, _, _)=R ].

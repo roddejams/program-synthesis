@@ -1,16 +1,54 @@
 \chapter{Conclusions and Future Work}
 
+In this chapter I will give an overview of features that would have been implemented in the learning tool given more time, and some opinions on the positives and negatives of my implementation.
+
+\section{Future Work}
+
+\subsection{Type Usage}
+One of the main features the current version of the learning tool is missing is the ability to handle input and return types that are not integers. This adds a significant restriction on what the tool can learn, and if implemented would not adversely affect performance. \\ \\
+The implementation of this feature would be based on performing analysis on the types of the examples. By using the UI to calculate the type of each input argument and the type of the example, it would be possible to evaluate which operations can be performed on those input types to return the correct output. It would then be possible to generate the set of skeleton rules based on these operations. \\ \\
+As an example, consider the \lstinline{isPrime} function, which returns a true if the input to the function is a prime number, and false if not. It is important to know that the function takes two arguments - the first being the number to check the primality of, and the second being a divisor which is checked against the first argument and decremented at each recursive step. \\ \\ %{
+Analysing the types of this example would tell the tool that all of the input types are integer, and that the output type is boolean. This would limit the tool to only generate skeleton rules which have bodies which return booleans - i.e having \lstinline{==}, \lstinline{>}, \lstinline{<} or the recursive call to \lstinline{isPrime} in the top level in the body expression. \\ \\
+This type of implementation would not affect performance because it is not increasing the size of the skeleton rules, only changing their content. In some cases even, the number of skeleton rules would be fewer if restricted in this way, as there may be fewer in-built operations to enumerate over.
+
+\subsection{Lists and Strings}
+Another key part of the Haskell language I am missing in my potential target language is list functionality. Without lists, a large feature of functional programming is missing, reducing the overall expressiveness of the possible learning domain. \\ \\
+Implementing the learning of lists would not be a trivial task, although it is already partially complete. The ASP interpreter is already expressive enough to handle lists, representing them as nested tuples. In a similar way to how the Haskell list \lstinline{[0, 1, 2, 3]} is internally represented as multiple items prepended together, \lstinline{(0 : (1 : (2 : (3 : []))))}, the list is represented in ASP as \lstinline{(0, (1, (2, (3, e))))}, where \lstinline{e} is an internal representation of the empty list. \\ \\
+The interpreter handles these lists in the same way it handles multiple arguments. If it has to evaluate a tuple, it then generates \lstinline{eval} terms for call complex arguments. Similar behaviour holds for values of expressions and checking for complexity. This behaviour is covered by the following rules : \\ %{
+
+\begin{lstlisting}
+value_with((A, B), (V1, V2), Args) :-
+   eval_with((A, B), Args), value_with(A, V1, Args), value_with(B, V2, Args).
+
+eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with((A, B), Args).
+
+check_if_complex(A) :- check_if_complex((A, B)).
+check_if_complex(B) :- check_if_complex((A, B)).
+
+complex((A, B)) :- complex(A), check_if_complex((A, B)).
+complex((A, B)) :- complex(B), check_if_complex((A, B)).
+
+n_complex((A, B)) :- n_complex(A), n_complex(B), check_if_complex((A, B)).
+\end{lstlisting}
+\mbox{}\\
+Implementing lists for the constraint based approach would be similar. Through use of rules which define equality on tuples, it should not be difficult to maintain the equality constraints which fail when a contradiction occurs. The check for termination would work in a similar way, although some advanced implementation of match rules may be necessary to check for list patterns. \\ \\
+The difficult part of lists would be enumerating all of the different possibilities. While my current implementation allows for a small range of constants to be learned as part of the skeleton rules, to allow for lists this range would have to be a lot wider. and consist of all combinations of constants up to a certain list length. \\ \\
+The implementation on string operations would work in a similar way, by treating strings as list of characters. The string \lstinline{"hello"} would be represented in ASP as the list \lstinline{(h, (e, (l, (l, (o, e)))))}. This would allow all basic operations on lists to be performed on strings, and allow them to be learned in the same way.
+
+\subsection{Expanding the Background Knowledge}
+
+
+\subsection{Loading known functions}
+
+\subsection{Parallel Learning}
+
 \section{Conclusions}
 
 \subsection{What worked}
 
 \subsection{Areas for improvement}
 
-\section{Future Work}
-
-\subsection{Learning Improvements}
-
-\subsection{UI Features}
 \pagebreak
 %\renewcommand\bibname{{References}}
 %\bibliography{References}

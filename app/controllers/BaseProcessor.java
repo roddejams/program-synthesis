@@ -29,11 +29,11 @@ public abstract class BaseProcessor extends UntypedActor {
     protected String rulesPath;
     protected String fnName = "f";
 
-    protected static final List<String> arg_ops = Arrays.asList(
+    protected static List<String> arg_ops = Arrays.asList(
             "add(%s, %s)",
             "mul(%s, %s)",
-            "sub(%s, %s)",
-            "div(%s, %s)");
+            "sub(%s, %s)");
+            //"div(%s, %s)");
 
     protected LearningResult result;
     protected boolean finished = false;
@@ -75,6 +75,8 @@ public abstract class BaseProcessor extends UntypedActor {
                 if(chosenOps.isEmpty()) {
                     throw new LearningException("Error : The language bias cannot be empty");
                 }
+
+                arg_ops = inputExamples.getChosenArgOps();
 
                 List<ChoiceRule> generatedRules = generateSkeletonRules(maxDepth, numArgs, chosenOps, inputExamples.isUseTailRecursion());
                 List<ChoiceRule> matchRules = generateMatchRules(numArgs);

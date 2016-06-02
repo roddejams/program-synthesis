@@ -57,6 +57,15 @@ public class IOExamples {
         return ops;
     }
 
+    public List<String> getChosenArgOps() {
+        List<String> ops = new ArrayList<>();
+        if(useAddition) ops.add("add(%s, %s)");
+        if(useSubtraction) ops.add("sub(%s, %s)");
+        if(useMultiplication) ops.add("mul(%s, %s)");
+        if(useDivision) ops.add("div(%s, %s)");
+        return ops;
+    }
+
     public boolean isUseDivision() {
         return useDivision;
     }

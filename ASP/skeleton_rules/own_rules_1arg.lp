@@ -1,3 +1,5 @@
+match_guard(f, R, (N0)) :- N0 == C1, input(call(f, (N0))), choose_match(R, 1, C1).
+match_guard(f, R, (N0)) :- input(call(f, (N0))), choose_match(R, 2, C1).
 rule(R, f, N, C1) :- input(call(f, N)), choose(R, 1, C1).
 rule(R, f, N, N) :- input(call(f, N)), choose(R, 2).
 
@@ -59,6 +61,10 @@ choose_where(31..33;38),
 choose_where(34..37;39, C1) : expr_const(C1)
 } 1.
 
+1 {
+choose_match(R, 2) ,
+choose_match(R, 1, C0) : expr_const(C0)
+} 1 :- num_match(R).
 
-#minimise [choose(_, N)=N, choose(_, N, _)=N ].
+#minimise [choose(1, N)=N, choose(1, N, _)=N ].
 #minimise[choose_where(R)=1, choose_where(R, C)=1].

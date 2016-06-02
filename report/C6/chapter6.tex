@@ -1,16 +1,197 @@
 \chapter{Critical Evaluation}
 
-\section{Testing}
+In this chapter, I describe the set of experiments used to show the increase in performance from the implementation of the constraint-based approach. \\ \\
+I have measured the performance by running both versions of the learner on five target problems, and returning both the generated code and the time taken to learn, as returned by clingo. The problems are defined by a set of Input / Output examples which cover enough cases to correctly learn the target function. Solutions are defined as a subset of the generated Answer Set, containing only \lstinline{choose}, \lstinline{choose_match} and \lstinline{choose_where} atoms, representing chosen rules from the skeleton rules. \\ \\%{ 
+All examples have been run on --MY PC SPECS--
 
-\subsection{One Argument Programs}
+\section{One Argument Programs}
 
-\subsubsection{Factorial}
+\subsection{Factorial}
+\underline{\textbf{Input Examples}}
+\begin{lstlisting}
+example(call(fac, 0), 1).
+example(call(fac, 1), 1).
+example(call(fac, 2), 2).
+example(call(fac, 3), 6).
+\end{lstlisting}
 
-\subsection{Two Argument Programs}
+\subsubsection{\underline{Interpreted approach results}}
 
-\subsubsection{Tail Recursive Factorial}
+
+\subsubsection{\underline{Constraint approach results}}
+
+\begin{multicols*}{2}
+\begin{lstlisting}
+choose(1,1,1). 
+choose(2,53,1).
+choose_match(1,2,0). 
+choose_match(2,1). 
+
+Models      : 1     
+[info] Optimization: 54 
+[info] Time        : 5.094
+[info]   Prepare   : 0.391
+[info]   Prepro.   : 0.422
+[info]   Solving   : 4.281
+\end{lstlisting}
+
+\begin{lstlisting}
+fac n0
+  | n0 == 0 = 1
+  | otherwise = (fac (n0 - 1)) * n0
+\end{lstlisting}
+\end{multicols*}
+
+\subsection{Fibonacci}
+
+\section{Two Argument Programs}
+
+\subsection{Greatest Common Divisor}
+
+\subsection{Tail Recursive Factorial}
+\underline{\textbf{Input Examples}}
+\begin{lstlisting}
+example(call(f, (0, 1)), 1).
+example(call(f, (1, 1)), 1).
+example(call(f, (2, 1)), 2).
+example(call(f, (3, 1)), 6).
+example(call(f, (2, 3)), 6).
+\end{lstlisting}
+
+\subsubsection{\underline{Interpreted approach results}}
+
+\subsubsection{\underline{Constraint approach results}}
+\begin{lstlisting}
+fac n0 n1
+  | n0 == 0 = n1
+  | otherwise = fac (n0 - 1) (n0 * n1)
+\end{lstlisting}
 
 \section{Comparison to Existing Tools}
+
+In this section, I will detail how other existing inductive functional programming (IFP) tools perform in comparison to mine, highlighting any benefits or restrictions to both mine and the existing tools. More information on these tools can be found in the background section. \\ \\
+For evaluation, I have ran both systems on the examples detailed in the section above, showing a comparison between code generated and running time between both existing systems and my tool's constraint based approach.
+
+\subsection{MagicHaskeller}
+MagicHaskeller is an IFP system that is based on the generate-and-test approach to IFP. It works by systematically generating a stream of gradually more complicated functions (based on length), and keeping the ones which cover the input examples. The system is made more efficient through smart restrictions of target programs based on the type of the input examples, and through heavy use of in built functions, both linear and higher order. \\ \\
+Input to MagicHaskeller is any Haskell expression which returns a boolean value, as long as it does not contain any \lstinline{let} or \lstinline{while} clauses. For example, to learn the factorial program, you can give as input the examples \lstinline{\f -> ( f 0 == 1 )  && ( f 1 == 1 )  && ( f 2 == 2 )  && ( f 3 == 6 )}. Here, each positive example is concatenated with \lstinline{&&} to produce the overall input.\\ \\
+Full tables of generated programs and performance timings can be found respectively in tables \ref{table:1} and \ref{table:2} \\ \\
+What is notable from these results is that MagicHaskeller fails to learn direct recursion, relying instead on its large library of in-built functions. This is most visible on the GCD and Fibonacci examples, where MagicHaskeller can simply make use of Haskell's inbuilt gcd function, but cannot learn the purely recursive Fibonacci. This is because of a deliberate choice by the creator of MagicHaskeller, as removing direct recursion decreases the complexity of the search space.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{| m{4em} | m{5em} | c | c |}
+\hline
+\multicolumn{4}{|c|}{\textbf{Generated Code}} \\
+\hline
+Function & Examples & My Solution & MagicHaskeller Solution \\
+\hline
+Factorial 
+& 
+(0, 1) \newline
+(1, 1) \newline
+(2, 2) \newline
+(3, 6)
+&
+\begin{lstlisting}
+f x
+  | x == 0 = 1
+  | otherwise = x * f(x - 1)
+\end{lstlisting}
+& 
+\begin{lstlisting}
+f = 
+  (\a -> product [1..a])
+\end{lstlisting}
+\\
+\hline
+\mbox{}\newline
+Tail \newline
+Recursive \newline
+Factorial \newline
+& 
+((0, 1), 1) \newline
+((1, 1), 1) \newline
+((2, 1), 2) \newline
+((3, 1), 6)
+&
+\begin{lstlisting}
+f x n
+  | x == 0 = n
+  | otherwise = f (x - 1) (x * n)
+\end{lstlisting}
+& 
+\begin{lstlisting}
+f = 
+  (\a b -> product [b..a])
+\end{lstlisting}
+\\
+\hline
+GCD
+&
+((1, 1), 1) \newline
+((2, 1), 1) \newline
+((4, 3), 1) \newline
+((3, 6), 3) \newline
+((9, 6), 3) \newline
+((4, 7), 1) \newline
+((9, 3), 3) 
+&
+\begin{lstlisting}
+gcd x y
+  | x == y = x
+  | x > y  = gcd x - y y
+  | x < y  = gcd y x
+\end{lstlisting}	
+&
+\begin{lstlisting}
+f = (flip gcd)
+\end{lstlisting}
+\\
+\hline
+Fibonacci
+&
+(1, 1) \newline
+(2, 1) \newline
+(3, 2) \newline
+(4, 3) \newline
+(5, 5) \newline
+(6, 8) \newline
+(7, 13) 
+&
+result
+&
+No Result!
+\\
+\hline
+\end{tabular}
+\caption{MagicHaskeller Generated Code Comparison }
+\label{table:1}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{3}{|c|}{\textbf{Performance}}\\
+\hline
+Function & My Performance & MagicHaskeller \\
+\hline
+Factorial & & \\
+\hline
+Tail Recursive Factorial & & \\
+\hline
+GCD & & \\
+\hline
+Fibonacci & & \\
+\hline
+\end{tabular}
+\caption{MagicHaskeller Performance Comparison }
+\label{table:2}
+\end{table}
+\mbox{} \\
+
+\subsection{Igor II}
 \pagebreak
 %\renewcommand\bibname{{References}}
 %\bibliography{References}
