@@ -1,7 +1,6 @@
 expr_const(0;1).
 num_rules(1..2).
-num_match(1..2).
-match_guard(f, 1, (Arg1, Args)) :- Arg1 == 0, input(call(f, (Arg1, Args))).
+num_match(1).
 match_guard(f, 2, (Arg1, Args)) :- input(call(f, (Arg1, Args))).
 example(call(f, (0, 1)), 1).
 example(call(f, (1, 1)), 1).

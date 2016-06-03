@@ -1,0 +1,263 @@
+
+fmod PREDICATES is
+	inc HYPOTHESES .
+	inc SHARED-PART .
+	
+	vars EKey RKey DKey RC DC EC FC UpdDC UpdRC ResultDC VarIndex : Nat .
+	var Progs : ProgramSet .
+	vars Name ModName Sym1 Sym2 : Qid .
+	vars RHS Pattern P T : Term .
+	var Matchable : FunNameSet .
+	var Sub : SubData .
+	var Matches : MatchDataSet .
+	vars Rules UpdRules : RuleDataSet .
+	var EKeys PPart EKeys1 EKeys2 DKeys : KeySet .
+	var ID : AUResult .
+	var ODS : OutDataSet .
+	var Cond : EqCondition .
+	vars Preds UnfPreds Params : TermList .
+	vars Parts PParts OnePart : Partitions .
+	vars IOSubsets UpdIOSubsets ResultIOSubsets : IODataSet .
+	var Expls : IOSet .
+	var PredOps : OpDeclSet .
+	var Coas : Coarities .
+	var Extended : Bool .
+	var Frags : FragmentSet .
+	var SD : SubstitutionData .
+	var PredOp : OpDecl .
+	var Tys : TypeList .
+	var Ty : Type .
+	var Attribs : AttrSet .
+	var VsList : VariablesList .
+	vars ISs ISs1 ISs2 : IndexedSubstitutions .
+	var Mod : Module .
+	vars V V1 V2 : Variable .
+	vars Vars Vars1 : Variables .
+	var RPart : Partition .
+	vars Sigma Sigma1 Sigma2 : Substitution .
+	var B : Constant .
+	var Poss : Positions .
+	var AD : AssignmentData .
+	var ITs : IndexedTerms .
+	var Depth : IndexNamePairSet .
+	var IT : IndexedTerm .
+	
+	
+	
+	*** check this fun defs
+	op predicates : Nat InductionState OpDeclSet Coarities Qid Bool -> InductionState .
+	
+	ceq predicates(RKey, 
+				  istate(Progs, 
+				  		 (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , 
+				  		  Rules), RC, 
+					  	 (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, (PPart next PParts)) , 
+						  IOSubsets),
+						 DC, Expls, EC, FC, Depth),
+				  PredOps, Coas, ModName, Extended) =
+		istate(integrateFragments(RKey, Frags, Progs, UpdRules, Name, 
+								  (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, (PPart next PParts)) , 
+									ResultIOSubsets)), 
+				UpdRules, UpdRC, 
+			   (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, (PPart next PParts)) , 
+				ResultIOSubsets),
+				DC, Expls, EC, FC, Depth)
+		if < Frags , UpdRules , UpdRC , ResultIOSubsets > :=
+		   	compFragments((PPart next PParts), IOSubsets, Expls, RC, Name, Matchable, 
+				      (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), Coas) .
+				   
+			   
+	ceq predicates(RKey, 
+				  istate(Progs, 
+				  		 (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , 
+				  		  Rules), RC, 
+					  	 (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, noParts) , 
+						  IOSubsets),
+						 DC, Expls, EC, FC, Depth),
+				  PredOps, Coas, ModName, Extended) =
+		istate(integrateFragments(RKey, Frags, Progs, UpdRules, Name, 
+								  (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, PParts) , 
+									ResultIOSubsets)), 
+				UpdRules, UpdRC, 
+			   (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, PParts) , 
+				ResultIOSubsets),
+				UpdDC, Expls, EC, FC, Depth)
+		if < PParts ; UpdIOSubsets ; UpdDC > :=
+		   	compPPartitions(Preds, ID, PredOps, IOSubsets, DC, ModName, Extended) /\
+		   < Frags , UpdRules , UpdRC , ResultIOSubsets > :=
+		   	compFragments(PParts, UpdIOSubsets, Expls, RC, Name, Matchable, 
+				      	  (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , 
+				      	   Rules), Coas) .		   
+	   
+	
+	op compPPartitions : TermList AUResult OpDeclSet IODataSet Nat Qid Bool
+			-> PartitionsResult .
+	eq compPPartitions('failed.Preds, ID, PredOps, IOSubsets, DC, ModName, Extended) =
+		< noParts ; IOSubsets ; DC > .
+	eq compPPartitions(empty, < Pattern , SD , VarIndex >, PredOps, IOSubsets, DC, 
+					   ModName, Extended) =
+		compPParts(compPreds(PredOps, SD, Extended), 
+				   substData2indSubsts(SD), 
+				   < Pattern , SD , VarIndex >,
+				   IOSubsets, DC, upModule(ModName, true)) [label problem] .
+	eq compPPartitions(Preds, < Pattern , SD , VarIndex >, PredOps, IOSubsets, DC, 
+					   ModName, Extended) =
+		compPParts(Preds, 
+				   substData2indSubsts(SD), 
+				   < Pattern , SD , VarIndex >,
+				   IOSubsets, DC, upModule(ModName, true)) [owise] .
+			
+	op compPreds : OpDeclSet SubstitutionData Bool -> TermList .
+	eq compPreds(none, SD, false) = empty .
+	eq compPreds(none, SD, true) = compExtPreds(SD) .
+	eq compPreds((PredOp PredOps), SD, Extended) =
+		***empty .
+		$compPreds(PredOp, getVars(SD)) ,
+		compPreds(PredOps, SD, Extended) .
+		
+	sort VariablesList .
+	subsort Variables < VariablesList .
+	op emptyVarsList : -> VariablesList [ctor] .
+	op _nextVars_ : VariablesList VariablesList -> VariablesList
+		[ctor assoc id: emptyVarsList] .
+		
+		
+	op $compPreds : OpDecl Variables -> TermList .
+	ceq $compPreds(op Name : Tys -> Ty [ Attribs ]., Vars) =
+		listPreds(VsList, initPreds(Name, Vars1))
+		if (Vars1 nextVars VsList) := compVarsList(Tys, Vars) .
+		
+	op initPreds : Qid Variables -> TermList .
+	eq initPreds(Name, noVars) = empty .
+	eq initPreds(Name, (V # Vars)) = Name [ V ] , initPreds(Name, Vars) .
+		
+	op listPreds : VariablesList TermList -> TermList .
+	eq listPreds(emptyVarsList, Preds) = Preds .
+	eq listPreds((Vars nextVars VsList), UnfPreds) =  
+		listPreds(VsList, addVars(Vars, UnfPreds)) .
+		
+	op addVars : Variables TermList -> TermList .
+	eq addVars(noVars, UnfPreds) = empty .
+	eq addVars((V # Vars), UnfPreds) = 
+		addVar(V, UnfPreds) , addVars(Vars, UnfPreds) .
+		
+	op addVar : Variable TermList -> TermList .
+	eq addVar(V, empty) = empty .
+	eq addVar(V, (Name [ Params ] , UnfPreds)) =
+		if (Params includes V)
+		then addVar(V, UnfPreds)
+		else (Name [ Params , V ] , addVar(V, UnfPreds))
+		fi .
+	
+	op compVarsList : TypeList Variables -> VariablesList .
+	eq compVarsList(nil, Vars) = emptyVarsList .
+	eq compVarsList((Ty Tys), Vars) = 
+		selectVarsOfType(Vars, Ty) nextVars compVarsList(Tys, Vars) .
+		
+	op selectVarsOfType : Variables Type -> Variables .
+	eq selectVarsOfType(noVars, Ty) = noVars .
+	eq selectVarsOfType((V # Vars), Ty) =
+		if getType(V) == Ty
+		then V # selectVarsOfType(Vars, Ty)
+		else selectVarsOfType(Vars, Ty)
+		fi .
+		
+	op compPParts : TermList IndexedSubstitutions AUResult IODataSet Nat Module
+			-> PartitionsResult .
+	eq compPParts(empty, ISs, ID, IOSubsets, DC, Mod) = 
+		< noParts ; IOSubsets ; DC > .
+	ceq compPParts((P , Preds), ISs, ID, IOSubsets, DC, Mod) =
+		< (OnePart next PParts) ; ResultIOSubsets ; ResultDC > 
+		if < OnePart ; UpdIOSubsets ; UpdDC > :=
+			compPPart(P, Preds, ISs, ID, IOSubsets, DC, Mod) /\
+		   < PParts ; ResultIOSubsets ; ResultDC > :=
+		   	compPParts(Preds, ISs, ID, UpdIOSubsets, UpdDC, Mod) .
+		   	
+	op compPPart : Term TermList IndexedSubstitutions AUResult IODataSet Nat Module
+			-> PartitionsResult .
+	ceq compPPart(P, Preds, ISs, ID, IOSubsets, DC, Mod) =
+		if partitioned?(RPart)
+		then finishPPart(RPart, ID, P, Preds, IOSubsets, DC)
+		else < noParts ; IOSubsets ; DC >
+		fi
+		if RPart := $compPPart(P, ISs, Mod) .
+		
+	op compExtPreds : SubstitutionData -> TermList .
+	eq compExtPreds(SD) = compEqVars(getVars(SD)) , compConst(SD) .
+	
+	op compEqVars : Variables -> TermList .
+	eq compEqVars(noVars) = empty .
+	eq compEqVars((V # Vars)) = 
+		$compEqVars(V, Vars) , compEqVars(Vars) .
+		
+	op $compEqVars : Variable Variables -> TermList .
+	eq $compEqVars(V, noVars) = empty .
+	eq $compEqVars(V1, (V2 # Vars)) =
+		if getType(V1) == getType(V2)
+		then ('_==_ [ V1 , V2 ]) , $compEqVars(V1, Vars)
+		else $compEqVars(V1, Vars)
+		fi .
+	
+	op compConst : SubstitutionData -> TermList .
+	eq compConst(empty) = empty .
+	eq compConst((< V ; ITs ; Poss > , SD)) =
+		$compConst(V, ITs, empty) , compConst(SD) .
+		
+	op $compConst : Variable IndexedTerms TermList -> TermList .
+	***eq $compConst(V, none, Preds) = Preds .
+	eq $compConst(V, (< EKey , GIT:GroundTerm > , ITs), Preds) =
+		if (Preds includes ('_==_ [ V , GIT:GroundTerm ]))
+		then $compConst(V, ITs, Preds) 
+		else $compConst(V, ITs, (Preds , ('_==_ [ V , GIT:GroundTerm ])))
+		fi .
+	eq $compConst(V, ITs, Preds) = Preds [owise] .
+	
+	op partitioned? : Partition -> Bool .
+	eq partitioned?((< EKeys1 ; Sym1 > , < EKeys2 ; Sym2 > , RPart)) = true .
+	eq partitioned?(RPart) = false [owise] .
+	
+	op $compPPart : Term IndexedSubstitutions Module -> Partition .
+	eq $compPPart(P, none, Mod) = empty .
+	eq $compPPart(P, (< EKey , Sigma > , ISs), Mod) =
+		insert(EKey, getTerm(metaReduce(Mod, (P Sigma))), $compPPart(P, ISs, Mod)) .
+		
+	op finishPPart : Partition AUResult Term TermList IODataSet Nat 
+			-> PartitionsResult .
+	eq finishPPart(empty, ID, P, Preds, IOSubsets, DC) = < empty ; IOSubsets ; DC > .
+	ceq finishPPart((< EKeys ; B > , RPart), ID, P, Preds, IOSubsets, DC) =
+		< (DKey , DKeys) ; ResultIOSubsets ; ResultDC >
+		if < DKey , UpdIOSubsets , UpdDC > :=
+			introducePIOData(DC, EKeys, ID, (P = B), Preds, IOSubsets) /\
+		   < DKeys ; ResultIOSubsets ; ResultDC > :=
+			finishPPart(RPart, ID, P, Preds, UpdIOSubsets, UpdDC) .
+	
+	
+	
+	
+	sorts IndexedSubstitution IndexedSubstitutions .	*** substitutions 
+														*** indexed by a key
+	subsort IndexedSubstitution < IndexedSubstitutions .
+	
+	op <_,_> : Nat Substitution -> IndexedSubstitution [ctor] .
+	op none : -> IndexedSubstitutions [ctor] .
+	op _,_ : IndexedSubstitutions IndexedSubstitutions -> IndexedSubstitutions 
+			[ctor assoc comm id: none] .
+	eq Sigma:IndexedSubstitution , Sigma:IndexedSubstitution = 
+		Sigma:IndexedSubstitution .
+		
+	op substData2indSubsts : SubstitutionData -> IndexedSubstitutions .
+	eq substData2indSubsts(empty) = none .
+	eq substData2indSubsts((AD , SD)) = 
+		mergeIndSubsts(assData2indSubsts(AD), substData2indSubsts(SD)) .
+	
+	op assData2indSubsts : AssignmentData -> IndexedSubstitutions .
+	eq assData2indSubsts(< V ; none ; Poss >) = none .
+	eq assData2indSubsts(< V ; (< EKey , T > , ITs) ; Poss >) = 
+		< EKey , (V <- T) > , assData2indSubsts(< V ; ITs ; Poss >) .
+		
+	op mergeIndSubsts : IndexedSubstitutions IndexedSubstitutions -> IndexedSubstitutions .
+	eq mergeIndSubsts(ISs, none) = ISs .
+	eq mergeIndSubsts((< EKey , Sigma1 > , ISs1), (< EKey , Sigma2 > , ISs2)) =
+		< EKey , (Sigma1 ; Sigma2) > , mergeIndSubsts(ISs1, ISs2) .
+		
+endfm

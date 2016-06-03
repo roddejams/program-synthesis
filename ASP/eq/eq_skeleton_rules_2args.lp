@@ -1,357 +1,357 @@
 #domain const_number(N0).
 #domain const_number(N1).
-match_guard(div, R, (N0, N1)) :- N1 == C1, is_call(call(div, (N0, N1))), choose_match(R, 2, C1).
-match_guard(div, R, (N0, N1)) :- N0 == C1, is_call(call(div, (N0, N1))), choose_match(R, 1, C1).
-match_guard(div, R, (N0, N1)) :- N0 == N1, is_call(call(div, (N0, N1))), choose_match(R, 3).
-match_guard(div, R, (N0, N1)) :- N0 < N1, is_call(call(div, (N0, N1))), choose_match(R, 4).
-match_guard(div, R, (N0, N1)) :- N1 == N0, is_call(call(div, (N0, N1))), choose_match(R, 5).
-match_guard(div, R, (N0, N1)) :- N1 < N0, is_call(call(div, (N0, N1))), choose_match(R, 6).
-match_guard(div, R, (N0, N1)) :- is_call(call(div, (N0, N1))), choose_match(R, 7).
-rule(R, div, (N0, N1), C1) :- is_call(call(div, (N0, N1))), choose(R, 1, C1).
-rule(R, div, (N0, N1), N0) :- is_call(call(div, (N0, N1))), choose(R, 2).
-rule(R, div, (N0, N1), N1) :- is_call(call(div, (N0, N1))), choose(R, 3).
-rule(R, div, (N0, N1), (N0 * N0)) :- is_call(call(div, (N0, N1))), choose(R, 4).
-rule(R, div, (N0, N1), (N0 + C1)) :- is_call(call(div, (N0, N1))), choose(R, 5, C1).
-rule(R, div, (N0, N1), (N0 - C1)) :- is_call(call(div, (N0, N1))), choose(R, 6, C1).
-rule(R, div, (N0, N1), (N0 * C1)) :- is_call(call(div, (N0, N1))), choose(R, 7, C1).
-rule(R, div, (N0, N1), (N1 * N1)) :- is_call(call(div, (N0, N1))), choose(R, 8).
-rule(R, div, (N0, N1), (N1 + C1)) :- is_call(call(div, (N0, N1))), choose(R, 9, C1).
-rule(R, div, (N0, N1), (N1 - C1)) :- is_call(call(div, (N0, N1))), choose(R, 10, C1).
-rule(R, div, (N0, N1), (N1 * C1)) :- is_call(call(div, (N0, N1))), choose(R, 11, C1).
-rule(R, div, (N0, N1), (N0 + N1)) :- is_call(call(div, (N0, N1))), choose(R, 12).
-rule(R, div, (N0, N1), (N0 - N1)) :- is_call(call(div, (N0, N1))), choose(R, 13).
-rule(R, div, (N0, N1), (N0 * N1)) :- is_call(call(div, (N0, N1))), choose(R, 14).
-rule(R, div, (N0, N1), ((N0 * N0) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 15).
-rule(R, div, (N0, N1), ((N0 * N0) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 16, C1).
-rule(R, div, (N0, N1), ((N0 * N0) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 17).
-rule(R, div, (N0, N1), ((N0 * N0) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 18, C1).
-rule(R, div, (N0, N1), ((N0 * N0) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 19).
-rule(R, div, (N0, N1), ((N0 * N0) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 20, C1).
-rule(R, div, (N0, N1), ((N0 * N0) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 21).
-rule(R, div, (N0, N1), ((N0 * N0) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 22, C1).
-rule(R, div, (N0, N1), ((N0 * N0) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 23).
-rule(R, div, (N0, N1), ((N0 * N0) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 24, C1).
-rule(R, div, (N0, N1), ((N0 * N0) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 25).
-rule(R, div, (N0, N1), ((N0 * N0) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 26, C1).
-rule(R, div, (N0, N1), ((N0 + C1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 27, C1).
-rule(R, div, (N0, N1), ((N0 + C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 28, C1, C2).
-rule(R, div, (N0, N1), ((N0 + C1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 29, C1).
-rule(R, div, (N0, N1), ((N0 + C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 30, C1, C2).
-rule(R, div, (N0, N1), ((N0 + C1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 31, C1).
-rule(R, div, (N0, N1), ((N0 + C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 32, C1, C2).
-rule(R, div, (N0, N1), ((N0 + C1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 33, C1).
-rule(R, div, (N0, N1), ((N0 + C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 34, C1, C2).
-rule(R, div, (N0, N1), ((N0 + C1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 35, C1).
-rule(R, div, (N0, N1), ((N0 + C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 36, C1, C2).
-rule(R, div, (N0, N1), ((N0 + C1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 37, C1).
-rule(R, div, (N0, N1), ((N0 + C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 38, C1, C2).
-rule(R, div, (N0, N1), ((N0 - C1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 39, C1).
-rule(R, div, (N0, N1), ((N0 - C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 40, C1, C2).
-rule(R, div, (N0, N1), ((N0 - C1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 41, C1).
-rule(R, div, (N0, N1), ((N0 - C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 42, C1, C2).
-rule(R, div, (N0, N1), ((N0 - C1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 43, C1).
-rule(R, div, (N0, N1), ((N0 - C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 44, C1, C2).
-rule(R, div, (N0, N1), ((N0 - C1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 45, C1).
-rule(R, div, (N0, N1), ((N0 - C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 46, C1, C2).
-rule(R, div, (N0, N1), ((N0 - C1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 47, C1).
-rule(R, div, (N0, N1), ((N0 - C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 48, C1, C2).
-rule(R, div, (N0, N1), ((N0 - C1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 49, C1).
-rule(R, div, (N0, N1), ((N0 - C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 50, C1, C2).
-rule(R, div, (N0, N1), ((N0 * C1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 51, C1).
-rule(R, div, (N0, N1), ((N0 * C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 52, C1, C2).
-rule(R, div, (N0, N1), ((N0 * C1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 53, C1).
-rule(R, div, (N0, N1), ((N0 * C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 54, C1, C2).
-rule(R, div, (N0, N1), ((N0 * C1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 55, C1).
-rule(R, div, (N0, N1), ((N0 * C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 56, C1, C2).
-rule(R, div, (N0, N1), ((N0 * C1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 57, C1).
-rule(R, div, (N0, N1), ((N0 * C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 58, C1, C2).
-rule(R, div, (N0, N1), ((N0 * C1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 59, C1).
-rule(R, div, (N0, N1), ((N0 * C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 60, C1, C2).
-rule(R, div, (N0, N1), ((N0 * C1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 61, C1).
-rule(R, div, (N0, N1), ((N0 * C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 62, C1, C2).
-rule(R, div, (N0, N1), ((N1 * N1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 63).
-rule(R, div, (N0, N1), ((N1 * N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 64, C1).
-rule(R, div, (N0, N1), ((N1 * N1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 65).
-rule(R, div, (N0, N1), ((N1 * N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 66, C1).
-rule(R, div, (N0, N1), ((N1 * N1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 67).
-rule(R, div, (N0, N1), ((N1 * N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 68, C1).
-rule(R, div, (N0, N1), ((N1 * N1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 69).
-rule(R, div, (N0, N1), ((N1 * N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 70, C1).
-rule(R, div, (N0, N1), ((N1 * N1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 71).
-rule(R, div, (N0, N1), ((N1 * N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 72, C1).
-rule(R, div, (N0, N1), ((N1 * N1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 73).
-rule(R, div, (N0, N1), ((N1 * N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 74, C1).
-rule(R, div, (N0, N1), ((N1 + C1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 75, C1).
-rule(R, div, (N0, N1), ((N1 + C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 76, C1, C2).
-rule(R, div, (N0, N1), ((N1 + C1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 77, C1).
-rule(R, div, (N0, N1), ((N1 + C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 78, C1, C2).
-rule(R, div, (N0, N1), ((N1 + C1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 79, C1).
-rule(R, div, (N0, N1), ((N1 + C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 80, C1, C2).
-rule(R, div, (N0, N1), ((N1 + C1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 81, C1).
-rule(R, div, (N0, N1), ((N1 + C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 82, C1, C2).
-rule(R, div, (N0, N1), ((N1 + C1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 83, C1).
-rule(R, div, (N0, N1), ((N1 + C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 84, C1, C2).
-rule(R, div, (N0, N1), ((N1 + C1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 85, C1).
-rule(R, div, (N0, N1), ((N1 + C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 86, C1, C2).
-rule(R, div, (N0, N1), ((N1 - C1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 87, C1).
-rule(R, div, (N0, N1), ((N1 - C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 88, C1, C2).
-rule(R, div, (N0, N1), ((N1 - C1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 89, C1).
-rule(R, div, (N0, N1), ((N1 - C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 90, C1, C2).
-rule(R, div, (N0, N1), ((N1 - C1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 91, C1).
-rule(R, div, (N0, N1), ((N1 - C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 92, C1, C2).
-rule(R, div, (N0, N1), ((N1 - C1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 93, C1).
-rule(R, div, (N0, N1), ((N1 - C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 94, C1, C2).
-rule(R, div, (N0, N1), ((N1 - C1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 95, C1).
-rule(R, div, (N0, N1), ((N1 - C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 96, C1, C2).
-rule(R, div, (N0, N1), ((N1 - C1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 97, C1).
-rule(R, div, (N0, N1), ((N1 - C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 98, C1, C2).
-rule(R, div, (N0, N1), ((N1 * C1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 99, C1).
-rule(R, div, (N0, N1), ((N1 * C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 100, C1, C2).
-rule(R, div, (N0, N1), ((N1 * C1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 101, C1).
-rule(R, div, (N0, N1), ((N1 * C1) + C2)) :- is_call(call(div, (N0, N1))), choose(R, 102, C1, C2).
-rule(R, div, (N0, N1), ((N1 * C1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 103, C1).
-rule(R, div, (N0, N1), ((N1 * C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 104, C1, C2).
-rule(R, div, (N0, N1), ((N1 * C1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 105, C1).
-rule(R, div, (N0, N1), ((N1 * C1) - C2)) :- is_call(call(div, (N0, N1))), choose(R, 106, C1, C2).
-rule(R, div, (N0, N1), ((N1 * C1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 107, C1).
-rule(R, div, (N0, N1), ((N1 * C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 108, C1, C2).
-rule(R, div, (N0, N1), ((N1 * C1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 109, C1).
-rule(R, div, (N0, N1), ((N1 * C1) * C2)) :- is_call(call(div, (N0, N1))), choose(R, 110, C1, C2).
-rule(R, div, (N0, N1), ((N0 + N1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 111).
-rule(R, div, (N0, N1), ((N0 + N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 112, C1).
-rule(R, div, (N0, N1), ((N0 + N1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 113).
-rule(R, div, (N0, N1), ((N0 + N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 114, C1).
-rule(R, div, (N0, N1), ((N0 + N1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 115).
-rule(R, div, (N0, N1), ((N0 + N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 116, C1).
-rule(R, div, (N0, N1), ((N0 + N1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 117).
-rule(R, div, (N0, N1), ((N0 + N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 118, C1).
-rule(R, div, (N0, N1), ((N0 + N1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 119).
-rule(R, div, (N0, N1), ((N0 + N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 120, C1).
-rule(R, div, (N0, N1), ((N0 + N1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 121).
-rule(R, div, (N0, N1), ((N0 + N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 122, C1).
-rule(R, div, (N0, N1), ((N0 - N1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 123).
-rule(R, div, (N0, N1), ((N0 - N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 124, C1).
-rule(R, div, (N0, N1), ((N0 - N1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 125).
-rule(R, div, (N0, N1), ((N0 - N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 126, C1).
-rule(R, div, (N0, N1), ((N0 - N1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 127).
-rule(R, div, (N0, N1), ((N0 - N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 128, C1).
-rule(R, div, (N0, N1), ((N0 - N1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 129).
-rule(R, div, (N0, N1), ((N0 - N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 130, C1).
-rule(R, div, (N0, N1), ((N0 - N1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 131).
-rule(R, div, (N0, N1), ((N0 - N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 132, C1).
-rule(R, div, (N0, N1), ((N0 - N1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 133).
-rule(R, div, (N0, N1), ((N0 - N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 134, C1).
-rule(R, div, (N0, N1), ((N0 * N1) + N0)) :- is_call(call(div, (N0, N1))), choose(R, 135).
-rule(R, div, (N0, N1), ((N0 * N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 136, C1).
-rule(R, div, (N0, N1), ((N0 * N1) + N1)) :- is_call(call(div, (N0, N1))), choose(R, 137).
-rule(R, div, (N0, N1), ((N0 * N1) + C1)) :- is_call(call(div, (N0, N1))), choose(R, 138, C1).
-rule(R, div, (N0, N1), ((N0 * N1) - N0)) :- is_call(call(div, (N0, N1))), choose(R, 139).
-rule(R, div, (N0, N1), ((N0 * N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 140, C1).
-rule(R, div, (N0, N1), ((N0 * N1) - N1)) :- is_call(call(div, (N0, N1))), choose(R, 141).
-rule(R, div, (N0, N1), ((N0 * N1) - C1)) :- is_call(call(div, (N0, N1))), choose(R, 142, C1).
-rule(R, div, (N0, N1), ((N0 * N1) * N0)) :- is_call(call(div, (N0, N1))), choose(R, 143).
-rule(R, div, (N0, N1), ((N0 * N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 144, C1).
-rule(R, div, (N0, N1), ((N0 * N1) * N1)) :- is_call(call(div, (N0, N1))), choose(R, 145).
-rule(R, div, (N0, N1), ((N0 * N1) * C1)) :- is_call(call(div, (N0, N1))), choose(R, 146, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 147).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 148).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 149).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 150).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 151).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 152).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 153, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 154, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 155, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 156, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), C1))) :- is_call(call(div, (N0, N1))), choose(R, 157, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 158, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 159, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - N1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 160).
-rule(R, div, (N0, N1), call(div, (N0, (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 161).
-rule(R, div, (N0, N1), call(div, (N0, N0))) :- is_call(call(div, (N0, N1))), choose(R, 162).
-rule(R, div, (N0, N1), call(div, (N0, (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 163).
-rule(R, div, (N0, N1), call(div, (N0, N1))) :- is_call(call(div, (N0, N1))), choose(R, 164).
-rule(R, div, (N0, N1), call(div, (N0, (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 165).
-rule(R, div, (N0, N1), call(div, (N0, (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 166).
-rule(R, div, (N0, N1), call(div, (N0, (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 167, C1).
-rule(R, div, (N0, N1), call(div, (N0, (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 168, C1).
-rule(R, div, (N0, N1), call(div, (N0, (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 169, C1).
-rule(R, div, (N0, N1), call(div, (N0, (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 170, C1).
-rule(R, div, (N0, N1), call(div, (N0, C1))) :- is_call(call(div, (N0, N1))), choose(R, 171, C1).
-rule(R, div, (N0, N1), call(div, (N0, (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 172, C1).
-rule(R, div, (N0, N1), call(div, (N0, (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 173, C1).
-rule(R, div, (N0, N1), call(div, (N0, (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 174).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 175).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 176).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 177).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 178).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 179).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 180).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 181, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 182, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 183, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 184, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), C1))) :- is_call(call(div, (N0, N1))), choose(R, 185, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 186, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 187, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * N1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 188).
-rule(R, div, (N0, N1), call(div, (N1, (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 189).
-rule(R, div, (N0, N1), call(div, (N1, N0))) :- is_call(call(div, (N0, N1))), choose(R, 190).
-rule(R, div, (N0, N1), call(div, (N1, (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 191).
-rule(R, div, (N0, N1), call(div, (N1, N1))) :- is_call(call(div, (N0, N1))), choose(R, 192).
-rule(R, div, (N0, N1), call(div, (N1, (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 193).
-rule(R, div, (N0, N1), call(div, (N1, (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 194).
-rule(R, div, (N0, N1), call(div, (N1, (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 195, C1).
-rule(R, div, (N0, N1), call(div, (N1, (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 196, C1).
-rule(R, div, (N0, N1), call(div, (N1, (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 197, C1).
-rule(R, div, (N0, N1), call(div, (N1, (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 198, C1).
-rule(R, div, (N0, N1), call(div, (N1, C1))) :- is_call(call(div, (N0, N1))), choose(R, 199, C1).
-rule(R, div, (N0, N1), call(div, (N1, (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 200, C1).
-rule(R, div, (N0, N1), call(div, (N1, (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 201, C1).
-rule(R, div, (N0, N1), call(div, (N1, (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 202).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 203).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 204).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 205).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 206).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 207).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 208).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 209, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 210, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 211, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 212, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), C1))) :- is_call(call(div, (N0, N1))), choose(R, 213, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 214, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 215, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 216).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 217).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), N0))) :- is_call(call(div, (N0, N1))), choose(R, 218).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 219).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), N1))) :- is_call(call(div, (N0, N1))), choose(R, 220).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 221).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 222).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 223, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 224, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 225, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 226, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), C1))) :- is_call(call(div, (N0, N1))), choose(R, 227, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 228, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 229, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * N0), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 230).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 231, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 232, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 233, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 234, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 235, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 236, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 237, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 238, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 239, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 240, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), C2))) :- is_call(call(div, (N0, N1))), choose(R, 241, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 242, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 243, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 + C1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 244, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 245, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 246, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 247, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 248, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 249, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 250, C1).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 251, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 252, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 253, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 254, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), C2))) :- is_call(call(div, (N0, N1))), choose(R, 255, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 256, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 257, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 + C1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 258, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 259, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 260, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 261, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 262, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 263, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 264, C1).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 265, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 266, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 267, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 268, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), C2))) :- is_call(call(div, (N0, N1))), choose(R, 269, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 270, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 271, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 - C1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 272, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 273, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 274, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 275, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 276, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 277, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 278, C1).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 279, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 280, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 281, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 282, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), C2))) :- is_call(call(div, (N0, N1))), choose(R, 283, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 284, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 285, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N1 * C1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 286, C1).
-rule(R, div, (N0, N1), call(div, (C1, (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 287, C1).
-rule(R, div, (N0, N1), call(div, (C1, N0))) :- is_call(call(div, (N0, N1))), choose(R, 288, C1).
-rule(R, div, (N0, N1), call(div, (C1, (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 289, C1).
-rule(R, div, (N0, N1), call(div, (C1, N1))) :- is_call(call(div, (N0, N1))), choose(R, 290, C1).
-rule(R, div, (N0, N1), call(div, (C1, (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 291, C1).
-rule(R, div, (N0, N1), call(div, (C1, (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 292, C1).
-rule(R, div, (N0, N1), call(div, (C1, (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 293, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 294, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 295, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 296, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, C2))) :- is_call(call(div, (N0, N1))), choose(R, 297, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 298, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 299, C1, C2).
-rule(R, div, (N0, N1), call(div, (C1, (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 300, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 301, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 302, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 303, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 304, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 305, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 306, C1).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 307, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 308, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 309, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 310, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), C2))) :- is_call(call(div, (N0, N1))), choose(R, 311, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 312, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 313, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 - C1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 314, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 315, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 316, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 317, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 318, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 319, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 320, C1).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 321, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N1 + C2)))) :- is_call(call(div, (N0, N1))), choose(R, 322, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N1 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 323, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N1 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 324, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), C2))) :- is_call(call(div, (N0, N1))), choose(R, 325, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 - C2)))) :- is_call(call(div, (N0, N1))), choose(R, 326, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 * C2)))) :- is_call(call(div, (N0, N1))), choose(R, 327, C1, C2).
-rule(R, div, (N0, N1), call(div, ((N0 * C1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 328, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 - N1)))) :- is_call(call(div, (N0, N1))), choose(R, 329).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), N0))) :- is_call(call(div, (N0, N1))), choose(R, 330).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N1 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 331).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), N1))) :- is_call(call(div, (N0, N1))), choose(R, 332).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 * N1)))) :- is_call(call(div, (N0, N1))), choose(R, 333).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 * N0)))) :- is_call(call(div, (N0, N1))), choose(R, 334).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 335, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N1 + C1)))) :- is_call(call(div, (N0, N1))), choose(R, 336, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N1 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 337, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N1 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 338, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), C1))) :- is_call(call(div, (N0, N1))), choose(R, 339, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 - C1)))) :- is_call(call(div, (N0, N1))), choose(R, 340, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 * C1)))) :- is_call(call(div, (N0, N1))), choose(R, 341, C1).
-rule(R, div, (N0, N1), call(div, ((N0 + N1), (N0 + N1)))) :- is_call(call(div, (N0, N1))), choose(R, 342).
+match_guard(gcd, R, (N0, N1)) :- N1 == C1, is_call(call(gcd, (N0, N1))), choose_match(R, 2, C1).
+match_guard(gcd, R, (N0, N1)) :- N0 == C1, is_call(call(gcd, (N0, N1))), choose_match(R, 1, C1).
+match_guard(gcd, R, (N0, N1)) :- N0 == N1, is_call(call(gcd, (N0, N1))), choose_match(R, 3).
+match_guard(gcd, R, (N0, N1)) :- N0 < N1, is_call(call(gcd, (N0, N1))), choose_match(R, 4).
+match_guard(gcd, R, (N0, N1)) :- N1 == N0, is_call(call(gcd, (N0, N1))), choose_match(R, 5).
+match_guard(gcd, R, (N0, N1)) :- N1 < N0, is_call(call(gcd, (N0, N1))), choose_match(R, 6).
+%match_guard(gcd, R, (N0, N1)) :- is_call(call(gcd, (N0, N1))), choose_match(R, 7).
+rule(R, gcd, (N0, N1), C1) :- is_call(call(gcd, (N0, N1))), choose(R, 1, C1).
+rule(R, gcd, (N0, N1), N0) :- is_call(call(gcd, (N0, N1))), choose(R, 2).
+rule(R, gcd, (N0, N1), N1) :- is_call(call(gcd, (N0, N1))), choose(R, 3).
+rule(R, gcd, (N0, N1), (N0 * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 4).
+rule(R, gcd, (N0, N1), (N0 + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 5, C1).
+rule(R, gcd, (N0, N1), (N0 - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 6, C1).
+rule(R, gcd, (N0, N1), (N0 * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 7, C1).
+rule(R, gcd, (N0, N1), (N1 * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 8).
+rule(R, gcd, (N0, N1), (N1 + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 9, C1).
+rule(R, gcd, (N0, N1), (N1 - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 10, C1).
+rule(R, gcd, (N0, N1), (N1 * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 11, C1).
+rule(R, gcd, (N0, N1), (N0 + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 12).
+rule(R, gcd, (N0, N1), (N0 - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 13).
+rule(R, gcd, (N0, N1), (N0 * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 14).
+rule(R, gcd, (N0, N1), ((N0 * N0) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 15).
+rule(R, gcd, (N0, N1), ((N0 * N0) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 16, C1).
+rule(R, gcd, (N0, N1), ((N0 * N0) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 17).
+rule(R, gcd, (N0, N1), ((N0 * N0) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 18, C1).
+rule(R, gcd, (N0, N1), ((N0 * N0) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 19).
+rule(R, gcd, (N0, N1), ((N0 * N0) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 20, C1).
+rule(R, gcd, (N0, N1), ((N0 * N0) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 21).
+rule(R, gcd, (N0, N1), ((N0 * N0) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 22, C1).
+rule(R, gcd, (N0, N1), ((N0 * N0) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 23).
+rule(R, gcd, (N0, N1), ((N0 * N0) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 24, C1).
+rule(R, gcd, (N0, N1), ((N0 * N0) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 25).
+rule(R, gcd, (N0, N1), ((N0 * N0) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 26, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 27, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 28, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 + C1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 29, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 30, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 + C1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 31, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 32, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 + C1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 33, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 34, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 + C1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 35, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 36, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 + C1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 37, C1).
+rule(R, gcd, (N0, N1), ((N0 + C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 38, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 - C1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 39, C1).
+rule(R, gcd, (N0, N1), ((N0 - C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 40, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 - C1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 41, C1).
+rule(R, gcd, (N0, N1), ((N0 - C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 42, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 - C1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 43, C1).
+rule(R, gcd, (N0, N1), ((N0 - C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 44, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 - C1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 45, C1).
+rule(R, gcd, (N0, N1), ((N0 - C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 46, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 - C1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 47, C1).
+rule(R, gcd, (N0, N1), ((N0 - C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 48, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 - C1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 49, C1).
+rule(R, gcd, (N0, N1), ((N0 - C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 50, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 * C1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 51, C1).
+rule(R, gcd, (N0, N1), ((N0 * C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 52, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 * C1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 53, C1).
+rule(R, gcd, (N0, N1), ((N0 * C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 54, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 * C1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 55, C1).
+rule(R, gcd, (N0, N1), ((N0 * C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 56, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 * C1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 57, C1).
+rule(R, gcd, (N0, N1), ((N0 * C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 58, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 * C1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 59, C1).
+rule(R, gcd, (N0, N1), ((N0 * C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 60, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 * C1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 61, C1).
+rule(R, gcd, (N0, N1), ((N0 * C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 62, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * N1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 63).
+rule(R, gcd, (N0, N1), ((N1 * N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 64, C1).
+rule(R, gcd, (N0, N1), ((N1 * N1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 65).
+rule(R, gcd, (N0, N1), ((N1 * N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 66, C1).
+rule(R, gcd, (N0, N1), ((N1 * N1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 67).
+rule(R, gcd, (N0, N1), ((N1 * N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 68, C1).
+rule(R, gcd, (N0, N1), ((N1 * N1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 69).
+rule(R, gcd, (N0, N1), ((N1 * N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 70, C1).
+rule(R, gcd, (N0, N1), ((N1 * N1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 71).
+rule(R, gcd, (N0, N1), ((N1 * N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 72, C1).
+rule(R, gcd, (N0, N1), ((N1 * N1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 73).
+rule(R, gcd, (N0, N1), ((N1 * N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 74, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 75, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 76, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 + C1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 77, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 78, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 + C1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 79, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 80, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 + C1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 81, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 82, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 + C1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 83, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 84, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 + C1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 85, C1).
+rule(R, gcd, (N0, N1), ((N1 + C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 86, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 - C1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 87, C1).
+rule(R, gcd, (N0, N1), ((N1 - C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 88, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 - C1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 89, C1).
+rule(R, gcd, (N0, N1), ((N1 - C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 90, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 - C1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 91, C1).
+rule(R, gcd, (N0, N1), ((N1 - C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 92, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 - C1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 93, C1).
+rule(R, gcd, (N0, N1), ((N1 - C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 94, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 - C1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 95, C1).
+rule(R, gcd, (N0, N1), ((N1 - C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 96, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 - C1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 97, C1).
+rule(R, gcd, (N0, N1), ((N1 - C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 98, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * C1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 99, C1).
+rule(R, gcd, (N0, N1), ((N1 * C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 100, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * C1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 101, C1).
+rule(R, gcd, (N0, N1), ((N1 * C1) + C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 102, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * C1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 103, C1).
+rule(R, gcd, (N0, N1), ((N1 * C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 104, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * C1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 105, C1).
+rule(R, gcd, (N0, N1), ((N1 * C1) - C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 106, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * C1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 107, C1).
+rule(R, gcd, (N0, N1), ((N1 * C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 108, C1, C2).
+rule(R, gcd, (N0, N1), ((N1 * C1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 109, C1).
+rule(R, gcd, (N0, N1), ((N1 * C1) * C2)) :- is_call(call(gcd, (N0, N1))), choose(R, 110, C1, C2).
+rule(R, gcd, (N0, N1), ((N0 + N1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 111).
+rule(R, gcd, (N0, N1), ((N0 + N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 112, C1).
+rule(R, gcd, (N0, N1), ((N0 + N1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 113).
+rule(R, gcd, (N0, N1), ((N0 + N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 114, C1).
+rule(R, gcd, (N0, N1), ((N0 + N1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 115).
+rule(R, gcd, (N0, N1), ((N0 + N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 116, C1).
+rule(R, gcd, (N0, N1), ((N0 + N1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 117).
+rule(R, gcd, (N0, N1), ((N0 + N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 118, C1).
+rule(R, gcd, (N0, N1), ((N0 + N1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 119).
+rule(R, gcd, (N0, N1), ((N0 + N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 120, C1).
+rule(R, gcd, (N0, N1), ((N0 + N1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 121).
+rule(R, gcd, (N0, N1), ((N0 + N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 122, C1).
+rule(R, gcd, (N0, N1), ((N0 - N1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 123).
+rule(R, gcd, (N0, N1), ((N0 - N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 124, C1).
+rule(R, gcd, (N0, N1), ((N0 - N1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 125).
+rule(R, gcd, (N0, N1), ((N0 - N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 126, C1).
+rule(R, gcd, (N0, N1), ((N0 - N1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 127).
+rule(R, gcd, (N0, N1), ((N0 - N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 128, C1).
+rule(R, gcd, (N0, N1), ((N0 - N1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 129).
+rule(R, gcd, (N0, N1), ((N0 - N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 130, C1).
+rule(R, gcd, (N0, N1), ((N0 - N1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 131).
+rule(R, gcd, (N0, N1), ((N0 - N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 132, C1).
+rule(R, gcd, (N0, N1), ((N0 - N1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 133).
+rule(R, gcd, (N0, N1), ((N0 - N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 134, C1).
+rule(R, gcd, (N0, N1), ((N0 * N1) + N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 135).
+rule(R, gcd, (N0, N1), ((N0 * N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 136, C1).
+rule(R, gcd, (N0, N1), ((N0 * N1) + N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 137).
+rule(R, gcd, (N0, N1), ((N0 * N1) + C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 138, C1).
+rule(R, gcd, (N0, N1), ((N0 * N1) - N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 139).
+rule(R, gcd, (N0, N1), ((N0 * N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 140, C1).
+rule(R, gcd, (N0, N1), ((N0 * N1) - N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 141).
+rule(R, gcd, (N0, N1), ((N0 * N1) - C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 142, C1).
+rule(R, gcd, (N0, N1), ((N0 * N1) * N0)) :- is_call(call(gcd, (N0, N1))), choose(R, 143).
+rule(R, gcd, (N0, N1), ((N0 * N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 144, C1).
+rule(R, gcd, (N0, N1), ((N0 * N1) * N1)) :- is_call(call(gcd, (N0, N1))), choose(R, 145).
+rule(R, gcd, (N0, N1), ((N0 * N1) * C1)) :- is_call(call(gcd, (N0, N1))), choose(R, 146, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 147).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 148).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 149).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 150).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 151).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 152).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 153, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 154, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 155, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 156, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 157, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 158, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 159, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - N1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 160).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 161).
+rule(R, gcd, (N0, N1), call(gcd, (N0, N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 162).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 163).
+rule(R, gcd, (N0, N1), call(gcd, (N0, N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 164).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 165).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 166).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 167, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 168, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 169, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 170, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 171, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 172, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 173, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N0, (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 174).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 175).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 176).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 177).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 178).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 179).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 180).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 181, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 182, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 183, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 184, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 185, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 186, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 187, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * N1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 188).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 189).
+rule(R, gcd, (N0, N1), call(gcd, (N1, N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 190).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 191).
+rule(R, gcd, (N0, N1), call(gcd, (N1, N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 192).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 193).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 194).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 195, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 196, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 197, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 198, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 199, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 200, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 201, C1).
+rule(R, gcd, (N0, N1), call(gcd, (N1, (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 202).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 203).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 204).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 205).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 206).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 207).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 208).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 209, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 210, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 211, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 212, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 213, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 214, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 215, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 216).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 217).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 218).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 219).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 220).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 221).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 222).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 223, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 224, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 225, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 226, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 227, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 228, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 229, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * N0), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 230).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 231, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 232, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 233, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 234, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 235, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 236, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 237, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 238, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 239, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 240, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 241, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 242, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 243, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + C1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 244, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 245, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 246, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 247, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 248, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 249, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 250, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 251, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 252, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 253, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 254, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 255, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 256, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 257, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 + C1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 258, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 259, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 260, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 261, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 262, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 263, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 264, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 265, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 266, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 267, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 268, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 269, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 270, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 271, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 - C1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 272, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 273, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 274, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 275, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 276, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 277, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 278, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 279, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 280, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 281, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 282, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 283, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 284, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 285, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N1 * C1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 286, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 287, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 288, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 289, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 290, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 291, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 292, C1).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 293, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 294, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 295, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 296, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 297, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 298, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 299, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, (C1, (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 300, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 301, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 302, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 303, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 304, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 305, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 306, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 307, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 308, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 309, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 310, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 311, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 312, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 313, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 - C1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 314, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 315, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 316, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 317, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 318, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 319, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 320, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 321, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N1 + C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 322, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N1 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 323, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N1 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 324, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), C2))) :- is_call(call(gcd, (N0, N1))), choose(R, 325, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 - C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 326, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 * C2)))) :- is_call(call(gcd, (N0, N1))), choose(R, 327, C1, C2).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 * C1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 328, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 - N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 329).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), N0))) :- is_call(call(gcd, (N0, N1))), choose(R, 330).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N1 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 331).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), N1))) :- is_call(call(gcd, (N0, N1))), choose(R, 332).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 * N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 333).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 * N0)))) :- is_call(call(gcd, (N0, N1))), choose(R, 334).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 335, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N1 + C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 336, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N1 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 337, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N1 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 338, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), C1))) :- is_call(call(gcd, (N0, N1))), choose(R, 339, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 - C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 340, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 * C1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 341, C1).
+rule(R, gcd, (N0, N1), call(gcd, ((N0 + N1), (N0 + N1)))) :- is_call(call(gcd, (N0, N1))), choose(R, 342).
 
 1 {
-choose_match(R, 3;4;5;6;7) ,
+choose_match(R, 3;4;5;6) ,
 choose_match(R, 1;2, C0) : expr_const(C0)
 } 1 :- num_match(R).
 1 {

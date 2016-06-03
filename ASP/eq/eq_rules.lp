@@ -45,12 +45,12 @@ eq(In, Out) :- example(In, Out).
 is_call(call(F, Expr)):- eq(call(F, Expr), Out).
 
 eq(Expr, Val) :- rule(Index, F, Arg_Expr, Expr), match(F, Index, Arg_Expr), eq(call(F, Arg_Expr), Val).
-eq(A, Val - B) :- eq(add(A, B), Val), const_number(B), B <= Val.
-eq(B, Val - A) :- eq(add(A, B), Val), const_number(A), A <= Val.
-eq(A, Val / B) :- eq(mul(A, B), Val), const_number(B), B > 0.
-eq(B, Val / A) :- eq(mul(A, B), Val), const_number(A), A > 0.
-eq(A, Val + B) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
-eq(B, Val + A) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
+eq(A, Val - @to_num(B)) :- eq(add(A, B), Val), const_number(B), B <= Val.
+eq(B, Val - @to_num(A)) :- eq(add(A, B), Val), const_number(A), A <= Val.
+eq(A, Val / @to_num(B)) :- eq(mul(A, B), Val), const_number(B), B > 0.
+eq(B, Val / @to_num(A)) :- eq(mul(A, B), Val), const_number(A), A > 0.
+eq(A, Val + @to_num(B)) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
+eq(B, Val + @to_num(A)) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
 eq(X, Val) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 eq(Xs, Vals) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 %eq(A, Val * B) :- eq(div(A, B), Val), const_number(Val), const_number(B), const_number(Val * B).

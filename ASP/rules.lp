@@ -16,19 +16,20 @@ const(e).
 
 #domain max_depth(MaxDepth).
 
-#hide const(N).
-#hide const_number(N).
-#hide rule(R, F, Args, Expr).
-#hide match(F, Index, Args).
-#hide match_guard(F, Index, Args).
-#hide smaller_match(F, Index, Args).
-#hide eval_with(Expr, Args).
-#hide value_with(Expr, Out, Args).
-#hide num_rules(N).
-#hide check_if_complex(Expr).
-#hide complex(Expr).
-#hide n_complex(Expr).
-#hide value(Expr, Val).
+#hide const/1.
+#hide const_number/1.
+#hide rule/4.
+#hide match/3.
+#hide match_guard/3.
+#hide smaller_match/3.
+#hide eval_with/2.
+#hide value_with/3.
+#hide num_rules/1.
+#hide num_match/1.
+#hide check_if_complex/1.
+#hide complex/1.
+#hide n_complex/1.
+#hide value/2.
 
 #hide expr_const(N).
 

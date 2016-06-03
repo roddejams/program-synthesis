@@ -1,0 +1,109 @@
+*** this file contains modules to preprocess problem specification modules,
+*** e.g., to variabalize examples in advance if possible in order to
+*** keep the amount of examples for igor and as a consequence the induction
+*** times as small as possible
+
+fmod VARIABALIZE is
+	*** this module tries to variabalize ground examples which are
+	*** structural equal regarding distinguished separators
+	
+	inc AUXILLIARY-TYPES .
+	inc GENERAL-CONSTANTS .
+	inc SHARED-IO-DATA .
+	inc META-LEVEL .
+	
+	sort VarExplsResult .
+	op <_,_,_> : IOSet Nat KeySet -> VarExplsResult [ctor] .
+	
+	
+	var TKeyss : TermedKeySets .
+	var Seps : FunNameSet .
+	vars EKey EC VarEC OrigEC VarIndex : Nat .
+	vars I T ILGG OLGG : Term .
+	var NOs : NamedOutputs .
+	vars Expls OrigExpls VarExpls : IOSet .
+	var EKeys : KeySet .
+	vars C1 C2 : Constant .
+	vars TL1 TL2 Subterms1 Subterms2 : TermList .
+	var Coas : Coarities .
+	var Ops : OpDeclSet .
+	vars Name Root : Qid .
+	vars SD OSD : SubstitutionData .
+	var TyL : TypeList .
+	var Ty : Type .
+	vars Attribs1 Attribs2 : AttrSet .
+	var IndParams : String .
+	
+	
+	op compVariabalizedExpls : IOSet Nat Qid OpDeclSet Coarities -> VarExplsResult .
+	eq compVariabalizedExpls(Expls, EC, Name, Ops, Coas) =
+		variabalizeExpls(blockStructEqExamples(Expls, empty, getSeparators(Ops)),
+						 Expls, EC, empty, Name, Coas, initEC) [label problem] .
+	
+	op getEKeys : IOSet -> KeySet .
+	eq getEKeys(empty) = empty .
+	eq getEKeys((ioEntry(EKey, I, NOs) , Expls)) =
+		EKey , getEKeys(Expls) .
+	
+	op getSeparators : OpDeclSet -> FunNameSet .
+	eq getSeparators(((op Name : TyL -> Ty [ (Attribs1 metadata(IndParams) Attribs2) ].) Ops)) =
+		if find(IndParams, "separator", 0) =/= notFound
+		then Name * getSeparators(Ops) 
+		else getSeparators(Ops)
+		fi .
+	eq getSeparators(Ops) = noName [owise] .
+	
+	sorts TermedKeySet TermedKeySets .
+	subsort TermedKeySet < TermedKeySets .
+	op <_:_> : Term KeySet -> TermedKeySet [ctor] .
+	op empty : -> TermedKeySets [ctor] .
+	op _,_ : TermedKeySets TermedKeySets -> TermedKeySets 
+		[ctor assoc comm id: empty] .
+	eq TKeys:TermedKeySet , TKeys:TermedKeySet = TKeys:TermedKeySet .
+	
+	
+	op blockStructEqExamples : IOSet TermedKeySets FunNameSet -> TermedKeySets .
+	eq blockStructEqExamples(empty, TKeyss, Seps) = TKeyss .
+	eq blockStructEqExamples((ioEntry(EKey, I, NOs) , Expls), TKeyss, Seps) =
+		blockStructEqExamples(Expls, 
+							  insertToBlocks(ioEntry(EKey, I, NOs), TKeyss, Seps),
+							  Seps) .
+	
+	op insertToBlocks : IOEntry TermedKeySets FunNameSet -> TermedKeySets .
+	eq insertToBlocks(ioEntry(EKey, I, NOs), empty, Seps) = < I : EKey > .
+	eq insertToBlocks(ioEntry(EKey, I, NOs), (< T : EKeys > , TKeyss), Seps) =
+		if structEq(I, T, Seps)
+		then (< T : (EKey , EKeys) > , TKeyss)
+		else (< T : EKeys > , insertToBlocks(ioEntry(EKey, I, NOs), TKeyss, Seps))
+		fi .
+		
+	op structEq : TermList TermList FunNameSet -> Bool .
+	eq structEq(empty, empty, Seps) = true .
+	eq structEq((C1 , TL1), (C2 , TL2), Seps) = 
+		((C1 == C2) or not((Seps contains C1) or (Seps contains C2))) and
+		structEq(TL1, TL2, Seps) .
+	eq structEq((Root [ Subterms1 ] , TL1), (Root [ Subterms2 ] , TL2), Seps) =
+		structEq(Subterms1, Subterms2, Seps) and
+		structEq(TL1, TL2, Seps) .
+	eq structEq(TL1, TL2, Seps) = false [owise] .
+	
+	op variabalizeExpls : TermedKeySets IOSet Nat IOSet Qid Coarities Nat 
+		-> VarExplsResult .
+	eq variabalizeExpls(empty, OrigExpls, OrigEC, VarExpls, Name, Coas, EC) = 
+		< VarExpls , EC , getEKeys(VarExpls) > .
+	ceq variabalizeExpls((< T : EKeys > , TKeyss), OrigExpls, OrigEC, VarExpls, Name,
+						 Coas, EC) =
+		if (OSD in SD) 
+		then variabalizeExpls(TKeyss, OrigExpls, OrigEC, 
+							  (ioEntry(EC, ILGG, < Name , OLGG >) , VarExpls), Name,
+							  Coas, s EC)
+		else < OrigExpls , OrigEC , getEKeys(OrigExpls) >
+		fi
+		if < ILGG , SD , VarIndex > := compPattern(EKeys, OrigExpls, Coas) /\
+		   < OLGG , OSD , Index:Nat > := 
+		   	antiunify(getOutputs(EKeys, Name, OrigExpls), Coas, SD, VarIndex, epsilon) .
+		   
+endfm 
+
+	
+	

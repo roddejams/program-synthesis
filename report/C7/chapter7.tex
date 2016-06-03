@@ -37,7 +37,92 @@ The difficult part of lists would be enumerating all of the different possibilit
 The implementation on string operations would work in a similar way, by treating strings as list of characters. The string \lstinline{"hello"} would be represented in ASP as the list \lstinline{(h, (e, (l, (l, (o, e)))))}. This would allow all basic operations on lists to be performed on strings, and allow them to be learned in the same way.
 
 \subsection{Expanding the Background Knowledge}
+To increase the expressiveness of the learned functions, it would be beneficial to increase the number of inbuilt functions in the background knowledge, to better represent functions a person may write. The functions I have considered for addition are part of the \lstinline{Prelude.hs} standard Haskell library %{
+\begin{center}
+\begin{tabular}{ c | c | c }
+\textbf{List Processing} & \textbf{Arithmetic} & \textbf{Tuples} \\
+\hline
+\begin{lstlisting}
+length
+\end{lstlisting} 
+& 
+\begin{lstlisting}
+div
+\end{lstlisting} 
+& 
+\begin{lstlisting}
+zip
+\end{lstlisting}
+\\
+\begin{lstlisting}
+++
+\end{lstlisting}
+& 
+\begin{lstlisting}
+mod
+\end{lstlisting}
+&
+\begin{lstlisting}
+unzip
+\end{lstlisting}
+\\
+\begin{lstlisting}
+reverse
+\end{lstlisting}
+& 
+\begin{lstlisting}
+gcd
+\end{lstlisting}
+& 
+\begin{lstlisting}
+fst
+\end{lstlisting}
+\\
+\begin{lstlisting}
+head
+\end{lstlisting}
+& 
+\begin{lstlisting}
+even
+\end{lstlisting}
+& 
+\begin{lstlisting}
+snd
+\end{lstlisting}
+\\
+\begin{lstlisting}
+last
+\end{lstlisting}
+& 
+\begin{lstlisting}
+odd
+\end{lstlisting}
+& \\
+\begin{lstlisting}
+tail
+\end{lstlisting}
+&
+\begin{lstlisting}
+sum
+\end{lstlisting}
+& \\
+&
+\begin{lstlisting}
+product
+\end{lstlisting}
+ & 
+\end{tabular}
+\end{center}
+\mbox{} \\
+Usage of these functions would be implemented by adding more rules to the skeleton rules. The skeleton rules would contain all possible usages of these in-built functions with the given arguments, restricted by the types of the examples. Then, the ASP interpreter would have to contain rules which handle the generating the value of expressions containing these functions. Through use of addition lua scripting, the complexity of this task could be reduced, allowing for example the calculation of a length of a list to be evaluated in one rule instead of many.\\ \\
+In addition to these in-built functions, implementing higher-order functions would also increase the expressiveness of learned functions. The functions \lstinline{map}, \lstinline{fold} and \lstinline{filter} would be added to the skeleton rules in a similar way, with the addition of having to enumerate all possible functions as additional arguments. However, evaluating the higher order functions might prove to be more difficult. Applying operations to every element in a list would be difficult to evaluate using just ASP, but through use of lua scripting, again it would be possible, albeit slow. %{
 
+\subsection{Advanced Skeleton Rule Generation}
+One of the main advantages to existing Inductive Functional Programming implementations is the way they generate their search space. MagicHaskeller generates a stream of valid functions, ordered by depth, and checks each one sequentially against the examples. If my learning tool were to implement such a system then it would have the potential to greatly increase performance. Currently, my skeleton rule generation is a naive process, containing many irrelevant rules which could not return valid programs, and my implementation of optimisation means that clingo has to enumerate all possible programs before returning a result, instead of being able to return as soon as a solution is found as would occur using a stream of rules. However, it is not clear how this would be easily implemented in ASP. \\ \\
+Another potential skeleton rule generation optimisation would be to be explicit with the difference between rules that can appear in the base case and the recursive cases of generated functions. Currently, all possible rules can appear in the base case of a recursive function, even complex function calls. This means that the learning task has to evaluate a large number of redundant possibilities, reducing performance. \\ \\
+To avoid this, the tool would limit the possible rules for base cases to simple arithmetic functions that are only one, potentially two operations deep. Then, the recursive cases would be limited to only expressions which contain calls to functions or in-built operations. Theoretically, this optimisation could lead to around a 50\% increase in performance on functions with two cases, one base case and one recursive case, as it would greatly reduce the time taken to enumerate the base case, which in this case is half the rules needed to be learned.
+
+\subsection{Supporting Multiple Function Calls}
 
 \subsection{Loading known functions}
 

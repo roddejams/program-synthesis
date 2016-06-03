@@ -74,29 +74,28 @@
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-9}
 \contentsline {chapter}{\numberline {7}Critical Evaluation}{40}{chapter.7}
-\contentsline {section}{\numberline {7.1}One Argument Programs}{40}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}Factorial}{40}{subsection.7.1.1}
-\contentsline {subsubsection}{\relax $\@@underline {\hbox {Interpreted approach results}}\mathsurround \z@ $\relax }{40}{section*.15}
-\contentsline {subsubsection}{\relax $\@@underline {\hbox {Constraint approach results}}\mathsurround \z@ $\relax }{40}{section*.16}
-\contentsline {subsection}{\numberline {7.1.2}Fibonacci}{41}{subsection.7.1.2}
-\contentsline {section}{\numberline {7.2}Two Argument Programs}{41}{section.7.2}
-\contentsline {subsection}{\numberline {7.2.1}Greatest Common Divisor}{41}{subsection.7.2.1}
-\contentsline {subsection}{\numberline {7.2.2}Tail Recursive Factorial}{41}{subsection.7.2.2}
-\contentsline {subsubsection}{\relax $\@@underline {\hbox {Interpreted approach results}}\mathsurround \z@ $\relax }{41}{section*.17}
-\contentsline {subsubsection}{\relax $\@@underline {\hbox {Constraint approach results}}\mathsurround \z@ $\relax }{41}{section*.18}
-\contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{41}{section.7.3}
-\contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{41}{subsection.7.3.1}
-\contentsline {subsection}{\numberline {7.3.2}Igor II}{42}{subsection.7.3.2}
+\contentsline {section}{\numberline {7.1}One Argument Programs}{41}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}Factorial}{41}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}Fibonacci}{42}{subsection.7.1.2}
+\contentsline {subsection}{\numberline {7.1.3}Powers of 2}{43}{subsection.7.1.3}
+\contentsline {section}{\numberline {7.2}Two Argument Programs}{44}{section.7.2}
+\contentsline {subsection}{\numberline {7.2.1}Tail Recursive Factorial}{44}{subsection.7.2.1}
+\contentsline {subsection}{\numberline {7.2.2}Greatest Common Divisor}{45}{subsection.7.2.2}
+\contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{46}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{46}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}Igor II}{46}{subsection.7.3.2}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-10}
-\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{43}{chapter.8}
-\contentsline {section}{\numberline {8.1}Future Work}{43}{section.8.1}
-\contentsline {subsection}{\numberline {8.1.1}Type Usage}{43}{subsection.8.1.1}
-\contentsline {subsection}{\numberline {8.1.2}Lists and Strings}{44}{subsection.8.1.2}
-\contentsline {subsection}{\numberline {8.1.3}Expanding the Background Knowledge}{45}{subsection.8.1.3}
-\contentsline {subsection}{\numberline {8.1.4}Loading known functions}{45}{subsection.8.1.4}
-\contentsline {subsection}{\numberline {8.1.5}Parallel Learning}{45}{subsection.8.1.5}
-\contentsline {section}{\numberline {8.2}Conclusions}{45}{section.8.2}
-\contentsline {subsection}{\numberline {8.2.1}What worked}{45}{subsection.8.2.1}
-\contentsline {subsection}{\numberline {8.2.2}Areas for improvement}{45}{subsection.8.2.2}
+\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{48}{chapter.8}
+\contentsline {section}{\numberline {8.1}Future Work}{48}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Type Usage}{48}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}Lists and Strings}{49}{subsection.8.1.2}
+\contentsline {subsection}{\numberline {8.1.3}Expanding the Background Knowledge}{50}{subsection.8.1.3}
+\contentsline {subsection}{\numberline {8.1.4}Advanced Skeleton Rule Generation}{50}{subsection.8.1.4}
+\contentsline {subsection}{\numberline {8.1.5}Supporting Multiple Function Calls}{51}{subsection.8.1.5}
+\contentsline {subsection}{\numberline {8.1.6}Loading known functions}{51}{subsection.8.1.6}
+\contentsline {subsection}{\numberline {8.1.7}Parallel Learning}{51}{subsection.8.1.7}
+\contentsline {section}{\numberline {8.2}Conclusions}{51}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}What worked}{51}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Areas for improvement}{51}{subsection.8.2.2}
 \gdef \the@ipfilectr {}

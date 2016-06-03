@@ -1,5 +1,6 @@
 #domain const_number(N0).
 match_guard(f, 1, (N0)) :- N0 == C1, is_call(call(f, (N0))), choose_match(R, 1, C1).
+match_guard(f, R, (N0)) :- is_call(call(f, (N0))), choose_match(R, 2).
 rule(R, f, (N0), C1) :- is_call(call(f, (N0))), choose(R, 1, C1).
 rule(R, f, (N0), N0) :- is_call(call(f, (N0))), choose(R, 2).
 rule(R, f, (N0), (N0 * N0)) :- is_call(call(f, (N0))), choose(R, 3).
@@ -67,6 +68,7 @@ rule(R, f, (N0), sub(call(f, (N0 * C1)), C2)) :- is_call(call(f, (N0))), choose(
 rule(R, f, (N0), div(call(f, (N0 * C1)), N0)) :- is_call(call(f, (N0))), choose(R, 65, C1).
 rule(R, f, (N0), div(call(f, (N0 * C1)), C2)) :- is_call(call(f, (N0))), choose(R, 66, C1, C2).
 1 {
+choose_match(R, 2),
 choose_match(R, 1, C0) : expr_const(C0)
 } 1 :- num_match(R).
 1 {

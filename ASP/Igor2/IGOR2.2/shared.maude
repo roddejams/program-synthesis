@@ -1,0 +1,261 @@
+
+fmod SHARED-SUB is
+	inc AUXILLIARY-TYPES .
+
+	vars Name Name1 Name2 : Qid .
+	var Names : FunNameSet .
+	vars Cs UpdCs : CallPairSet .
+	var Calls : Callclass .
+	
+
+	op updCalls : Qid FunNameSet CallPairSet CallPairSet -> CallPairSet .
+	eq updCalls(Name2, Names, ((Name1 Calls Name2) , Cs), UpdCs) =
+		updCalls(Name2, Names, Cs,
+				 ((Name1 Calls Name2) , 
+				  if Name1 =/= Name2 
+				  then createCalls(Name1, Calls, Names) 
+				  else empty
+				  fi , UpdCs)) .
+	eq updCalls(Name, Names, Cs, UpdCs) =
+		(createCalls(Name, callsEq, Names) , Cs , UpdCs) [owise] .
+
+	op createCalls : Qid Callclass FunNameSet -> CallPairSet .
+	eq createCalls(Name1, Calls, noName) = empty .
+	eq createCalls(Name1, Calls, (Name2 * Names)) =
+		(Name1 Calls Name2) , createCalls(Name1, Calls, Names) .
+
+endfm
+
+fmod SHARED-PART is
+	inc HYPOTHESES .
+	inc MAIN-PARAMETERS .
+	
+	sort PartitionsResult .		*** result of compPartitions
+	
+	op <_;_;_> : Partitions IODataSet Nat 
+				*** partitions, updated iodataset, updated dc
+					-> PartitionsResult [ctor] .
+	
+	*** auxilliary sorts
+	sort Partition .	*** set of AnnoteKeySet
+	subsort AnnoteKeySet < Partition .
+	
+	op empty : -> Partition [ctor] .
+	op _,_ : Partition Partition -> Partition 
+			[ctor assoc comm id: empty] .
+	eq A:AnnoteKeySet , A:AnnoteKeySet = A:AnnoteKeySet .
+	
+	
+	var EKey : Nat .
+	var Root : Qid .
+	var EKeys : KeySet .
+	var RPart : Partition .
+	
+	
+	*** inserts an example key regarding its pivot symbol into the correct
+	*** subset of a partition, potentially into a new subset
+	op insert : Nat Qid Partition -> Partition .
+	eq insert(EKey, Root, (< EKeys ; Root > , RPart)) = 
+		< (EKey , EKeys) ; Root > , RPart .
+	eq insert(EKey, Root, RPart) = < EKey ; Root > , RPart [owise] .
+	
+	
+	
+
+	sorts Fragment FragmentSet .	*** as Program but without the calling relations,
+					*** represents rules replaced for a rule
+	subsort Fragment < FragmentSet .
+	
+	op frag : KeySet Nat Bool		
+		*** rule keys, keys of io subsets (specialization grade), finished
+				-> Fragment [ctor] .
+	op empty : -> FragmentSet [ctor] .
+	op _,_ : FragmentSet FragmentSet -> FragmentSet [ctor assoc comm id: empty] .
+	eq F:Fragment , F:Fragment = F:Fragment .
+	
+	sort FragmentsResult .
+	op <_,_,_,_> : FragmentSet RuleDataSet Nat IODataSet 
+				*** computed fragments, updated rule set, updated rule counter,
+				*** updated io subsets; io subsets may change because out data 
+				*** is introduced if not yet present 
+					-> FragmentsResult .
+					
+	
+	vars RKey DKey RC UpdRC ResultRC DC UpdDC EC FC VarIndex Speci FSpeci PSpeci : Nat .
+	var Name : Qid .
+	vars RHS Pattern T B : Term .
+	var Matchable CNames : FunNameSet .
+	vars Progs UpdProgs : ProgramSet .
+	vars Rules UpdRules ResultRules : RuleDataSet .
+	vars RKeys NewKeys Part DKeys : KeySet .
+	var SD : SubstitutionData .
+	var ODS : OutDataSet .
+	var Preds : TermList .
+	var Cond : EqCondition .
+	vars Parts PParts : Partitions .
+	vars IOSubsets UpdIOSubsets ResultIOSubsets : IODataSet .
+	var Coas : Coarities .
+	var Mode : PartMode .
+	var Frags : FragmentSet .
+	vars Cs : CallPairSet .
+	vars Finished FragFinished : Bool .
+	var Frag : Fragment .
+	var Expls : IOSet .
+	var ID : AUResult .
+	var Data : IOData .
+	var Prog : Program .
+	var Sub : SubData .
+	var Matches : MatchDataSet .
+	var Rem : Bool .
+	var DKey2 : Nat .
+	var InData : AUResult .
+	var D : Nat .
+	var Depth : IndexNamePairSet .
+	
+	
+					
+	*** computes a program fragment for each partition
+	op compFragments : Partitions IODataSet IOSet Nat Qid FunNameSet RuleDataSet Coarities
+						-> FragmentsResult .
+						
+	*** base case: no partitions
+	eq compFragments(noParts, IOSubsets, Expls, RC, Name, Matchable, Rules, Coas) = 
+		< empty , Rules , RC , IOSubsets > .
+		
+	*** rec. case
+	ceq compFragments((Part next Parts), IOSubsets, Expls, RC, Name, Matchable, Rules, Coas) =
+		< (Frag , Frags) , 
+		  ResultRules ,
+		  ResultRC ,
+		  ResultIOSubsets >
+		if < Frag , UpdRules , UpdRC , UpdIOSubsets > :=
+			compFragment(Part, IOSubsets, Expls, RC, Name, Matchable, Rules, Coas) /\
+		   < Frags , ResultRules , ResultRC , ResultIOSubsets > := 
+			compFragments(Parts, UpdIOSubsets, Expls, UpdRC, Name, Matchable, UpdRules, Coas) .
+		
+	*** computes the fragment for one partition
+	op compFragment : KeySet IODataSet IOSet Nat Qid FunNameSet RuleDataSet Coarities
+						-> FragmentsResult .
+	*** base case (no remaining data keys)
+	eq compFragment(empty, IOSubsets, Expls, RC, Name, Matchable, Rules, Coas) =
+		< frag(empty, 0, true) , Rules , RC , IOSubsets > .
+	*** rec. case
+	ceq compFragment((DKey , DKeys), 
+					 (ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, PParts) , IOSubsets), 
+					 Expls, RC, Name, Matchable, Rules, Coas) =
+		< frag((RKey , RKeys) , s Speci , (Finished and FragFinished)) ,
+		  ResultRules , 
+		  ResultRC , 
+		  ResultIOSubsets >
+		if < RHS , Finished , Data > := 
+			introduceOutData(Name, ioData(DKey, EKeys, ID, ODS, Cond, Preds, Parts, PParts), 
+							 Expls, Coas) /\
+		   < RKey , UpdRules , UpdRC > := 
+		   	introduceRule(RC, Name, DKey, RHS, Matchable, Finished, Rules) /\
+		   < frag(RKeys, Speci, FragFinished) , 
+		     ResultRules , 
+		     ResultRC ,
+		     ResultIOSubsets > :=
+		   	compFragment(DKeys, (Data , IOSubsets), Expls, UpdRC, Name, 
+		   				 Matchable, UpdRules, Coas) .
+
+
+	op $integrateFragments : Nat FragmentSet Program RuleDataSet Qid 
+								IODataSet -> ProgramSet .
+	eq $integrateFragments(RKey, empty, Prog, Rules, Name, IOSubsets) = empty .
+	eq $integrateFragments(RKey, (frag(NewKeys, FSpeci, Finished) , Frags), 
+						   prog((RKey , RKeys), Cs, PSpeci, CNames, false), 
+						   Rules, Name, IOSubsets) =
+		(prog((NewKeys , RKeys), Cs, 
+			  *** *(sd(PSpeci, 1) + FSpeci),
+			  numOfDKeys((NewKeys , RKeys), Rules, IOSubsets),
+			  (CNames * Name),
+			  (finished(RKeys, Rules) and Finished)) ,
+		 $integrateFragments(RKey, Frags, 
+							 prog((RKey , RKeys), Cs, PSpeci, CNames, false),
+						     Rules, Name, IOSubsets)) .		    
+		
+	op numOfDKeys : KeySet RuleDataSet IODataSet -> Nat .
+	eq numOfDKeys(RKeys, Rules, IOSubsets) = 
+		countKeys(collectKeys(RKeys, Rules, IOSubsets)) .
+	
+	op consumeDKey : Partitions KeySet IODataSet RuleDataSet -> Bool .
+	eq consumeDKey(noParts, RKeys, IOSubsets, Rules) = false .
+	eq consumeDKey((Part next Parts), RKeys, IOSubsets, Rules) =
+		if $consumeDKey(Part, RKeys, IOSubsets, Rules) 
+		then true
+		else consumeDKey(Parts, RKeys, IOSubsets, Rules)
+		fi .
+		
+	op $consumeDKey : KeySet KeySet IODataSet RuleDataSet -> Bool .
+	eq $consumeDKey(empty, RKeys, IOSubsets, Rules) = true .
+	ceq $consumeDKey((DKey2 , DKeys), RKeys, 
+				     (ioData(DKey2, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets), 
+				     Rules) =
+		if containsSubset(RKeys, DKey2, Rules)
+		then Rem
+		else (consumeDKey(Parts, RKeys, 
+						  (ioData(DKey2, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets), 
+						  Rules)) and Rem
+	    fi 
+	    if Rem := 
+	    	$consumeDKey(DKeys, RKeys, 
+						 (ioData(DKey2, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets), 
+						 Rules) .
+						 
+	op containsSubset : KeySet Nat RuleDataSet -> Bool .
+	eq containsSubset((RKey , RKeys), DKey, 
+					  (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) , 
+					   Rules)) = true .
+	eq containsSubset(RKeys, DKey, Rules) = false [owise] .
+	
+	op collectKeys : KeySet RuleDataSet IODataSet -> KeySet .
+	eq collectKeys(empty, Rules, IOSubsets) = empty .
+	eq collectKeys((RKey , RKeys), 
+				   (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) ,
+					Rules),
+				   (ioData(DKey, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets)) =
+		if consumeDKey(Parts, (RKey, RKeys), 
+					   (ioData(DKey, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets),
+					   (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) ,
+					    Rules))
+		then collectKeys(RKeys, 
+						 (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) ,
+						  Rules),
+						 (ioData(DKey, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets))
+		else DKey , collectKeys(RKeys, 
+								(rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) ,
+								Rules), 
+								(ioData(DKey, EKeys, InData, ODS, Cond, Preds, Parts, PParts) , IOSubsets)) 
+		fi .
+		
+	op countKeys : KeySet -> Nat .
+	eq countKeys(empty) = 0 .
+	eq countKeys((DKey , DKeys)) = s countKeys(DKeys) .
+	
+	
+	*** replaces given rule key by keys in the fragment in all programs
+	*** and updates finished and specialization info
+	op integrateFragments : Nat FragmentSet ProgramSet RuleDataSet Qid 
+							IODataSet -> ProgramSet .
+	
+	*** a program containing the rule exists, then replace with fragments and
+	*** proceed on remaining programs
+	eq integrateFragments(RKey, Frags, 
+						  (prog((RKey , RKeys), Cs, Speci, CNames, false) , Progs),
+						  Rules, Name, IOSubsets) = 
+		$integrateFragments(RKey, Frags, 
+						    prog((RKey , RKeys), Cs, Speci, CNames, false),
+						    getRules((RKey , RKeys , getFragsKeys(Frags)), Rules), Name, IOSubsets) ,
+		integrateFragments(RKey, Frags, Progs, Rules, Name, IOSubsets) [label problem] .
+		
+	*** no program containing the rule exists, return programs unchanged
+	eq integrateFragments(RKey, Frags, Progs, Rules, Name, IOSubsets) = Progs [owise] .
+	
+					
+	op getFragsKeys : FragmentSet -> KeySet .
+	eq getFragsKeys(empty) = empty .
+	eq getFragsKeys((frag(RKeys, Speci, Finished) , Frags)) =
+		RKeys , getFragsKeys(Frags) .
+endfm
+

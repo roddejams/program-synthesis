@@ -46,19 +46,22 @@
 \BOOKMARK [1][-]{section.7.1}{One Argument Programs}{chapter.7}% 46
 \BOOKMARK [2][-]{subsection.7.1.1}{Factorial}{section.7.1}% 47
 \BOOKMARK [2][-]{subsection.7.1.2}{Fibonacci}{section.7.1}% 48
-\BOOKMARK [1][-]{section.7.2}{Two Argument Programs}{chapter.7}% 49
-\BOOKMARK [2][-]{subsection.7.2.1}{Greatest Common Divisor}{section.7.2}% 50
-\BOOKMARK [2][-]{subsection.7.2.2}{Tail Recursive Factorial}{section.7.2}% 51
-\BOOKMARK [1][-]{section.7.3}{Comparison to Existing Tools}{chapter.7}% 52
-\BOOKMARK [2][-]{subsection.7.3.1}{MagicHaskeller}{section.7.3}% 53
-\BOOKMARK [2][-]{subsection.7.3.2}{Igor II}{section.7.3}% 54
-\BOOKMARK [0][-]{chapter.8}{Conclusions and Future Work}{}% 55
-\BOOKMARK [1][-]{section.8.1}{Future Work}{chapter.8}% 56
-\BOOKMARK [2][-]{subsection.8.1.1}{Type Usage}{section.8.1}% 57
-\BOOKMARK [2][-]{subsection.8.1.2}{Lists and Strings}{section.8.1}% 58
-\BOOKMARK [2][-]{subsection.8.1.3}{Expanding the Background Knowledge}{section.8.1}% 59
-\BOOKMARK [2][-]{subsection.8.1.4}{Loading known functions}{section.8.1}% 60
-\BOOKMARK [2][-]{subsection.8.1.5}{Parallel Learning}{section.8.1}% 61
-\BOOKMARK [1][-]{section.8.2}{Conclusions}{chapter.8}% 62
-\BOOKMARK [2][-]{subsection.8.2.1}{What worked}{section.8.2}% 63
-\BOOKMARK [2][-]{subsection.8.2.2}{Areas for improvement}{section.8.2}% 64
+\BOOKMARK [2][-]{subsection.7.1.3}{Powers of 2}{section.7.1}% 49
+\BOOKMARK [1][-]{section.7.2}{Two Argument Programs}{chapter.7}% 50
+\BOOKMARK [2][-]{subsection.7.2.1}{Tail Recursive Factorial}{section.7.2}% 51
+\BOOKMARK [2][-]{subsection.7.2.2}{Greatest Common Divisor}{section.7.2}% 52
+\BOOKMARK [1][-]{section.7.3}{Comparison to Existing Tools}{chapter.7}% 53
+\BOOKMARK [2][-]{subsection.7.3.1}{MagicHaskeller}{section.7.3}% 54
+\BOOKMARK [2][-]{subsection.7.3.2}{Igor II}{section.7.3}% 55
+\BOOKMARK [0][-]{chapter.8}{Conclusions and Future Work}{}% 56
+\BOOKMARK [1][-]{section.8.1}{Future Work}{chapter.8}% 57
+\BOOKMARK [2][-]{subsection.8.1.1}{Type Usage}{section.8.1}% 58
+\BOOKMARK [2][-]{subsection.8.1.2}{Lists and Strings}{section.8.1}% 59
+\BOOKMARK [2][-]{subsection.8.1.3}{Expanding the Background Knowledge}{section.8.1}% 60
+\BOOKMARK [2][-]{subsection.8.1.4}{Advanced Skeleton Rule Generation}{section.8.1}% 61
+\BOOKMARK [2][-]{subsection.8.1.5}{Supporting Multiple Function Calls}{section.8.1}% 62
+\BOOKMARK [2][-]{subsection.8.1.6}{Loading known functions}{section.8.1}% 63
+\BOOKMARK [2][-]{subsection.8.1.7}{Parallel Learning}{section.8.1}% 64
+\BOOKMARK [1][-]{section.8.2}{Conclusions}{chapter.8}% 65
+\BOOKMARK [2][-]{subsection.8.2.1}{What worked}{section.8.2}% 66
+\BOOKMARK [2][-]{subsection.8.2.2}{Areas for improvement}{section.8.2}% 67

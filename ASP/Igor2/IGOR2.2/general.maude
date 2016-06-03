@@ -1,0 +1,601 @@
+*** General Types of IGOR 2.2, i.e., types to represent I/O-examples,
+*** rules, (partially) inferred programs and so on.
+
+fmod AUXILLIARY-TYPES is
+	inc NAT .
+	inc QID .
+	
+	sort KeySet .	*** set/list of natural numbers interpreted as keys 
+	subsort Nat < KeySet .
+	
+	op empty : -> KeySet [ctor] .
+	op _,_ : KeySet KeySet -> KeySet [ctor assoc comm id: empty] .
+	eq Key:Nat , Key:Nat = Key:Nat .
+	
+
+	sorts KeyPair KeyPairSet .	*** for denoting keys of matching outputs
+	subsort KeyPair < KeyPairSet .
+	
+	op <_,_> : Nat Nat -> KeyPair [ctor] .
+	op empty : -> KeyPairSet [ctor] .
+	op _,_ : KeyPairSet KeyPairSet -> KeyPairSet 
+			[ctor assoc comm id: empty] .
+	eq KP:KeyPair , KP:KeyPair = KP:KeyPair .
+	
+	sort AnnoteKeySet .	*** a key set together with a Qid. Used to represent
+						*** initial expl key sets (SETUP module) and for
+						*** partitioning (PARTITIONS module).
+	op <_;_> : KeySet Qid -> AnnoteKeySet [ctor] .
+	
+	
+	sorts Callclass CallPair CallPairSet .	*** for expressing various calling relations
+	subsort CallPair < CallPairSet .
+	
+	ops none callsRed callsEq callsInc : -> Callclass [ctor] .
+	op ___ : Qid Callclass Qid -> CallPair [ctor] .
+	op empty : -> CallPairSet [ctor] .
+	op _,_ : CallPairSet CallPairSet -> CallPairSet 
+			[ctor assoc comm id: empty] .
+	eq CP:CallPair , CP:CallPair = CP:CallPair .
+
+
+	sort NoName .
+	subsort Qid < NoName .
+	op noName : -> NoName [ctor] .	
+	
+	sort FunNameList .	*** for denoting function names of a match 
+	subsort NoName < FunNameList .
+
+	*** op noName : -> FunNameList [ctor] .
+	op _**_ : FunNameList FunNameList -> FunNameList [ctor assoc id: noName] .
+	
+	sort FunNameSet .	*** for matchable set, subdata 
+	subsort NoName < FunNameSet .
+	*** op noName : -> FunNameSet [ctor] .
+	op _*_ : FunNameSet FunNameSet -> FunNameSet [ctor assoc comm id: noName] .
+	eq Name:Qid * Name:Qid = Name:Qid .
+	
+	vars Name Name1 Name2 : Qid .
+	vars Names CNames : FunNameSet .
+	var LNames : FunNameList .
+	var C : CallPair .
+	var Cs : CallPairSet .
+	var Calls : Callclass .
+	
+	op funNameList2Set : FunNameList -> FunNameSet .
+	eq funNameList2Set(noName) = noName .
+	eq funNameList2Set((Name ** LNames)) = 
+		Name * funNameList2Set(LNames) .
+	
+	*** kann das sein, dass ich das nicht brauche???
+	op numberOf_in_ : FunNameSet FunNameSet -> Nat .
+	eq numberOf (Name * Names) in (Name * CNames) = 
+		s (numberOf Names in CNames) .
+	eq numberOf Names in CNames = 0 [owise] .
+	
+	op _contains_ : FunNameSet Qid -> Bool .
+	eq (Name * Names) contains Name = true .
+	eq Names contains Name = false [owise] .
+	
+	op _,_in_ : Qid Qid CallPairSet -> Bool .
+	eq Name1 , Name2 in ((Name1 Calls Name2) , Cs) = true .
+	eq Name1 , Name2 in Cs = false [owise] .
+	
+	
+	sort IndexNamePair .	*** a pair of an index denoting an unfinished subterm 
+							*** in the RHS and the corresponding subfunction name
+							*** additionally usage: depth , subname pair
+	sort IndexNamePairSet .
+	subsort IndexNamePair < IndexNamePairSet .
+	op <_:_> : Nat Qid -> IndexNamePair [ctor] .
+	op empty : -> IndexNamePairSet [ctor] .
+	op _,_ : IndexNamePairSet IndexNamePairSet -> IndexNamePairSet
+		[ctor assoc comm id: empty] .
+		
+	var D : Nat .
+	var Depth : IndexNamePairSet .
+		
+		
+	op _contains_ : IndexNamePairSet Qid -> Bool .
+	eq (< D : Name > , Depth) contains Name = true .
+	eq Depth contains Name = false [owise] .
+	
+	op createDepth : Nat FunNameSet -> IndexNamePairSet .
+	eq createDepth(D , noName) = empty .
+	eq createDepth(D , (Name * Names)) = < D : Name > , createDepth(D, Names) .
+	
+endfm
+
+
+fmod IO-EXAMPLES is
+	inc AUXILLIARY-TYPES .
+	inc ANTIUNIFICATION .
+	
+	***************************************************************
+	*** I / O - E X A M P L E S
+	***************************************************************
+	
+	*** General rationale behind chosen representation:
+	*** within one induction problem, different subproblems
+	*** [i.e., different function definitions to be induced from 
+	*** examples] have equal inputs and similiar outputs. More precise,
+	*** there are three types of particular problems:
+	*** 1. target functions,
+	*** 2. subfunctions (i.e., functions with same input as the context
+	***    and with context suboutputs as outputs),
+	*** 3. nested/argument functions (i.e., functions called as 
+	***    argument for another call of a defined function F'); such
+	***    functions have the same inputs as the context and inputs
+	***    of the called function F' as outputs.
+	*** A consequence is that only inputs of target functions occur
+	*** as inputs even as inputs for sub- and nested functions. Moreover,
+	*** it can happen that two target functions have (partly) the same
+	*** inputs. That is, LGGs and partitions of the same inputs are needed
+	*** repeatedly, thus, these data should only be computed once and
+	*** then be shared.
+	*** Another consequence is that outputs of all problems are 
+	*** subterms of target outputs or of target or background-function 
+	*** inputs. Since the subterms LGG is the corresponding subterm of 
+	*** the terms LGG, once computed LGGs of outputs can be used to get
+	*** even the LGGs of the outputs for the subproblems.
+	*** Moreover, matchings of I/O-subsets are partially contained in
+	*** matchings of the original superset, i.e., matchings should be
+	*** stored and reused.
+	
+	sorts IOEntry IOSet .	*** base sorts to represent I/O-examples
+	subsort IOEntry < IOSet .
+	
+	op ioEntry : Nat Term NamedOutputs	*** key, input, and named outputs
+					-> IOEntry [ctor] .
+	op empty : -> IOSet [ctor] .
+	op _,_ : IOSet IOSet -> IOSet [ctor assoc comm id: empty] .
+	eq E:IOEntry , E:IOEntry = E:IOEntry .
+	
+	
+	sort NamedOutput NamedOutputs .	*** outputs together with names of the
+									*** defined functions they belong to;
+									*** rationale behind collecting outputs
+									*** together: in an induction problem,
+									*** many outputs will have the same input,
+									*** all these outputs will be collected and
+									*** associated with the input (in one
+									*** ioEntry)
+	subsort NamedOutput < NamedOutputs .
+	
+	op <_,_> : Qid Term -> NamedOutput [ctor] .	*** def fun name and output
+	op none : -> NamedOutputs [ctor] .
+	op _,_ : NamedOutputs NamedOutputs -> NamedOutputs 
+				[ctor assoc comm id: none] .
+	eq NOut:NamedOutput , NOut:NamedOutput = NOut:NamedOutput .
+	
+
+	var Expls : IOSet .
+	var EKey : Nat .
+	var EKeys : KeySet .
+	vars I I1 I2 O : Term .
+	var NOs : NamedOutputs .
+	var Name : Qid .
+	vars Is1 Is2 : TermList .
+	
+	op getInputs : KeySet IOSet -> IndexedTerms .	
+	eq getInputs((empty).KeySet, Expls) = none .
+	eq getInputs((EKey , EKeys), (ioEntry(EKey, I, NOs) , Expls)) = 
+		< EKey , I > , getInputs(EKeys, Expls) .
+		
+	op getInputs : Qid IOSet -> IndexedTerms .
+	eq getInputs(Name, (ioEntry(EKey, I, (< Name , O > , NOs)) , Expls)) =
+		< EKey , I > , getInputs(Name, Expls) .
+	eq getInputs(Name, Expls) = none [owise] .
+		
+	op getOutputs : KeySet Qid IOSet -> IndexedTerms .
+	eq getOutputs(empty, Name, Expls) = none .
+	eq getOutputs((EKey , EKeys), Name, 
+				  (ioEntry(EKey, I, (< Name , O > , NOs)) , Expls)) = 
+		< EKey , O > , getOutputs(EKeys, Name, Expls) .
+		
+	op getOutputs : Qid IOSet -> IndexedTerms .
+	eq getOutputs(Name, (ioEntry(EKey, I, (< Name , O > , NOs)) , Expls)) =
+		< EKey , O > , getOutputs(Name, Expls) .
+	eq getOutputs(Name, Expls) = none [owise] .
+
+	
+	op inSmallerSize : Term Term -> Bool .
+	op inEqualSize : Term Term -> Bool . 
+
+	eq inSmallerSize('in [ Is1 ], 'in [ Is2 ]) =
+		inSmSize(Is1, Is2) .
+		*** inSmParams(Is1, Is2) .
+	eq inEqualSize('in [ Is1 ], 'in [ Is2 ]) =
+		inEqSize(Is1, Is2) .
+		*** inEqParams(Is1, Is2) .
+
+	op inSmSize : TermList TermList -> Bool .
+	eq inSmSize(Is1, Is2) = size(Is1) < size(Is2) .
+
+	op inEqSize : TermList TermList -> Bool .
+	eq inEqSize(Is1, Is2) = size(Is1) == size(Is2) .
+
+	op inSmParams : TermList TermList -> Bool .
+	eq inSmParams(empty, Is2) = false .
+	eq inSmParams((I1 , Is1), empty) = false .
+	eq inSmParams((I1 , Is1), (I2 , Is2)) =
+		(size(I1) < size(I2)) or 
+		((size(I1) == size(I2)) and inSmParams(Is1, Is2)) .
+
+	op inEqParams : TermList TermList -> Bool .
+	eq inEqParams(empty, Is2) = true .
+	eq inEqParams((I1 , Is1), empty) = false .
+	eq inEqParams((I1 , Is1), (I2 , Is2)) =
+		(size(I1) == size(I2)) and inEqParams(Is1, Is2) . 
+		
+endfm
+
+
+fmod SHARED-IO-DATA is
+	*** inc ANTIUNIFICATION .	*** for type $AssListSet
+	inc IO-EXAMPLES .
+	
+	sort IOData .	*** shared computed data for subsets of I/O-examples
+	sort IODataSet .
+	subsort IOData < IODataSet .
+	
+	op ioData : Nat KeySet AUResult OutDataSet EqCondition TermList Partitions Partitions
+			*** key, keys of ioEntries definig a subset, shared data for input subset,
+			*** shared data for output subsets, possible predicates, partitioning info
+					-> IOData [ctor] .	*** the OutDataSet corresponds to
+										*** the NamedOutputs
+	op empty : -> IODataSet [ctor] .
+	op _,_ : IODataSet IODataSet -> IODataSet [ctor assoc comm id: empty] .
+	eq Data:IOData , Data:IOData = Data:IOData .
+	
+	sorts OutData OutDataSet .	*** encapsulates particular data
+								*** output subsets
+								*** data for input subsets is $AUResult
+	subsort OutData < OutDataSet .
+	
+	op <_,_,_,_> : Qid Term KeySet Bool *** Matches 
+		*** funname, LGG, indices of unfinished subterms, finished flag, matches
+		-> OutData [ctor] . 
+	op empty : -> OutDataSet [ctor] .
+	op _,_ : OutDataSet OutDataSet -> OutDataSet [ctor assoc comm id: empty] .
+	eq Data:OutData , Data:OutData = Data:OutData .
+	
+	
+	*** sorts Match Matches .		*** matching subsets of IOEntries 
+								*** a Match contains info regarding one
+								*** match of all examples in the subset,
+								*** this is simply a qid-list where the first
+								*** qid denotes the called function and the
+								*** remaining qids denote the introduced
+								*** argument functions
+	*** subsort Match < Matches .
+	
+	*** op match : FunNameList KeyPairSet -> Match [ctor] .
+	*** ops none failed : -> Matches [ctor] .	*** failed indicates that
+											*** matches have been computed
+											*** unsuccessfully
+	*** op _,_ : Matches Matches -> Matches [ctor assoc comm id: none] .
+	*** eq M:Match , M:Match = M:Match .
+	
+	
+	sort Partitions .	*** keys of IOData that form partitions
+						*** i.e., one key denotes one ioData (i.e., one subset),
+						*** thus one keyset is one partition
+	subsort KeySet < Partitions .
+	
+	ops noParts failed : -> Partitions [ctor] .
+	op _next_ : Partitions Partitions -> Partitions 
+					[ctor assoc comm id: noParts] .
+	eq P:KeySet next P:KeySet = P:KeySet .
+	
+	
+	op failed : -> TermList [ctor] .	*** if no predicates were found
+	
+	
+	vars EKeys Indices : KeySet .
+	var Expls : IOSet .
+	var Coas : Coarities .
+	var Name : Qid .
+	vars InAssigns Assigns SD1 SD2 SD : SubstitutionData .
+	vars VarIndex DKey DC VC EKey : Nat .
+	vars LGG Pattern T : Term .
+	var InData : AUResult .
+	var Finished : Bool .
+	var ODS : OutDataSet .
+	vars Preds Preds1 Preds2 TL1 TL2 TLInit1 TLInit2 TLRest1 TLRest2 : TermList .
+	vars Cond SingleCond : EqCondition .
+	vars Parts PParts : Partitions .
+	var V : Variable .
+	var ITs : IndexedTerms .
+	vars Poss InPoss : Positions .
+	var IOSubsets : IODataSet .
+	var SubIndex : Nat .
+	var Pos : Position .
+	
+	op compPattern : KeySet IOSet Coarities -> AUResult .
+	eq compPattern(EKeys, Expls, Coas) = 
+		antiunify(getInputs(EKeys, Expls), Coas, empty, 0, epsilon) .
+
+	sort OutDataIntroResult .	*** LGG, finished flag, updated ioData
+	op <_,_,_> : Term Bool IOData -> OutDataIntroResult [ctor] .
+
+	*** takes the name of the target function, the ioData to be updated,
+	*** i/o examples, and coarities and returns a triple (OutDataIntroResult)
+	*** containing the LGG (wrt SD for inputs), teh finished flag, and the
+	*** updated ioData
+	op introduceOutData : Qid IOData IOSet Coarities -> OutDataIntroResult .
+	
+	*** outdata already present
+	eq introduceOutData(Name, 
+						ioData(DKey, EKeys, InData, 
+							   (< Name , LGG , Indices , Finished > , ODS),
+							   Cond, Preds, Parts, PParts), 
+						Expls, Coas) =
+		< LGG , 
+		  Finished , 
+		  ioData(DKey, EKeys, InData, 
+				 (< Name , LGG , Indices , Finished > , ODS),
+			     Cond, Preds, Parts, PParts) > .
+			     
+	*** new out data 
+	ceq introduceOutData(Name, 
+						 ioData(DKey, EKeys, < Pattern , InAssigns , VC >, 
+							    ODS, Cond, Preds, Parts, PParts),
+						 Expls, Coas) =
+		< LGG , 
+		  Finished ,
+		  ioData(DKey, EKeys, < Pattern , InAssigns , VC >, 
+				 (< Name , LGG , Indices , Finished > , ODS), 
+				 Cond, Preds, Parts, PParts) >
+		if not(in(Name, ODS)) /\
+		   < LGG , Assigns , Index:Nat > := 
+			antiunify(getOutputs(EKeys, Name, Expls), Coas, InAssigns, 
+					  VC, epsilon) /\ 
+		   Indices := getUnfinishedSubIndices(Assigns, InAssigns) /\
+		   Finished := Assigns in InAssigns .
+					  
+	op in : Qid OutDataSet -> Bool .
+	eq in(Name, (< Name , LGG , Indices , Finished > , ODS)) = true .
+	eq in(Name, ODS) = false [owise] .
+	
+	op getUnfinishedSubIndices : SubstitutionData SubstitutionData -> KeySet .
+	eq getUnfinishedSubIndices(empty, empty) = empty .
+	eq getUnfinishedSubIndices((< V ; ITs ; Poss > , Assigns), 
+				   (< V ; ITs ; InPoss > , InAssigns)) =
+		getUnfinishedSubIndices(Assigns, InAssigns) .
+	eq getUnfinishedSubIndices((< V ; ITs ; ((SubIndex . Pos) ; Poss) > , Assigns), empty) =
+		SubIndex , 
+		getUnfinishedSubIndices((< V ; ITs ; Poss > , Assigns), empty) .
+	eq getUnfinishedSubIndices((< V ; ITs ; Poss > , Assigns), empty) =
+		getUnfinishedSubIndices(Assigns, empty) [owise] .
+
+	op _in_ : SubstitutionData SubstitutionData -> Bool .
+	eq empty in InAssigns = true .
+	eq (< V ; ITs ; Poss > , Assigns) in (< V ; ITs ; InPoss > , InAssigns) = 
+		Assigns in InAssigns .
+	eq Assigns in InAssigns = false [owise] .
+
+	*** computes LGG for outputs but not matches
+	***op initOutData : KeySet Qid IOSet Coarities SubstitutionData Nat -> OutData .
+	***ceq initOutData(EKeys, Name, Expls, Coas, InAssigns, VarIndex) =
+	***	< Name , LGG , InAssigns == Assigns , none >
+	***	if < LGG , Assigns:SubstitutionData , Index:Nat > := 
+	***		antiunify(getOutputs(EKeys, Name, Expls), Coas, InAssigns, 
+	***				   VarIndex, epsilon) .
+					    
+	*** yields IOData object where key, ioEntry keys, and pattern are set
+	*** missing out data, predicates, and partitions will be computed when
+	*** they are requested
+	*** op initIOData : Nat KeySet IOSet Coarities -> IOData .
+	*** eq initIOData(DKey, EKeys, Expls, Coas) = 
+	***	ioData(DKey, EKeys, compPattern(EKeys, Expls, Coas), 
+	***		   empty, empty, noParts) .
+
+	sort IODataIntroResult .
+	op <_,_,_> : Nat IODataSet Nat -> IODataIntroResult [ctor] .
+	
+	op introduceIOData : Nat KeySet IOSet Coarities IODataSet -> IODataIntroResult .
+	eq introduceIOData(DC, EKeys, Expls, Coas, 
+					   (ioData(DKey, EKeys, InData, ODS, nil, Preds, Parts, PParts) , IOSubsets)) =
+		< DKey , (ioData(DKey, EKeys, InData, ODS, nil, Preds, Parts, PParts) , IOSubsets), DC > .
+	eq introduceIOData(DC, EKeys, Expls, Coas, IOSubsets) =
+		< DC , 
+		  (ioData(DC, EKeys, compPattern(EKeys, Expls, Coas), empty, nil, empty, noParts, noParts) , 
+		   IOSubsets), 
+		  s DC > [owise] .
+		  
+	op introducePIOData : Nat KeySet AUResult EqCondition TermList
+						  IODataSet -> IODataIntroResult .
+	eq introducePIOData(DC, EKeys, < Pattern , SD1 , VarIndex >, SingleCond, Preds1, 
+					    (ioData(DKey, EKeys, < Pattern , SD2 , VarIndex >, ODS, Cond, Preds2, Parts, PParts) , 
+					     IOSubsets)) =
+		< DKey , 
+		  (ioData(DKey, EKeys, < Pattern , SD2 , VarIndex >, ODS, (Cond /\ SingleCond), 
+		  		  predIntersect(Preds1, Preds2), Parts, PParts) , 
+		   IOSubsets) , 
+		  DC > .
+	eq introducePIOData(DC, EKeys, < Pattern , SD , VarIndex >, SingleCond, Preds, IOSubsets) =
+		< DC , 
+		  (ioData(DC, EKeys, < Pattern , filterSD(SD, EKeys) , VarIndex >, empty, SingleCond, Preds, noParts, noParts) , 
+		   IOSubsets) , 
+		  s DC > [owise] .
+		  
+	op predIntersect : TermList TermList -> TermList .
+	eq predIntersect((TLInit1 , T , TLRest1), (TLInit2 , T , TLRest2)) = 
+		T , predIntersect((TLInit1 , TLRest1), (TLInit2 , TLRest2)) .
+	eq predIntersect(TL1, TL2) = empty [owise] .
+	
+	op filterSD : SubstitutionData KeySet -> SubstitutionData .
+	eq filterSD(empty, EKeys) = empty .
+	eq filterSD((< V ; ITs ; Poss > , SD), EKeys) =
+		< V ; filterITs(ITs, EKeys) ; Poss > , filterSD(SD, EKeys) .
+		
+	op filterITs : IndexedTerms KeySet -> IndexedTerms .
+	eq filterITs((< EKey , T > , ITs), (EKey , EKeys)) = 
+		< EKey , T > , filterITs(ITs, EKeys) .
+	eq filterITs(ITs, EKeys) = none [owise] .
+	
+	*** used in PARTITIONS and SETUP
+	*** op in : KeySet IODataSet -> Bool .
+	*** eq in(EKeys, (ioData(DKey, EKeys, InData, ODS, Preds, Parts) , IOSubsets)) =
+	***	true .
+	*** eq in(EKeys, IOSubsets) = false [owise] .
+endfm
+
+
+fmod HYPOTHESES is
+	inc SHARED-IO-DATA .
+	*** inc SHARED .
+	
+	sorts RuleData RuleDataSet Program ProgramSet .	*** representations of rules and 
+											*** programs during search
+	subsort RuleData < RuleDataSet .
+	subsort Program < ProgramSet .
+	
+	op rule : Nat Qid Nat Term FunNameSet SubData MatchDataSet Bool 
+		*** key, name, ioData-key, RHS, matchable functions names, finished,
+		*** a set of key sets, each key set references rules which have been
+		*** replaced this rule
+				-> RuleData [ctor] .
+	op empty : -> RuleDataSet [ctor] .
+	op _,_ : RuleDataSet RuleDataSet -> RuleDataSet [ctor assoc comm id: empty] .
+	eq R:RuleData , R:RuleData = R:RuleData .
+	
+	sort SubData .
+	op <_,_,_> : KeySet FunNameSet Bool	
+		*** keys of new rules (finished original and subprograms), subprog names,
+		*** Finished Flag for the new fragment
+		-> SubData [ctor] .	
+	op noSubData : -> SubData [ctor] .
+	
+	
+	sort MatchData .
+	op <_,_,_,_> : KeySet CallPair FunNameSet Bool 
+		*** keys of new rules (finished original and arguments), matched function
+		*** name together with calling class, argfun names (fall into the 
+		*** eq calling class), Finished Flag for the new fragment
+		-> MatchData [ctor] .
+	
+	
+	sort MatchDataSet .
+	subsort MatchData < MatchDataSet .
+	ops empty failed : -> MatchDataSet [ctor] .	*** initially, a MatchDataSet is
+				*** empty, it is failed, if matches have unsuccessfully been computed
+	op _,_ : MatchDataSet MatchDataSet -> MatchDataSet [ctor assoc comm id: empty] .
+	eq M:MatchData , M:MatchData = M:MatchData .
+	
+	op prog : KeySet CallPairSet Nat FunNameSet Bool		
+		*** rule keys, calling relations, final number of rules (interpreted as 
+		*** specialization grade, to be minimized), fun names whose rules count
+		*** *(these are all names to be induced as well as recursive subprograms), 
+		*** finished
+				-> Program [ctor] .
+	op empty : -> ProgramSet [ctor] .
+	op _,_ : ProgramSet ProgramSet -> ProgramSet [ctor assoc comm id: empty] .
+	eq P:Program , P:Program = P:Program .
+				
+				
+	sort InductionState .
+	op istate : ProgramSet RuleDataSet Nat IODataSet Nat IOSet Nat Nat IndexNamePairSet
+			*** programs, rules, rule counter, shared io subset data, data counter,
+			*** examples, examples counter, fun name counter
+					-> InductionState [ctor] .
+				
+	*** sorts RuleReplacement RuleReplacements .	
+	*** subsort RuleReplacement < RuleReplacements .
+	
+	*** op {_,_} : KeySet Nat -> RuleReplacement [ctor] .
+	*** ops none : -> RuleReplacements [ctor] .
+	*** op _,_ : RuleReplacements RuleReplacements -> RuleReplacements
+	*** 				[ctor assoc comm id: none] .
+	*** eq R:RuleReplacement , R:RuleReplacement = R:RuleReplacement .
+	
+	
+	sort RuleIntroResult .
+	op <_,_,_> : Nat RuleDataSet Nat 
+			*** rule key, resulting rule set, new rule counter
+					-> RuleIntroResult [ctor] .
+	
+	
+	vars RC DKey Size RKey Index : Nat .
+	var RKeys : KeySet .
+	vars Name Called : Qid .
+	var Matchable : FunNameSet .
+	var Finished : Bool .
+	*** var Repls : RuleReplacements .
+	var Rules : RuleDataSet .
+	var RHS : Term .
+	var Sub : SubData .
+	var Matches : MatchDataSet .
+	var Cs : CallPairSet .
+	var Calls : Callclass .
+	
+	op introduceRule : Nat Qid Nat Term FunNameSet Bool RuleDataSet -> RuleIntroResult .
+	eq introduceRule(RC, Name, DKey, RHS, Matchable, Finished,
+					 (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) , 
+					 Rules)) =
+		< RKey ,
+		  (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) , Rules) ,
+		  RC > .
+	eq introduceRule(RC, Name, DKey, RHS, Matchable, Finished, Rules) =
+		< RC ,
+		  (rule(RC, Name, DKey, RHS, Matchable, noSubData, empty, Finished) , Rules) ,
+		  s RC > [owise] .
+		  
+	op finished : KeySet RuleDataSet -> Bool .
+	eq finished((RKey , RKeys), 
+				(rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules)) 
+		= false .
+	eq finished(RKeys, Rules) = true [owise] .
+
+	
+	op _>_ : Callclass Callclass -> Bool .
+	eq none > callsInc = true .
+	eq none > callsEq = true .
+	eq none > callsRed = true .
+	eq callsInc > callsEq = true .
+	eq callsInc > callsRed = true .
+	eq callsEq > callsRed = true .
+	eq C1:Callclass > C2:Callclass = false [owise] .
+	
+	op getClass : Qid Qid CallPairSet -> Callclass .
+	eq getClass(Name, Called, ((Name Calls Called) , Cs)) = Calls .
+	eq getClass(Name, Called, Cs) = none [owise] .
+	
+	***op getRule : Nat RuleDataSet -> RuleData .
+	***eq getRule(RKey, (rule(RKey, Name, DKey, RHS, Matchable, Sub, Finished) , Rules)) = 
+	***	rule(RKey, Name, DKey, RHS, Matchable, Sub, Finished) .
+
+	op getRules : KeySet RuleDataSet -> RuleDataSet .
+	eq getRules(empty, Rules) = empty .
+	eq getRules((RKey , RKeys), 
+		    (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) , Rules)) =
+		rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, Finished) , 
+		getRules(RKeys, Rules) .
+	
+	op createSubname : Nat -> Qid .
+	eq createSubname(Index) = 
+		qid("Sub" + string(Index, 10)) .
+	
+endfm
+
+
+fmod MAIN-PARAMETERS is
+	
+		sort PartMode .		*** mode of partitioning
+		
+		ops medium fast : -> PartMode [ctor] .
+endfm
+
+fmod GENERAL-CONSTANTS is
+	inc NAT .
+
+	ops initEC initRC initDC initFC : -> Nat .
+	eq initEC = 1 .
+	eq initRC = 1 .
+	eq initDC = 1 .
+	eq initFC = 1 .
+endfm 
+
+					   
+	

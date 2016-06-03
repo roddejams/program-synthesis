@@ -1,0 +1,221 @@
+fmod PARTITIONS is
+	inc SHARED-IO-DATA .
+	inc MAIN-PARAMETERS .
+	inc SHARED-PART .
+	
+	vars EKeys DKeys : KeySet .
+	var SD : SubstitutionData .
+	vars IOSubsets UpdIOSubsets ResultIOSubsets : IODataSet .
+	vars DC UpdDC ResultDC EKey EKey1 EKey2 DKey : Nat .
+	var Expls : IOSet .
+	var Coas : Coarities .
+	var Mode : PartMode .
+	var V : Variable .
+	var ISubts : IndexedTerms .
+	var Positions : Positions .
+	var Parts : Partitions .
+	var AD : AssignmentData .
+	var Subterm : Term .
+	vars Root PivotSym : Qid .
+	var Part : Partition .
+	var Pattern : AUResult .
+	var ODS : OutDataSet .
+	var Preds : TermList .
+	var OnePart : Partitions .
+	
+	*** calls one of two functions for computing partitions				  
+	op compPartitions : KeySet SubstitutionData IODataSet Nat IOSet Coarities PartMode
+							-> PartitionsResult .
+	eq compPartitions(EKeys, SD, IOSubsets, DC, Expls, Coas, Mode) = 
+		compPartitions(EKeys, SD, IOSubsets, DC, Expls, Coas) .
+		*** if Mode == medium
+		*** then compPartitions(EKeys, SD, IOSubsets, DC, Expls, Coas)
+		*** else compOnePartition(EKeys, SD, IOSubsets, DC, Expls, Coas)
+		*** fi .
+		
+	*** partitions are computed w.r.t single generalized positions in the pattern,
+	*** a position will be specialized only if no variable occurs at this
+	*** position in subsumed inputs and the specialization is complete,
+	*** i.e., medium mode
+	*** for each subset of example keys it is checked whether an iodata for
+	*** this set already exists, if not, a new one is initialized
+	*** by initIOData-function
+	op compPartitions : KeySet SubstitutionData IODataSet Nat IOSet Coarities 
+							-> PartitionsResult .
+							
+	*** base case: no variable remaining in substitution data
+	eq compPartitions(EKeys, empty, IOSubsets, DC, Expls, Coas) = 
+		< noParts ; IOSubsets ; DC > .
+		
+	*** recursive case: compute partition regarding first variable, 
+	*** compute partitions regarding remaining variables,
+	*** combine results
+	ceq compPartitions(EKeys, (< V ; ISubts ; Positions > , SD), IOSubsets, DC, 
+					   Expls, Coas) =
+		< (OnePart next Parts) ; ResultIOSubsets ; ResultDC >
+		if < OnePart ; UpdIOSubsets ; UpdDC > := 
+			compPartition(EKeys, < V ; ISubts ; Positions >, IOSubsets, DC, 
+						  Expls, Coas) /\
+		   < Parts ; ResultIOSubsets ; ResultDC > :=
+			compPartitions(EKeys, SD, UpdIOSubsets, UpdDC, Expls, Coas) .
+		
+	*** computes one partition regarding one variable ($compPartition) and
+	*** introduces iodata (finishPartition)
+	op compPartition : KeySet AssignmentData IODataSet Nat IOSet Coarities 
+							-> PartitionsResult .
+	eq compPartition(EKeys, < V ; ISubts ; Positions >, IOSubsets, DC, 
+					 Expls, Coas) = 
+		if noVar(ISubts)
+		then finishPartition($compPartition(EKeys, < V ; ISubts ; Positions >), 
+							 IOSubsets, DC, Expls, Coas) 
+		else < noParts ; IOSubsets ; DC >
+		fi .
+		
+	op noVar : IndexedTerms -> Bool .
+	eq noVar((< EKey , V > , ISubts)) = false .
+	eq noVar(ISubts) = true [owise] .
+		
+	op $compPartition : KeySet AssignmentData -> Partition .
+	
+	*** base case: only one remaining example(key)
+	eq $compPartition(EKey, < V ; < EKey , Subterm > ; Positions >) =
+		< EKey ; root(Subterm) > .
+	*** rec. case: compute partition regarding remaining example(key)s and
+	*** insert the first key into the correct subset
+	eq $compPartition((EKey1 , EKey2 , EKeys), 
+			     	  < V ; (< EKey1 , Subterm > , ISubts) ; Positions >) =
+		insert(EKey1, root(Subterm), 
+			$compPartition((EKey2 , EKeys), < V ; ISubts ; Positions >)) .
+						  
+
+	*** computes updated iodataset from a partition
+	op finishPartition : Partition IODataSet Nat IOSet Coarities 
+							-> PartitionsResult .
+							
+	*** base case: empty partition/no subsets
+	eq finishPartition(empty, IOSubsets, DC, Expls, Coas) = 
+		< empty ; IOSubsets ; DC > .
+		
+	*** rec. case: iodata for first explkey set exists already
+	*** ceq finishPartition((< EKeys ; PivotSym > , Part), 
+	*** *					(ioData(DKey, EKeys, Pattern, ODS, Preds, Parts) , IOSubsets),
+	***					DC, Expls, Coas) =
+	***	< (DKey , DKeys) , ResultIOSubsets , ResultDC >
+	***	if < DKeys , ResultIOSubsets , ResultDC > :=
+	***		finishPartition(Part, 
+	*** *						(ioData(DKey, EKeys, Pattern, ODS, Preds, Parts) , IOSubsets), 
+	***						DC, Expls, Coas) .
+							
+	*** rec. case: iodata for first explkey set doesn't exist
+	ceq finishPartition((< EKeys ; PivotSym > , Part), IOSubsets,
+						DC, Expls, Coas) =
+		< (DKey , DKeys) ; ResultIOSubsets ; ResultDC >
+		if < DKey , UpdIOSubsets , UpdDC > :=
+		   	introduceIOData(DC, EKeys, Expls, Coas, IOSubsets) /\
+		   < DKeys ; ResultIOSubsets ; ResultDC > :=
+			finishPartition(Part, 
+							UpdIOSubsets, 
+							UpdDC, Expls, Coas) .
+							
+endfm
+
+
+fmod PARTITIONING is
+	inc PARTITIONS .
+	inc HYPOTHESES .
+	
+	
+	vars RKey DKey RC UpdRC ResultRC DC UpdDC EC FC VarIndex Speci FSpeci PSpeci : Nat .
+	var Name : Qid .
+	vars RHS Pattern T B : Term .
+	var Matchable CNames : FunNameSet .
+	vars Progs UpdProgs : ProgramSet .
+	vars Rules UpdRules ResultRules : RuleDataSet .
+	vars EKeys RKeys NewKeys Part DKeys : KeySet .
+	var SD : SubstitutionData .
+	var ODS : OutDataSet .
+	var Preds : TermList .
+	var Cond : EqCondition .
+	vars Parts PParts : Partitions .
+	vars IOSubsets UpdIOSubsets ResultIOSubsets : IODataSet .
+	var Coas : Coarities .
+	var Mode : PartMode .
+	var Frags : FragmentSet .
+	vars Cs : CallPairSet .
+	vars Finished FragFinished : Bool .
+	var Frag : Fragment .
+	var Expls : IOSet .
+	var ID : AUResult .
+	var Data : IOData .
+	var Prog : Program .
+	var Sub : SubData .
+	var Matches : MatchDataSet .
+	var Rem : Bool .
+	var DKey2 : Nat .
+	var InData : AUResult .
+	var D : Nat .
+	var Depth : IndexNamePairSet .
+	
+
+	op partitioning : Nat InductionState Coarities PartMode -> InductionState .
+	
+	*** partitions exist already
+	*** then the corresponding IOSubsets exists already but will be updated,
+	*** thus, the DC will remain the same
+	ceq partitioning(RKey, 
+			 istate(Progs, (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), RC, 
+					  	    (ioData(DKey, EKeys, ID, ODS, nil, Preds, (Part next Parts), PParts) , 
+						   	 IOSubsets),
+						    DC, Expls, EC, FC, Depth),
+					 Coas, Mode) =
+		istate(integrateFragments(RKey, Frags, Progs, UpdRules, Name, 
+								  (ioData(DKey, EKeys, ID, ODS, nil, Preds, (Part next Parts), PParts) , 
+									ResultIOSubsets)), 
+				UpdRules, UpdRC, 
+			   (ioData(DKey, EKeys, ID, ODS, nil, Preds, (Part next Parts), PParts) , 
+				ResultIOSubsets),
+				DC, Expls, EC, FC, Depth)
+		if < Frags , UpdRules , UpdRC , ResultIOSubsets > :=
+		   	compFragments((Part next Parts), IOSubsets, Expls, RC, Name, Matchable, 
+				      (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), Coas) .
+	
+	*** partitions doesn't exist
+	ceq partitioning(RKey,
+			 istate(Progs, (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), RC, 
+						    (ioData(DKey, EKeys, < Pattern , SD , VarIndex >, 
+						   		    ODS, nil, Preds, noParts, PParts) , 
+						   	 IOSubsets),
+						    DC, Expls, EC, FC, Depth),
+					 Coas, Mode) =
+		istate(integrateFragments(RKey, Frags, Progs, UpdRules, Name,
+									(ioData(DKey, EKeys, < Pattern , SD , VarIndex >, 
+					   					ODS, nil, Preds, Parts, PParts) , 
+										ResultIOSubsets)), 
+				UpdRules, UpdRC, 
+			   (ioData(DKey, EKeys, < Pattern , SD , VarIndex >, 
+					   ODS, nil, Preds, Parts, PParts) , 
+				ResultIOSubsets),
+				UpdDC, Expls, EC, FC, Depth)
+		if ***not((Depth contains Name)) /\
+		   < Parts ; UpdIOSubsets ; UpdDC > := 
+			compPartitions(EKeys, SD, IOSubsets, DC, Expls, Coas, Mode) /\
+		   < Frags , UpdRules , UpdRC , ResultIOSubsets > :=
+		   	compFragments(Parts, UpdIOSubsets, Expls, RC, Name, Matchable, 
+				      (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), Coas) .
+		   
+	*** partitions doesn't exist, but predicates
+	eq partitioning(RKey,
+			 istate(Progs, (rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), RC, 
+						    (ioData(DKey, EKeys, < Pattern , SD , VarIndex >, 
+						   		    ODS, ((T = B) /\ Cond), Preds, noParts, PParts) , 
+						   	 IOSubsets),
+						    DC, Expls, EC, FC, Depth),
+					 Coas, Mode) =
+		istate(empty, 
+				(rule(RKey, Name, DKey, RHS, Matchable, Sub, Matches, false) , Rules), RC, 
+						    (ioData(DKey, EKeys, < Pattern , SD , VarIndex >, 
+						   		    ODS, ((T = B) /\ Cond), Preds, noParts, PParts) , 
+						   	 IOSubsets),
+						    DC, Expls, EC, FC, Depth) .
+
+endfm

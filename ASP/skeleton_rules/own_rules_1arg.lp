@@ -1,5 +1,5 @@
 match_guard(f, R, (N0)) :- N0 == C1, input(call(f, (N0))), choose_match(R, 1, C1).
-match_guard(f, R, (N0)) :- input(call(f, (N0))), choose_match(R, 2, C1).
+match_guard(f, R, (N0)) :- input(call(f, (N0))), choose_match(R, 2).
 rule(R, f, N, C1) :- input(call(f, N)), choose(R, 1, C1).
 rule(R, f, N, N) :- input(call(f, N)), choose(R, 2).
 
@@ -18,6 +18,8 @@ rule(R, f, N, mul(N, C1)) :- input(call(f, N)), choose(R, 7, C1).
 rule(R, f, N, sub(N, C1)) :- input(call(f, N)), choose(R, 8, C1).
 rule(R, f, N, sub(C1, N)) :- input(call(f, N)), choose(R, 9, C1).
 rule(R, f, N, call(f, C1)) :- input(call(f, N)), choose(R, 10, C1).
+
+rule(R, f, N, add(x1, x2)) :- input(call(f, N)), choose(R, 40).
 
 where(x1, N, add(N, N)) :- input(call(f, N)), choose_where(17).
 where(x1, N, mul(N, N)) :- input(call(f, N)), choose_where(18).
@@ -44,10 +46,8 @@ where(x2, N, sub(C1, N)) :- input(call(f, N)), choose_where(37, C1).
 where(x2, N, call(f, N)) :- input(call(f, N)), choose_where(38).
 where(x2, N, call(f, C1)) :- input(call(f, N)), choose_where(39, C1).
 
-rule(R, f, N, add(x1, x2)) :- input(call(f, N)), choose(R, 0).
-
 1 {
-choose(R, 2..5;11..16),
+choose(R, 2..5;11..16;40),
 choose(R, 1;6..10, C0) : expr_const(C0)
 } 1 :- num_rules(R).
 
