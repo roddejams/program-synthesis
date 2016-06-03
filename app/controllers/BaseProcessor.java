@@ -183,7 +183,7 @@ public abstract class BaseProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-        String[] procArguments = {"clingo", rulesPath, examplesPath, skeletonRulePath};
+        String[] procArguments = {"./clingo", rulesPath, examplesPath, skeletonRulePath};
         ProcessBuilder pb = new ProcessBuilder(procArguments);
 
         pb.directory(new File("bin"));
