@@ -123,6 +123,7 @@ Another potential skeleton rule generation optimisation would be to be explicit 
 To avoid this, the tool would limit the possible rules for base cases to simple arithmetic functions that are only one, potentially two operations deep. Then, the recursive cases would be limited to only expressions which contain calls to functions or in-built operations. Theoretically, this optimisation could lead to around a 50\% increase in performance on functions with two cases, one base case and one recursive case, as it would greatly reduce the time taken to enumerate the base case, which in this case is half the rules needed to be learned.
 
 \subsection{Supporting Multiple Function Calls}
+The main limitation on the constraint based learning approach is that it cannot handle multiple function calls. For example, if the tool encounters the equality constraint \lstinline{eq(add(f(x - 1), f(x - 2)), 8)}
 
 \subsection{Loading known functions}
 
