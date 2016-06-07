@@ -2,16 +2,19 @@
 
 In this chapter, I describe the set of experiments used to show the increase in performance from the implementation of the constraint-based approach. \\ \\
 I have measured the performance by running both versions of the learner on five target problems, and returning both the generated code and the time taken to learn, as returned by clingo. The problems are defined by a set of Input / Output examples which cover enough cases to correctly learn the target function. Solutions are defined as a subset of the generated Answer Set, containing only \lstinline{choose}, \lstinline{choose_match} and \lstinline{choose_where} atoms, representing chosen rules from the skeleton rules. \\ \\%{ 
+The five examples I am running are defined as follows.
+\begin{itemize}
+\item \textbf{Factorial} : The recursive definition of the mathematical factorial operation, denoted by \lstinline{n!} . It is defined as the product of all positive integers less than or equal to \lstinline{n}.% {
+\item \textbf{Fibonacci} : The Fibonacci numbers belong to the following sequence - \lstinline{1, 1, 2, 3, 5, 8, 13}, where each member of the sequence is equal to the sum of the previous two numbers. %{
+\item \textbf{Powers of Two} : A simple function which recursively defines the calculation of $2^n$.
+\item \textbf{Tail Recursive Factorial} : The tail-recursive definition of the factorial function. Takes two arguments, where the second is an accumulator in which the product is calculated.
+\item \textbf{Greatest Common Divisor} : A version of Euler's algorithm to calculate the greatest common divisor of two numbers.
+\end{itemize}
 All examples have been run on --LAB PC SPECS-- \\ \\
-The results from these experiments tend to show the result that apart from in the simple case, the constraint based approach performs around 50\% better than the interpreted approach across all examples. In the simple factorial example, the interpreted approach was quicker due to the small set of skeleton rules effecting performance in relatively small way. \\ \\
-However, the constraint based approach is less expressive, as highlighted by the fibonacci example. The fibonacci program consists of two recursive calls, which cannot be learned by this approach as it becomes difficult to maintain the equality constraints. For example, consider the equality constraint
-\begin{lstlisting}
-eq(add(call(f, (x - 1)), call(f, (x - 2))), 4).
-\end{lstlisting}
-The tool cannot continue evaluating this constraint as it does not know the value of either \lstinline{call} expressions.
 
 \pagebreak
-\section{One Argument Programs}
+
+\section{Generated Code}
 
 \subsection{Factorial}
 \underline{\textbf{Input Examples}}
@@ -22,26 +25,9 @@ example(call(fac, 2), 2).
 example(call(fac, 3), 6).
 \end{lstlisting}
 
-\begin{multicols*}{2}
+\begin{multicols}{2}
 
 \underline{\textbf{Interpreted approach results}}
-\begin{lstlisting}
-choose_match(1,1,0) 
-choose_match(2,2) 
-choose(1,3,1) 
-choose(2,9) 
-choose_where(34) 
-choose_where(45,1) 
-
-Models      : 1     
-Optimization: 2 3 
-Time        : 1.640
-  Prepare   : 0.060
-  Prepro.   : 0.020
-  Solving   : 1.560
-
-
-\end{lstlisting}
 
 \begin{lstlisting}
 fac x
@@ -50,32 +36,15 @@ fac x
   where x0 = f x1
   	where x1 = x - 1
 \end{lstlisting}
-\vfill
+%\vspace*{\fill}
 \columnbreak
 \underline{\textbf{Constraint approach results}}
-
-\begin{lstlisting}
-choose_match(1,1,0)
-choose_match(2,2) 
-choose(1,1,1) 
-choose(2,37,1) 
-
-
-
-Models      : 1     
-Optimization: 1 
-Time        : 1.240
-  Prepare   : 0.200
-  Prepro.   : 0.140
-  Solving   : 0.900
-\end{lstlisting}
-
 \begin{lstlisting}
 fac x
   | x == 0 = 1
   | otherwise = (fac (x - 1)) * x
 \end{lstlisting}
-\end{multicols*}
+\end{multicols}
 
 \subsection{Fibonacci}
 \underline{\textbf{Input Examples}}
@@ -88,27 +57,9 @@ example(call(f, 5), 5).
 example(call(f, 6), 8).
 \end{lstlisting}
 
-\begin{multicols*}{2}
+\begin{multicols}{2}
 \underline{\textbf{Interpreted approach results}}
 \begin{lstlisting}
-choose_match(1,1,1) 
-choose_match(2,1,2) 
-choose_match(3,2) 
-choose(1,1) 
-choose(2,13,1) 
-choose(3,84) 
-choose_where(30,1) 
-choose_where(49) 
-choose_where(83) 
-choose_where(75,2) 
-
-Models      : 1     
-Optimization: 4 1 
-Time        : 807.240
-  Prepare   : 0.060
-  Prepro.   : 0.020
-  Solving   : 807.160
-
 fib x
   | x == 1 = x
   | x == 2 = x - 1
@@ -118,19 +69,13 @@ fib x
   		where x2 = fib x3
   			where x3 = x - 2
 \end{lstlisting}
-\vfill
+%\vspace*{\fill}
 \columnbreak
 \underline{\textbf{Constraint approach results}}
 \begin{lstlisting}
 UNSATISFIABLE
-
-Models      : 0     
-Time        : 0.020
-  Prepare   : 0.020
-  Prepro.   : 0.000
-  Solving   : 0.000
 \end{lstlisting}
-\end{multicols*}
+\end{multicols}
 
 \pagebreak
 \subsection{Powers of 2}
@@ -142,24 +87,9 @@ example(call(f, 2), 4).
 example(call(f, 3), 8).
 \end{lstlisting}
 
-\begin{multicols*}{2}
+\begin{multicols}{2}
 \underline{\textbf{Interpreted approach results}}
 \begin{lstlisting}
-choose_match(1,1,0) 
-choose_match(2,2) 
-choose(1,3,1) 
-choose(2,84) 
-choose_where(30,1) 
-choose_where(49) 
-choose_where(64) 
-
-Models      : 1     
-Optimization: 3 3 
-Time        : 35.840
-  Prepare   : 0.040
-  Prepro.   : 0.040
-  Solving   : 35.760
-
 power2 x
   | x == 0 = x + 1
   | otherwise = x1 + x2
@@ -167,32 +97,16 @@ power2 x
   		where x2 = f x0
   			where x0 = x - 1
 \end{lstlisting}
-\vfill
+%\vspace*{\fill}
 \columnbreak
 \underline{\textbf{Constraint approach results}}
 \begin{lstlisting}
-choose_match(1,1,0) 
-choose_match(2,2)
-choose(1,1,1)
-choose(2,38,1,2) 
- 
- 
- 
- 
-Models      : 1  
-Optimization: 1 
-Time        : 5.580
-  Prepare   : 0.380
-  Prepro.   : 0.340
-  Solving   : 4.860
-
 power2 x
   | x == 1 = 1
   | otherwise = (f (x - 1)) * 2 
 \end{lstlisting}
-\end{multicols*}
+\end{multicols}
 \pagebreak
-\section{Two Argument Programs}
 
 \subsection{Tail Recursive Factorial}
 \underline{\textbf{Input Examples}}
@@ -204,23 +118,8 @@ example(call(f, (3, 1)), 6).
 example(call(f, (2, 3)), 6).
 \end{lstlisting}
 
-\begin{multicols*}{2}
+\begin{multicols}{2}
 \underline{\textbf{Interpreted approach results}}
-\begin{lstlisting}
-choose_match(1,1,0)
-choose_match(2,7)
-choose(1,2) 
-choose(2,27) 
-choose_where(51,1)
-choose_where(69) 
-
-Models      : 1     
-Optimization: 2 2 
-Time        : 419.860
-  Prepare   : 2.060
-  Prepro.   : 0.840
-  Solving   : 416.960
-\end{lstlisting}
 
 \begin{lstlisting}
 fac x y
@@ -229,32 +128,16 @@ fac x y
   where x0 = x - 1
   	where x1 = x * y
 \end{lstlisting}
-\vfill
+\vspace*{\fill}
 \columnbreak
 \underline{\textbf{Constraint approach results}}
-\begin{lstlisting}
-choose_match(1,2,0)
-choose_match(2,1) 
-choose(1,3) 
-choose(2,184,1) 
-
- 
- 
-Models      : 1     
-Optimization: 3 
-Time        : 173.900
-  Prepare   : 5.540
-  Prepro.   : 1.440
-  Solving   : 166.920
-
-\end{lstlisting}
 \begin{lstlisting}
 fac x y
   | x == 0 = y
   | otherwise = fac (x - 1) (x * y)
 \end{lstlisting}
-\end{multicols*}
-\pagebreak
+\end{multicols}
+%\pagebreak
 \subsection{Greatest Common Divisor}
 \underline{\textbf{Input Examples}}
 \begin{lstlisting}
@@ -269,22 +152,6 @@ example(call(gcd, (9, 3)), 3).
 \begin{multicols*}{2}
 \underline{\textbf{Interpreted approach results}}
 \begin{lstlisting}
-choose_match(1,2,0) 
-choose_match(2,6) 
-choose_match(3,7)   
-choose(1,1) 
-choose(2,30) 
-choose(3,81) 
-choose_where(53) 
-choose_where(77) 
-
-Models      : 1     
-Optimization: 1 2 
-Time        : 1546.820
-  Prepare   : 1.940
-  Prepro.   : 0.980
-  Solving   : 1543.900
-  
 gcd x y
   | y == 0 = x
   | x > y = gcd y x0
@@ -292,26 +159,10 @@ gcd x y
   where x0 = x - y
   	where x1 = y - x
 \end{lstlisting}
-\vfill
+\vspace*{\fill}
 \columnbreak
 \underline{\textbf{Constraint approach results}}
 \begin{lstlisting}
-choose_match(1,3)
-choose_match(2,4)
-choose_match(3,6)  
-choose(1,2) 
-choose(2,150) 
-choose(3,190) 
-
-
-
-Models      : 1     
-Optimization: 2 
-Time        : 1599.420
-  Prepare   : 11.720
-  Prepro.   : 2.100
-  Solving   : 1585.600
-
 gcd x y
 	| x == y = x
 	| x > y	 = gcd (x - y) y
@@ -319,6 +170,97 @@ gcd x y
 \end{lstlisting}
 \end{multicols*}
 \pagebreak
+
+\section{Performance Statistics}
+
+The results from these experiments tend to show the result that apart from in the simple case, the constraint based approach performs around 50\% better than the interpreted approach across all examples. In the simple factorial example, the interpreted approach was quicker due to the small set of skeleton rules effecting performance in relatively small way. \\ \\
+However, the constraint based approach is less expressive, as highlighted by the fibonacci example. The fibonacci program consists of two recursive calls, which cannot be learned by this approach as it becomes difficult to maintain the equality constraints. For example, consider the equality constraint \lstinline{eq(add(call(f, (x - 1)), call(f, (x - 2))), 4).} The tool cannot continue evaluating this constraint as it does not know the value of either \lstinline{call} expressions.%{
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|m{10em}|m{10em}|}
+\hline
+\multicolumn{3}{|c|}{\textbf{Performance}}\\
+\hline
+Function & Interpreted  & Constraint Based \\
+\hline
+Factorial 
+& 
+\mbox{}\newline
+Time        : 1.640 \newline
+  Prepare   : 0.060 \newline
+  Prepro.   : 0.020 \newline
+  Solving   : 1.560 \newline
+& 
+\mbox{}\newline
+Time        : 1.240 \newline
+  Prepare   : 0.200 \newline
+  Prepro.   : 0.140 \newline
+  Solving   : 0.900 \newline
+\\
+\hline
+Fibonacci 
+&
+\mbox{}\newline 
+Time        : 807.240 \newline
+  Prepare   : 0.060 \newline
+  Prepro.   : 0.020 \newline
+  Solving   : 807.160 \newline
+& 
+Unsatisfiable
+\\
+\hline
+Power of Two 
+&
+\mbox{}\newline 
+Time        : 35.840 \newline
+  Prepare   : 0.040 \newline
+  Prepro.   : 0.040 \newline
+  Solving   : 35.760 \newline
+& 
+\mbox{}\newline 
+Time        : 5.580 \newline
+  Prepare   : 0.380 \newline
+  Prepro.   : 0.340 \newline
+  Solving   : 4.860 \newline
+\\
+\hline
+Tail Recursive Factorial
+&
+\mbox{}\newline 
+Time        : 419.860 \newline
+  Prepare   : 2.060 \newline
+  Prepro.   : 0.840 \newline
+  Solving   : 416.960 \newline
+& 
+\mbox{}\newline 
+Time        : 173.900 \newline
+  Prepare   : 5.540 \newline
+  Prepro.   : 1.440 \newline
+  Solving   : 166.920 \newline
+\\
+\hline
+GCD 
+& 
+\mbox{}\newline 
+Time        : 1546.820 \newline
+  Prepare   : 1.940 \newline
+  Prepro.   : 0.980 \newline
+  Solving   : 1543.900 \newline
+& 
+\mbox{}\newline 
+Time        : 1599.420 \newline
+  Prepare   : 11.720 \newline
+  Prepro.   : 2.100 \newline
+  Solving   : 1585.600 \newline
+\\
+\hline
+\end{tabular}
+\caption{Approach Performance Comparison }
+\label{table:3}
+\end{table}
+
+
 \section{Comparison to Existing Tools}
 
 In this section, I will detail how other existing inductive functional programming (IFP) tools perform in comparison to mine, highlighting any benefits or restrictions to both mine and the existing tools. More information on these tools can be found in the background section. \\ \\
@@ -427,6 +369,11 @@ Fibonacci & & \\
 \mbox{} \\
 
 \subsection{Igor II}
+Igor II is an IFP system that is designed to learn purely recursive programs, and is different to my tool in important ways.
+\begin{itemize}
+\item Igor II does not have any built in background knowledge, which means that any functions to be learned need all basic operations and constants defined at the same time as the examples. This is only a small restriction for learning lists because the set of constants and operations to be defined are limited to the empty list and list prepending respectively. However, when learning arithmetic functions it is very complicated to define addition and multiplication in terms of the basic succession operation.
+\item The output from Igor II is a list of hypotheses, rather than a program or lambda function. While this increases the expressivity, it severely reduces readability and usability by users less experienced in the field.
+\end{itemize}
 
 
 \pagebreak

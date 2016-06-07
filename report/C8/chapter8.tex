@@ -23,14 +23,29 @@ Each skeleton rule has one of the following formats: \\
 \mbox{} \\ \\
 Where \lstinline{Expr} is one of the possible rule bodies. %{
 
+\subsection{Generating Skeleton Rules}
+Initially, it was difficult to decide how to generate the skeleton rules. While it would not be difficult to naively iterate over all combinations up to a certain depth, this method is very inefficient, especially when considering more than one input argument. This is because a sizeable subset of the generated rules are redundant, having semantically equivalent bodies to other rules. For example, the rule bodies \lstinline{add(x, x)} and \lstinline{mul(x, 2)} compute the same result, but are counted as distinct and separate skeleton rules.\\ \\
+To reduce the number of redundant rules, I have implemented a number of optimisations. By generating rules in a recursive manner, deeper rules are generated based off shallower ones. Then, by removing simple redundant rules when the depth is small (where they are easier to detect), rules with the same redundancy are removed from deeper iterations. \\ \\
+Another optimisation is the implementation of \lstinline{where} rules. These rules limit the depth of each individual rule body to one operation deep, making enumerating over all possibilities much easier, and reducing the overall scaling of the number of rules from multiplicative to additive. %{
+
 \subsection{Choice Rules}
 To run the interpreter on all possible rule combinations, I make use of ASP choice rules. For example, the statement :
 
-\lstinputlisting[language=Prolog, firstline=47, lastline=50]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\begin{lstlisting}
+1 {
+choose(R, 2..5;11..16;40),
+choose(R, 1;6..10, C0) : expr_const(C0)
+} 1 :- num_rules(R).
+\end{lstlisting}
 \mbox{} \\
 Represents the learning task choosing exactly one of the skeleton rules for each of the possible program rules (or recursive case). Additionally, I need a choice rule for every potential where rule : 
 
-\lstinputlisting[language=Prolog, firstline=52, lastline=55]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\begin{lstlisting}
+0 {
+choose_where(17..19;24..28;30),
+choose_where(20..23;29, C1) : expr_const(C1)
+} 1.
+\end{lstlisting}
 \mbox{} \\
 Here, it is not guaranteed for a where rule to be chosen, as they may not all be necessary in different learning tasks. 
 
@@ -65,12 +80,23 @@ As guard rules have to return booleans, this reduces the number of operations to
 Using these operations, the skeleton rules for match terms are given by : \\
 
 \begin{lstlisting}
-match_guard(gcd, R, (N0, N1)) :- N0 == C1, input(call(gcd, (N0, N1))), choose_match(R, 1, C1).
-match_guard(gcd, R, (N0, N1)) :- N1 == C1, input(call(gcd, (N0, N1))), choose_match(R, 2, C1).
-match_guard(gcd, R, (N0, N1)) :- N0 == N1, input(call(gcd, (N0, N1))), choose_match(R, 3).
-match_guard(gcd, R, (N0, N1)) :- N0 < N1, input(call(gcd, (N0, N1))), choose_match(R, 4).
-match_guard(gcd, R, (N0, N1)) :- N1 == N0, input(call(gcd, (N0, N1))), choose_match(R, 5).
-match_guard(gcd, R, (N0, N1)) :- N1 < N0, input(call(gcd, (N0, N1))), choose_match(R, 6).
+match_guard(gcd, R, (N0, N1)) :- 
+		N0 == C1, input(call(gcd, (N0, N1))), choose_match(R, 1, C1).
+		
+match_guard(gcd, R, (N0, N1)) :- 
+		N1 == C1, input(call(gcd, (N0, N1))), choose_match(R, 2, C1).
+		
+match_guard(gcd, R, (N0, N1)) :- 
+		N0 == N1, input(call(gcd, (N0, N1))), choose_match(R, 3).
+		
+match_guard(gcd, R, (N0, N1)) :- 
+		N0 < N1, input(call(gcd, (N0, N1))), choose_match(R, 4).
+		
+match_guard(gcd, R, (N0, N1)) :- 
+		N1 == N0, input(call(gcd, (N0, N1))), choose_match(R, 5).
+		
+match_guard(gcd, R, (N0, N1)) :- 
+		N1 < N0, input(call(gcd, (N0, N1))), choose_match(R, 6).
 \end{lstlisting}
 \mbox{}\\
 To choose these rules, I once again make use of a choice rule, which makes sure we choose exactly as many skeleton match rules as the user defines. \\
@@ -86,12 +112,16 @@ choose_match(R, 1;2, C0) : expr_const(C0)
 While learning, it is not uncommon to have multiple solutions, usually due to multiple semantically equivalent base cases. I may get two answer sets as output, one having learned \lstinline{rule(1, F, 0, 1)}, and the other with \lstinline{rule(1, F, 0, 0+1)}. \\ \\
 To attempt at dealing with this, I have implemented a basic optimisation system, by prioritising rules with shorter bodies. In general, rules with lower rule number are shorter, so I used the minimisation rule :
 
-\lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\begin{lstlisting}
+#minimise [choose(1, N)=N, choose(1, N, _)=N ].
+\end{lstlisting}
 \mbox{}\\
 Which prioritises rules with lower rule numbers.\\ \\
 As a second optimisation, I wanted to prefer less complicated results, and answer sets with fewer \lstinline{where} clauses represent less complicated functions, as the depth of the function is lower. Because of this, I use the minimisation rule : \\ %{
 
-\lstinputlisting[language=Prolog, firstline=64, lastline=64]{../ASP/skeleton_rules/own_rules_1arg.lp}
+\begin{lstlisting}
+#minimise[choose_where(R)=1, choose_where(R, C)=1].
+\end{lstlisting}
 
 \section{A Worked Example : Learning GCD}
 In the last chapter, I went through the steps that the interpreter takes to produce results when given Euler's algorithm to calculate the greatest common divisor. In this section, I will detail how I then learn that program. As a reminder, this function is defined in Haskell as :
@@ -106,6 +136,13 @@ gcd x y
 As input to the learning task I need to specify some examples. I initially chose the examples \\
 
 \lstinputlisting[language=Prolog, firstline=32, lastline=36]{../ASP/eq/gcd.lp}
+\begin{lstlisting}
+example(call(gcd, (1, 1)), 1).
+example(call(gcd, (2, 1)), 1).
+example(call(gcd, (4, 3)), 1).
+example(call(gcd, (3, 6)), 3).
+example(call(gcd, (9, 6)), 3).
+\end{lstlisting}
 \mbox{}\\
 Because they seem to cover all of the cases I need to learn. In addition to this, I will need to enumerate all of the possible \lstinline{rule} and \lstinline{where} bodies as part of the skeleton rules. I will not list the entire set of skeleton rules here, but instead highlight some which will be in use later : \\
 
@@ -150,6 +187,10 @@ What is interesting is that this is not a correct implementation of Euler's algo
 As an attempt to fix this problem, I can add some extra examples. By adding these two examples :\\
 
 \lstinputlisting[language=Prolog, firstline=37, lastline=38]{../ASP/eq/gcd.lp}
+\begin{lstlisting}
+example(call(gcd, (4, 7)), 1).
+example(call(gcd, (9, 3)), 3).
+\end{lstlisting}
 \mbox{}\\
 These examples are cases where the previous result would not work, and help generalise the target function. \\ \\
 After running these examples as input, I get the following terms as a result : \\

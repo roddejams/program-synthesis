@@ -57,73 +57,209 @@ As part of the interpreter, I have declared a number of my own predicates, some 
 
 \subsubsection{Computation Rules}
 To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. \\ \\
-To start, I needed a rule to calculate the output, given inputs and a rule to follow.
+To start, I needed a rule to calculate the output, given inputs and a rule to follow. \\
 
-\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp} 
+\begin{lstlisting}
+output(call(F, Args), Out) :- 
+    	rule(Index, F, Args, Expr), 
+    	match(F, Index, Args), 
+    	value_with(Expr, Out, Args).
+\end{lstlisting}
 \mbox{} \\
 This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
 
-\lstinputlisting[language=Prolog, firstline=120, lastline=120]{../ASP/rules.lp}
+\begin{lstlisting}
+input(call(F, Inputs)) :- 
+		eval_with(call(F, Args_new), Args_old), 
+		value_with(Args_new, Inputs, Args_old).
+\end{lstlisting}
 \mbox{} \\
 This rule represents generation of more input predicates. If you have to evaluate a function call, and the arguments have value \lstinline{Inputs}, then you take the function call argument \lstinline{Inputs} as additional function input. \\
 
-\lstinputlisting[language=Prolog, firstline=122, lastline=123]{../ASP/rules.lp}
+\begin{lstlisting}
+match(F, Index, Inputs) :- 
+		not smaller_match(F, Index, Inputs), 
+		rule(Index, F, Inputs, _), 
+		match_guard(F, Index, Inputs).
+		
+smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
+\end{lstlisting}
 \mbox{} \\
-These rules handle choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it.
+These rules handle choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it. \\
 
-\lstinputlisting[language=Prolog, firstline=56, lastline=58]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- 
+		eval_with(mul(A, B), Args), 
+		value_with(A, V1, Args), 
+		value_with(B, V2, Args), 
+		const_number(@to_num(V1)*@to_num(V2)).
+		
+value_with(sub(A, B), @to_num(V1) - @to_num(V2), Args) :- 
+		eval_with(sub(A, B), Args), 
+		value_with(A, V1, Args), 
+		value_with(B, V2, Args), 
+		const_number(@to_num(V1)-@to_num(V2)).
+		
+value_with(add(A, B), @to_num(V1) + @to_num(V2), Args) :- 
+		eval_with(add(A, B), Args), 
+		value_with(A, V1, Args), 
+		value_with(B, V2, Args), 
+		const_number(@to_num(V1)+@to_num(V2)).
+\end{lstlisting}
 \mbox{} \\
-These rules handle calculating the value of arithmetic expressions. Note the use of a lua function \lstinline{@to_num()}, as a bug workaround. %{
+These rules handle calculating the value of arithmetic expressions. Note the use of a lua function \lstinline{@to_num()}, as a bug workaround. \\%{
 
-\lstinputlisting[language=Prolog, firstline=60, lastline=60]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(call(F, Args_new), Out, Args_old) :- 
+		eval_with(call(F, Args_new), Args_old), 
+		output(call(F, Inputs), Out), 
+		value_with(Args_new, Inputs, Args_old).
+\end{lstlisting}
 \mbox{} \\
 This rule handles the value of a function call. Given some argument expressions, they have a computed value, which is then used to call the function and is returned as the output. \\
 
-\lstinputlisting[language=Prolog, firstline=62, lastline=62]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with((A, B), (V1, V2), Args) :- 
+		eval_with((A, B), Args), 
+		value_with(A, V1, Args), 
+		value_with(B, V2, Args).
+\end{lstlisting}
 \mbox{} \\
 This rule deals with paired expressions. If you have two or more expressions to evaluate at the same time, (when dealing with multiple-argument functions, for example), it calculates the value of both and returns the paired result. \\
 
-\lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(X, V, Args) :- 
+		eval_with(X, Args), 
+		where(X, Args, Expr), 
+		value_with(Expr, V, Args).
+\end{lstlisting}
 \mbox{} \\
 This rule handles the value of "where" expressions. If you have defined a where variable to define an expression, and that expression has a value, then the "where" variable also has that value.\\
 
-\lstinputlisting[language=Prolog, firstline=64, lastline=66]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(X, V, Args) :- eval_with(X, Args), value(X, V).
+value_with(N, N, Args) :- eval_with(N, Args), const(N).
+value_with(N, N, Args) :- const_number(N), input(call(F, Args)).
+\end{lstlisting}
 \mbox{} \\
 These rules handle simple values. They mainly exist for correctness, so that a simple "value" can be used to calculate outputs. \\
 
-\lstinputlisting[language=Prolog, firstline=68, lastline=72]{../ASP/rules.lp}
-\mbox{} \\
-These rules represent calculating values for non complex expressions. They work similarly to the \lstinline{value_with} predicate described above.\\ %{ \\
+\begin{lstlisting}
+value(mul(A, B), @to_num(V1) * @to_num(V2)) :- 
+		const_number(V1), 
+		const_number(V2), 
+		n_complex(mul(A, B)), 
+		value(A, V1), 
+		value(B, V2), 
+		const_number(@to_num(V1)*@to_num(V2)).
+		
+value(sub(A, B), @to_num(V1) - @to_num(V2)) :- 
+		const_number(V1), 
+		const_number(V2), 
+		n_complex(sub(A, B)), 
+		value(A, V1), 
+		value(B, V2), 
+		const_number(@to_num(V1)-@to_num(V2)).
+		
+value(add(A, B), @to_num(V1) + @to_num(V2)) :- 
+		const_number(V1), 
+		const_number(V2), 
+		n_complex(add(A, B)), 
+		value(A, V1), 
+		value(B, V2), 
+		const_number(@to_num(V1)+@to_num(V2)).
+		
+value((A, B), (V1, V2)) :- n_complex((A, B)), value(A, V1), value(B, V2).
 
-\lstinputlisting[language=Prolog, firstline=74, lastline=74]{../ASP/rules.lp}
+value(N, N) :- n_complex(N), const_number(N).
+\end{lstlisting}
+\mbox{} \\
+These rules represent calculating values for non complex expressions. They work similarly to the \lstinline{value_with} predicate described above.\\ %{
+
+\begin{lstlisting}
+eval_with(Expr, Inputs) :- 
+		input(call(F, Inputs)), 
+		rule(Index, F, Inputs, Expr), 
+		match(F, Index, Inputs).
+\end{lstlisting}
 \mbox{} \\
 This rule handles initialisation of the \lstinline{eval_with} predicate. Semantically, if there is there an input to a matching rule, then you evaluate the body of that rule. \\ %{
 
-\lstinputlisting[language=Prolog, firstline=79, lastline=84]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(A, Args) :- complex(A), eval_with(mul(A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with(mul(A, B), Args).
+eval_with(A, Args) :- complex(A), eval_with(sub(A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with(sub(A, B), Args).
+eval_with(A, Args) :- complex(A), eval_with(add(A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with(add(A, B), Args).
+\end{lstlisting}
 \mbox{} \\
 These rules define rule propagation of the \lstinline{eval_with} predicate. If you are evaluating an arithmetic rule, then you have also have to evaluate all complex sub-expressions. \\ %{
 
-\lstinputlisting[language=Prolog, firstline=75, lastline=78]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
+eval_with(Args_new, Args_old) :- 
+		complex(Args_new), 
+		eval_with(call(F, Args_new), Args_old).
+
+eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with((A, B), Args).
+\end{lstlisting}
 \mbox{} \\
 Similarly, these rules define \lstinline{eval_with} propagation for more complicated expressions. If you call a function, or have more than one expression together than you evaluate all complex sub-expressions \\ %{
 
-\lstinputlisting[language=Prolog, firstline=87, lastline=87]{../ASP/rules.lp}
+\begin{lstlisting}
+check_if_complex(Expr) :- eval_with(Expr, _).
+\end{lstlisting}
 \mbox{} \\
 This rule initialises \lstinline{check_if_complex} predicates. If you have to evaluate an expression, you also have to check if it is complex \\%{
 
-\lstinputlisting[language=Prolog, firstline=89, lastline=97]{../ASP/rules.lp}
+\begin{lstlisting}
+check_if_complex(Args) :- check_if_complex(call(F, Args)).
+check_if_complex(A) :- check_if_complex((A, B)).
+check_if_complex(B) :- check_if_complex((A, B)).
+check_if_complex(A) :- check_if_complex(mul(A, B)).
+check_if_complex(B) :- check_if_complex(mul(A, B)).
+check_if_complex(A) :- check_if_complex(sub(A, B)).
+check_if_complex(B) :- check_if_complex(sub(A, B)).
+check_if_complex(A) :- check_if_complex(add(A, B)).
+check_if_complex(B) :- check_if_complex(add(A, B)).
+\end{lstlisting}
 \mbox{} \\
 These rules define propagation of \lstinline{check_if_complex} predicates, similarly to \lstinline{eval_with} propagation. \\
 
-\lstinputlisting[language=Prolog, firstline=101, lastline=108]{../ASP/rules.lp}
+\begin{lstlisting}
+complex(x0;x1;x2;x3).
+
+complex((A, B))        :- complex(A), check_if_complex((A, B)).
+complex((A, B))        :- complex(B), check_if_complex((A, B)).
+complex(mul(A, B))     :- complex(A), check_if_complex(mul(A, B)).
+complex(mul(A, B))     :- complex(B), check_if_complex(mul(A, B)).
+complex(sub(A, B))     :- complex(A), check_if_complex(sub(A, B)).
+complex(sub(A, B))     :- complex(B), check_if_complex(sub(A, B)).
+complex(add(A, B))     :- complex(A), check_if_complex(add(A, B)).
+complex(add(A, B))     :- complex(B), check_if_complex(add(A, B)).
+\end{lstlisting}
 \mbox{} \\
 These rules define propagation of \lstinline{complex} predicates. The base case for a complex term is \lstinline{complex(x0;x1;..;xN)} where N is the depth of the learned program. Then, if either sub-expression of an expression is complex, then the entire expression is complex. \\
 
-\lstinputlisting[language=Prolog, firstline=110, lastline=110]{../ASP/rules.lp}
+\begin{lstlisting}
+n_complex(A) :- const(A), check_if_complex(A).
+\end{lstlisting}
 \mbox{} \\
 This rule introduces \lstinline{n_complex} predicates. If a term is a constant, then it is not complex. \\ %{
 
-\lstinputlisting[language=Prolog, firstline=112, lastline=116]{../ASP/rules.lp}
+\begin{lstlisting}
+n_complex(call(F, Args)) :- n_complex(Args), check_if_complex(call(F, Args)).
+n_complex((A, B))        :- n_complex(A), n_complex(B), check_if_complex((A, B)).
+
+n_complex(mul(A, B))     :- 
+		n_complex(A), n_complex(B), check_if_complex(mul(A, B)).
+n_complex(sub(A, B))     :- 
+		n_complex(A), n_complex(B), check_if_complex(sub(A, B)).
+n_complex(add(A, B))     :- 
+		n_complex(A), n_complex(B), check_if_complex(add(A, B)).
+\end{lstlisting}
 \mbox{} \\
 These rules represent propagation of \lstinline{n_complex} terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ %{
 
@@ -131,40 +267,74 @@ These rules represent propagation of \lstinline{n_complex} terms. If both sub-ex
 
 \section{A Worked Example : Greatest Common Divisor}
 
-To illustrate the interpreter, I will walk through a simple example - Euler's algorithm to calculate the Greatest Common Divisor. The Haskell definition of this function is :
+To illustrate the interpreter, I will walk through a simple example - Euler's algorithm to calculate the Greatest Common Divisor. The Haskell definition of this function is : \\
 
-\lstinputlisting[language=Haskell, firstline=2, lastline=5]{../ASP/eq/gcd.lp} 
+\begin{lstlisting}
+gcd x y
+	| x == y = x
+	| x > y  = gcd(x - y, y)
+	| x < y  = gcd(x, y - x)
+\end{lstlisting}
 \mbox{} \\
 You may notice this is not the typical definition of Euler's algorithm, as it does not make use of modulo. This is because my current language bias does not support the modulo operator. \\ \\
 I represent these Haskell rules in ASP as :\\
 
-\lstinputlisting[language=Haskell, firstline=20, lastline=26]{../ASP/eq/gcd.lp} 
+\begin{lstlisting}
+rule(1, gcd, (A, B), A) :- input(call(gcd, (A, B))).
+
+rule(2, gcd, (A, B), call(gcd, (x1, B))) :- input(call(gcd, (A, B))).
+where(x1, (A, B), sub(A, B)) :- input(call(gcd, (A, B))).
+
+rule(3, gcd, (A, B), call(gcd, (A, x2))) :- input(call(gcd, (A, B))).
+where(x2, (A, B), sub(B, A)) :- input(call(gcd, (A, B))).
+\end{lstlisting}
 \mbox{} \\
 And the corresponding \lstinline{match} rules are :\\ %{
 
-\lstinputlisting[language=Haskell, firstline=28, lastline=30]{../ASP/eq/gcd.lp} 
+\begin{lstlisting}
+match_guard(gcd, 1, (A, B)) :- A == B, input(call(gcd, (A, B))).
+match_guard(gcd, 2, (A, B)) :- A > B, input(call(gcd, (A, B))).
+match_guard(gcd, 3, (A, B)) :- A < B, input(call(gcd, (A, B))).
+\end{lstlisting}
 
 \subsection{A Simple Input}
 To start with, I will work through a simple example which matches the base case, \lstinline{gcd(3, 3)}. This input is represented in ASP as the term \lstinline{input(call(gcd, (3, 3)))}, meaning function \lstinline{gcd} is called with \lstinline{(3, 3)} as the arguments. \\ \\
 The first predicates generated are related to matching. As \lstinline{(3 == 3)}, the first \lstinline{match_guard} rule is applied and a the term \lstinline{match_guard(gcd, 1, (3, 3))} is added to the output.\\ \\ %{
 The rule next applied is \\
 
-\lstinputlisting[language=Prolog, firstline=122, lastline=122]{../ASP/rules.lp}
+\begin{lstlisting}
+match(F, Index, Inputs) :- 
+		not smaller_match(F, Index, Inputs), 
+		rule(Index, F, Inputs, _), 
+		match_guard(F, Index, Inputs).
+\end{lstlisting}
 \mbox{} \\
 As the relevant ground \lstinline{rule} and \lstinline{match_guard} terms exist, and there are no smaller matches, (as 1 is the smallest Index), I generate a \lstinline{match(gcd, 1, (3, 3))} term for the output. \\ \\ %{
 Next, the tool has to decide what to evaluate, by generating \lstinline{eval_with} terms. The rule applied is :\\ %{
 
-\lstinputlisting[language=Prolog, firstline=74, lastline=74]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(Expr, Inputs) :- 
+		input(call(F, Inputs)), 
+		rule(Index, F, Inputs, Expr), 
+		match(F, Index, Inputs).
+\end{lstlisting}
 \mbox{} \\
 Because the tool knows the ground \lstinline{rule} term \lstinline{rule(1, gcd, (3, 3), 3)}, it \lstinline{match} that rule with the term \lstinline{match(gcd, 1, (3, 3))} and it knows the \lstinline{input} term \lstinline{input(call(gcd, (3, 3)))}, it can apply this rule and get the expected term, \lstinline{eval_with(3, (3, 3))}, as part of the output. Semantically, this makes sense, as we want to evaluate the body of the called function, with respective arguments. \\ \\%{
 Now, the tool can work out values, through application of the rule \\
 
-\lstinputlisting[language=Prolog, firstline=65, lastline=65]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(N, N, Args) :- eval_with(N, Args), const(N).
+\end{lstlisting}
 \mbox{} \\
 The tool just generated the term \lstinline{eval_with(3, (3, 3))}, and it knows that 3 is a constant, so it can output that \lstinline{value_with(3, 3, (3, 3))}. \\ \\
 Finally, we can generate output. Using the rule \\
 
-\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
+\begin{lstlisting}
+output(call(F, Args), Out) :- 
+		rule(Index, F, Args, Expr), 
+		match(F, Index, Args), 
+		value_with(Expr, Out, Args).
+\end{lstlisting}
 \mbox{} \\
 In the same way to earlier rule applications, the tool knows the relevant ground \lstinline{rule(1, gcd, (3, 3), 3)} and \lstinline{match(gcd, 1, (3, 3))} terms, and we just generated the \lstinline{value_with(3, 3, (3, 3))} term. Therefore, the tool can return \lstinline{output(call(gcd, (3, 3)), 3)}, as expected.
 
@@ -172,85 +342,158 @@ In the same way to earlier rule applications, the tool knows the relevant ground
 Now I will detail a more complicated example, where the tool visits where rules and more complicated expressions. As input, I will use \lstinline{gcd(9, 6)}, which is represented in ASP as the term \lstinline{input(call(gcd, (9, 6)))}. \\ \\
 Once again, initially the tool generates \lstinline{match} terms using the rule : \\ %{
 
-\lstinputlisting[language=Prolog, firstline=122, lastline=122]{../ASP/rules.lp}
+\begin{lstlisting}
+match(F, Index, Inputs) :-
+		not smaller_match(F, Index, Inputs), 
+		rule(Index, F, Inputs, _), 
+		match_guard(F, Index, Inputs).
+\end{lstlisting}
 \mbox{} \\
 This time, it generates the ground term \lstinline{match(gcd, 2, (9, 6))}, as $(9 > 6)$ it hits the second rule guard. It then attempts to determine which rules to evaluate, using the rule : \\ %{
 
-\lstinputlisting[language=Prolog, firstline=74, lastline=74]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(Expr, Inputs) :- 
+		input(call(F, Inputs)), 
+		rule(Index, F, Inputs, Expr), 
+		match(F, Index, Inputs).
+\end{lstlisting}
 \mbox{} \\
 This rule generates the term \lstinline{eval_with(call(gcd, (x1, 6)), (9, 6))}. This is where is example diverges from the first. We first have to evaluate the arguments, because they are complex. \\ \\%{
 I know these rules are complex because we have checked them. Using this rule : \\
 
-\lstinputlisting[language=Prolog, firstline=87, lastline=87]{../ASP/rules.lp}
+\begin{lstlisting}
+check_if_complex(Expr) :- eval_with(Expr, _).
+\end{lstlisting}
 \mbox{} \\
 This rule generates the term \lstinline{check_complex(call(gcd, (x1, 6)))}. Then using the next rule I check the complexity of the arguments \\ %{
 
-\lstinputlisting[language=Prolog, firstline=89, lastline=89]{../ASP/rules.lp}
+\begin{lstlisting}
+check_if_complex(Args) :- check_if_complex(call(F, Args)).
+\end{lstlisting}
 \mbox{} \\
 This then generates the term \lstinline{check_complex((x1, 6))}. It then checks each argument individually, using the rules  \\ %{
 
-\lstinputlisting[language=Prolog, firstline=90, lastline=91]{../ASP/rules.lp}
+\begin{lstlisting}
+check_if_complex(A) :- check_if_complex((A, B)).
+check_if_complex(B) :- check_if_complex((A, B)).
+\end{lstlisting}
 \mbox{} \\
 Now, the tool knows that \lstinline{x1} is defined as complex, so we can start rebuilding the argument expression as complex. Using the rule  \\ %{
 
-\lstinputlisting[language=Prolog, firstline=101, lastline=101]{../ASP/rules.lp}
+\begin{lstlisting}
+complex((A, B))        :- complex(A), check_if_complex((A, B)).
+\end{lstlisting}
 \mbox{} \\
 This tells the tool to include the term \lstinline{complex((x1, 6))}. Now, having checked that the arguments are complex, we can evaluate them, using \\ %{
 
-\lstinputlisting[language=Prolog, firstline=76, lastline=76]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(Args_new, Args_old) :- 
+		complex(Args_new), 
+		eval_with(call(F, Args_new), Args_old).
+\end{lstlisting}
 \mbox{} \\
 The tool now knows to \lstinline{eval_with((x1, 6), (9,6))}. To do this, it evaluates all of the complex sub-expressions, using the rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=77, lastline=77]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
+\end{lstlisting}
 \mbox{} \\
 This produces the term \lstinline{eval_with(x1, (9, 6))}. Because it has to now evaluate a where variable, it chooses the rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=75, lastline=75]{../ASP/rules.lp}
+\begin{lstlisting}
+eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
+\end{lstlisting}
 \mbox{} \\
 As I have already defined the body of the where rule referenced by \lstinline{x1} to be \lstinline{where(x1, (A, B), sub(A, B))}, the tool then takes the ground version of this definition and applies the rule to get the term \lstinline{eval_with(sub(9, 6), (9,6))}. \\ \\%{
 This rule is why the tool needs to pass the relevant arguments around as it evaluates terms. If the \lstinline{(9, 6)} was missing, then the tool would not know which ground version of the rule to use.\\ %{
 The tool has now reached the end of evaluating, because \lstinline{eval_with(sub(9, 6), (9, 6))} is not complex. In the same way the tool checked for complexity, checking if an expression is not complex relies on \lstinline{check_if_complex} terms. Once again, I use the rule\\
 
-\lstinputlisting[language=Prolog, firstline=87, lastline=87]{../ASP/rules.lp}
+\begin{lstlisting}
+check_if_complex(Expr) :- eval_with(Expr, _).
+\end{lstlisting}
 \mbox{} \\
 Which introduces the term \lstinline{check_if_complex(sub(9, 6))}. As before, this rule then propagates, generating \lstinline{check_if_complex(9)} and \lstinline{check_if_complex(6)} terms. Now, as 9 and 6 are constants, they are not complex, as defined by this rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=110, lastline=110]{../ASP/rules.lp}
+\begin{lstlisting}
+n_complex(A) :- const(A), check_if_complex(A).
+\end{lstlisting}
 \mbox{} \\
 Now the tool knows \lstinline{n_complex(9)} and \lstinline{n_complex(6)}. It then uses the rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=115, lastline=115]{../ASP/rules.lp}
+\begin{lstlisting}
+n_complex(sub(A, B))     :- 
+		n_complex(A), 
+		n_complex(B), 
+		check_if_complex(sub(A, B)).
+\end{lstlisting}
 \mbox{} \\
 Which produces the term \lstinline{n_complex(sub(9, 6))}, as expected. This term can now have its value calculated, as it is not complex. Using the rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=69, lastline=69]{../ASP/rules.lp}
+\begin{lstlisting}
+value(sub(A, B), @to_num(V1) - @to_num(V2)) :- 
+		const_number(V1), 
+		const_number(V2), 
+		n_complex(sub(A, B)), 
+		value(A, V1), 
+		value(B, V2), 
+		const_number(@to_num(V1)-@to_num(V2)).
+\end{lstlisting}
 \mbox{} \\
 This generates the term \lstinline{value(sub(9, 6), 3)}, as it already knows \lstinline{value(9, 9)} and \lstinline{value(6, 6)}, as they are constants. Now, the tool can work out the value of the where variable, \lstinline{x1}, using this rule : \\
 
-\lstinputlisting[language=Prolog, firstline=63, lastline=63]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(X, V, Args) :- 
+		eval_with(X, Args), 
+		where(X, Args, Expr), 
+		value_with(Expr, V, Args).
+\end{lstlisting}
 \mbox{} \\
 This gives the tool the term \lstinline{value_with(x1, 3, (9, 6))}. Now the tool has almost calculated the value of the function call arguments, all it has to do it use this rule \\%{
 
-\lstinputlisting[language=Prolog, firstline=62, lastline=62]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with((A, B), (V1, V2), Args) :- 
+		eval_with((A, B), Args), 
+		value_with(A, V1, Args), 
+		value_with(B, V2, Args).
+\end{lstlisting}
 \mbox{} \\
 Which combines the terms \lstinline{value_with(x1, 3, (9, 6))} and \lstinline{value_with(6, 6, (9, 6))}, to get \lstinline{value_with((x1, 6), (3, 6), (9, 6))}. \\ \\ %{
 Remember that the overall goal of this was to be able to evaluate the term \lstinline{eval_with(call(gcd, (x1, 6)), (9, 6))}. Now, this is possible as the tool has generated the value of the arguments. The tool applies the following rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=120, lastline=120]{../ASP/rules.lp}
+\begin{lstlisting}
+input(call(F, Inputs)) :- 
+		eval_with(call(F, Args_new), Args_old), 
+		value_with(Args_new, Inputs, Args_old).
+\end{lstlisting}
 \mbox{} \\
 Which generates a new \lstinline{input(call(gcd, (3, 6)))} term, effectively starting the process again for a new input. This input is processed in a very similar way to the last one, with the only difference being that the third rule is matched, as \lstinline{3 < 6}. This means that the rule body to be evaluated produces the term \lstinline{eval_with(call(gcd, (3, x2)))}. \\ \\%{
 Once again, this evaluation proceeds by attempting to calculate the value of the arguments, more specifically the complex one, \lstinline{x2}. Using the definition, \lstinline{where(x2, (A, B), sub(B, A))}, the tool can generate the ground term \lstinline{value_with(x2, 3, (3, 6))}. This term is then combined with the non complex argument to produce the term \lstinline{value_with((3, x2), (3, 3), (3, 6))}. Then, it generates a new input predicate again by applying the rule \\ 
 
-\lstinputlisting[language=Prolog, firstline=120, lastline=120]{../ASP/rules.lp}
+\begin{lstlisting}
+input(call(F, Inputs)) :- 
+		eval_with(call(F, Args_new), Args_old), 
+		value_with(Args_new, Inputs, Args_old).
+\end{lstlisting}
 \mbox{} \\
 Now, we reach the base case, as the input generated is \lstinline{input(call(gcd, (3, 3)))}. As I explained in the first example, this input generates an output term in the Answer Set of \lstinline{output(call(gcd, (3, 3)), 3)}. It reaches this conclusion by matching to the base case, which is defined to return the first argument. \\ \\
 With this \lstinline{output} term, the tool can now traverse back up the call stack, to compute a final result. By applying the following rule \\ %{
 
-\lstinputlisting[language=Prolog, firstline=60, lastline=60]{../ASP/rules.lp}
+\begin{lstlisting}
+value_with(call(F, Args_new), Out, Args_old) :- 
+		eval_with(call(F, Args_new), Args_old), 
+		output(call(F, Inputs), Out), 
+		value_with(Args_new, Inputs, Args_old).
+\end{lstlisting}
 \mbox{} \\
 I can generate the term \lstinline{value_with(call(gcd, (3, x2)), 3, (3, 6))}. This then allows me to use the rule : \\%{
 
 \lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
+\begin{lstlisting}
+output(call(F, Args), Out) :- 
+		rule(Index, F, Args, Expr), 
+		match(F, Index, Args),
+		value_with(Expr, Out, Args).
+\end{lstlisting}
 \mbox{} \\
 Which gives a corresponding \lstinline{output} term \lstinline{output(call(gcd, (3, 6)), 3)}. Once again, I can use this output to generate the term \lstinline{value_with(call(gcd, (x1, 6)), 3)}, and then use this term to generate the final \lstinline{output} term, \lstinline{output(call(gcd, (9, 6)), 3)}, as expected! \\ \\%{
 TODO: Put Diagram here. Derivation / Expression tree pictures, with eval-with and value-with branches.

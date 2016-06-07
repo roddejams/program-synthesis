@@ -1,6 +1,19 @@
 \chapter{Conclusions and Future Work}
 
-In this chapter I will give an overview of features that would have been implemented in the learning tool given more time, and some opinions on the positives and negatives of my implementation.
+In this chapter I will give an overview of the went well during development of the tool , and an list of features that would have been implemented in the learning tool given more time.
+
+\section{Conclusions}
+Overall, I am very pleased with the finished learner. While I did not achieve everything I set out to accomplish, I was deliberately ambitious with those goals and to achieve it all would have been overly difficult.  In addition, the tool has been designed in such a way that adding these additional features would not be overly difficult and require a large amount of extra code.
+
+\subsection{Learning}
+I am most pleased with the current version of my learning task. It details a successful new approach to Inductive Functional Programming, showing that it is possible to use ASP to learn directly recursive programs in an efficient way.\\ \\
+The constraint based approach exceeded expectations, allowing a performance increase of approximately 50\%. This performance increase allows the tool to attempt learning more expressive programs than the interpreted approach, while not sacrificing performance.\\ \\
+Whilst the fact that I had to implement an entire new learning approach towards the end of the project has meant that the size of the target language is smaller than planned, it would only be a matter of time before additional features would be added, rather than them not being possible to add.
+
+\subsection{UI} 
+I am also proud of the quality of the user interface I created. Usage of the bootstrap libraries has meant that the UI looks clean and functional without being overly complicated. As an added bonus, it was not difficult to implement, allowing me to easily change and modify the UI based on feedback. \\ \\
+My usage of the Play Framework has also increased the usability of the tool. The learning running as a asynchronous process means that the interface feels fluid, allowing the user to change tabs and work on other functions while waiting for learning to be complete. Play has also made development of the UI easier, clearly separating the frontend and backend and keeping my code organised and fairly simple. \\ \\
+One feature that works well is the generation of Haskell programs from ASP. While the output from clingo is simply an answer set containing atoms specifying the chosen rules, this is converted into valid Haskell by the UI. The UI also allows for the Haskell to be downloaded and ran locally by the user, ran by the UI itself to check the validity of the learned program. This feature makes my tool stand out from other existing systems, which have output that can be very difficult to analyse or convert into something runnable.
 
 \section{Future Work}
 
@@ -123,17 +136,31 @@ Another potential skeleton rule generation optimisation would be to be explicit 
 To avoid this, the tool would limit the possible rules for base cases to simple arithmetic functions that are only one, potentially two operations deep. Then, the recursive cases would be limited to only expressions which contain calls to functions or in-built operations. Theoretically, this optimisation could lead to around a 50\% increase in performance on functions with two cases, one base case and one recursive case, as it would greatly reduce the time taken to enumerate the base case, which in this case is half the rules needed to be learned.
 
 \subsection{Supporting Multiple Function Calls}
-The main limitation on the constraint based learning approach is that it cannot handle multiple function calls. For example, if the tool encounters the equality constraint \lstinline{eq(add(f(x - 1), f(x - 2)), 8)}, then it cannot proceed as it does not know the value of either 
-
-\subsection{Loading known functions}
+The main limitation on the constraint based learning approach is that it cannot handle multiple function calls. Usually when evaluating equality constraints, one of the two arguments is a constant, allowing the tool to calculate the value of any non-constant arguments. For example, the evaluation of constraint \lstinline{eq(mul(3, call(f, 2)), 6)} occurs with the operations %{ 
+\begin{align*}
+3 * f(2) &= 6 \\
+f(2) &=  6 / 3 \\
+f(2) &= 2
+\end{align*}
+However, if the tool encounters a equality constraint with a function call as both arguments, similar to \lstinline{eq(add(f(6), f(5)), 8)}, then it cannot proceed as it does not know the constant value of either function call. \\ \\%{
+Ways to overcome this problem involve making assumptions about the value of either function call. As the value of constants in the tool is constrained to a small subset of integers, the range of possible values a function call can return is also constrained to this subset. Using this information, it would be possible to make assumptions about the value of either function call in the equality constraint, through use of choice rules. \\
+\begin{lstlisting}
+1 { value(call(f, 5), R) : const_number(R) } 1. 
+1 { value(call(f, 6), R) : const_number(R) } 1. 
+\end{lstlisting}  
+\mbox{} \\
+This rule generates a \lstinline{value(call(f, 5), R)} atom for each integer constant, then chooses each one to be tried in evaluation of the equality constraint. Using the example above, if the tool chooses \lstinline{value(call(f, 5), 3)} then it can now evaluate the constraint as follows
+\begin{align*}
+f(6) + f(5) &= 8 \\
+f(6) &= 8 - 3 \\
+f(6) &= 5
+\end{align*}
+However, for this to allow the constraint to hold, more restrictions are required. Both sides of the constraint have to be explored, as it could be possible for an equality constraint to hold on one side but not the other. In addition, all \lstinline{value} atoms generated have to be consistent. If for one constraint the tool chooses that \lstinline{value(call(f, 5), 3)} and another chooses \lstinline{value(call(f, 5), 5)}, then this should be unsatisfiable, as the functional nature of the target language means that a function can only return one result. \\ \\ %{
+The main downside of this approach would be that it has the potential to severely reduce performance. Any additional choice rules increase the complexity of the learning, adding more combinations of rules to be learned. Perhaps it is good enough to accept that the trade off to the increased performance of the constraint based approach is reduced expressivity. 
 
 \subsection{Parallel Learning}
-
-\section{Conclusions}
-
-\subsection{What worked}
-
-\subsection{Areas for improvement}
+One way to handle having multiple approaches would be to not completely replace the initial approach, and instead run them both in parallel. Through the user interface, when a new learning task is started it would be possible to start clingo runs of both approaches. Then, whichever run returns first is displayed as the learned program. While this would usually be the constraint based approach, occasionally it will fail as that approach is less expressive. This restriction does not apply to the interpreted approach, which would take longer but could find solutions the first approach misses. \\ \\
+This would be implemented as part of the UI through use of Akka actors. As my UI already makes use of these to allow the learning to happen in the background, it would not be difficult to run another actor, then terminate both once one returns a result.
 
 \pagebreak
 %\renewcommand\bibname{{References}}

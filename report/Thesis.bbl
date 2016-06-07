@@ -1,26 +1,3 @@
-\begin{thebibliography}{1}
-
-\bibitem{clingoguide}
-M.~Gebser, R.~Kaminski, B.~Kaufmann, M.~Ostrowski, T.~Schaub, and S.~Thiele.
-\newblock {\em A User's guide to gringo, clasp, clingo and iclingo}, 2010.
-
-\bibitem{igordemo}
-M.~Hofmann.
-\newblock {\em Igor II - an Analytical Inductive Functional Programming
-  System}, 2010.
-
-\bibitem{IFPsummary}
-M.~Hofmann, E.~Kitzelmann, and U.~Schmid.
-\newblock A unifying framework for analysis and evaluation of inductive
-  programming systems.
-\newblock In {\em The Second Conference on Artificial General Intelligence},
-  2009.
-
-\bibitem{Katayama12}
-S.~Katayama.
-\newblock An analytical inductive functional programming system that avoids
-  unintended programs.
-\newblock In {\em PEPM '12 Proceedings of the ACM SIGPLAN 2012 Workshop on
-  Partial evaluation and program manipulation}, pages 43--52, 2012.
+\begin{thebibliography}{}
 
 \end{thebibliography}
