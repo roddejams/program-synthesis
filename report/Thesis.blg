@@ -11,6 +11,9 @@ A level-1 auxiliary file: C5/chapter5.aux
 A level-1 auxiliary file: C6/chapter6.aux
 A level-1 auxiliary file: C7/chapter7.aux
 A level-1 auxiliary file: CA1/chapterA1.aux
-I found no \citation commands---while reading file Thesis.aux
+Illegal, another \bibdata command---line 57 of file Thesis.aux
+ : \bibdata
+ :         {References}
+I'm skipping whatever remains of this command
 Database file #1: References.bib
 (There was 1 error message)

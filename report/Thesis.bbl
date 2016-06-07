@@ -1,3 +1,9 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{negAsFailure}
+K.~Clark.
+\newblock {\em Readings in nonmonotonic reasoning}, chapter Negation as
+  failure, pages 311--325.
+\newblock Morgan Kaufmann Publishers, 1987.
 
 \end{thebibliography}

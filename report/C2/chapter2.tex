@@ -62,7 +62,7 @@ A collection of rules \newline
 \subsection{Negation As Failure}
 Negation as failure is an inference rule used in non-monotonic logic programs to derive atoms of the form \lstinline!not p!. This derivation is defined as 
 \begin{displayquote}
-``\lstinline!not p! can be inferred if every possible proof of \lstinline!p! fails.''
+``\lstinline!not p! can be inferred if every possible proof of \lstinline!p! fails.'' \cite{negAsFailure}
 \end{displayquote}
 In more simple terms, this means that you can assume that \lstinline!not p! holds if you cannot prove \lstinline!p!. 
 As an example, consider the program \\
@@ -407,7 +407,7 @@ f x = x * y
 This program simply multiplies by 5, as the variable \lstinline!y! has value 5 and is substituted in.
 
 %\renewcommand\bibname{{References}}
-%\bibliography{References}
+\bibliography{References}
 %\bibliographystyle{plain}
 
 \pagebreak
