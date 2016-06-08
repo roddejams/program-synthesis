@@ -11,111 +11,111 @@
 \contentsline {section}{\numberline {1.2}Contributions}{7}{section.1.2}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-4}
-\contentsline {chapter}{\numberline {2}Background}{8}{chapter.2}
-\contentsline {section}{\numberline {2.1}Common Terminology}{8}{section.2.1}
-\contentsline {section}{\numberline {2.2}Answer Set Programming}{8}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Negation As Failure}{8}{subsection.2.2.1}
-\contentsline {subsection}{\numberline {2.2.2}The Stable Model Semantics}{8}{subsection.2.2.2}
-\contentsline {subsubsection}{Grounding}{9}{section*.2}
-\contentsline {subsubsection}{Safety}{10}{section*.3}
-\contentsline {subsubsection}{Least Herbrand Models}{10}{section*.4}
-\contentsline {subsection}{\numberline {2.2.3}Calculating Answer Sets}{11}{subsection.2.2.3}
-\contentsline {subsubsection}{Reduct}{11}{section*.5}
-\contentsline {subsubsection}{Constraints}{12}{section*.6}
-\contentsline {subsubsection}{Aggregates and Choice Rules}{12}{section*.7}
-\contentsline {subsubsection}{Optimisation Statements}{13}{section*.8}
-\contentsline {subsection}{\numberline {2.2.4}ASPAL}{13}{subsection.2.2.4}
-\contentsline {subsection}{\numberline {2.2.5}ASP Solvers}{15}{subsection.2.2.5}
-\contentsline {section}{\numberline {2.3}Inductive Functional Programming}{16}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}Conditional Constructor Systems}{16}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}Overview of current tools}{17}{subsection.2.3.2}
-\contentsline {section}{\numberline {2.4}The Target Language, Haskell}{18}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}The Haskell Syntax}{18}{subsection.2.4.1}
+\contentsline {chapter}{\numberline {2}Background}{9}{chapter.2}
+\contentsline {section}{\numberline {2.1}Common Terminology}{9}{section.2.1}
+\contentsline {section}{\numberline {2.2}Answer Set Programming}{9}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Negation As Failure}{9}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}The Stable Model Semantics}{9}{subsection.2.2.2}
+\contentsline {subsubsection}{Grounding}{10}{section*.3}
+\contentsline {subsubsection}{Safety}{11}{section*.4}
+\contentsline {subsubsection}{Least Herbrand Models}{11}{section*.5}
+\contentsline {subsection}{\numberline {2.2.3}Calculating Answer Sets}{12}{subsection.2.2.3}
+\contentsline {subsubsection}{Reduct}{12}{section*.6}
+\contentsline {subsubsection}{Constraints}{13}{section*.7}
+\contentsline {subsubsection}{Aggregates and Choice Rules}{13}{section*.8}
+\contentsline {subsubsection}{Optimisation Statements}{14}{section*.9}
+\contentsline {subsection}{\numberline {2.2.4}ASPAL}{14}{subsection.2.2.4}
+\contentsline {subsection}{\numberline {2.2.5}ASP Solvers}{16}{subsection.2.2.5}
+\contentsline {section}{\numberline {2.3}Inductive Functional Programming}{17}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Conditional Constructor Systems}{17}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Overview of current tools}{18}{subsection.2.3.2}
+\contentsline {section}{\numberline {2.4}The Target Language, Haskell}{19}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}The Haskell Syntax}{19}{subsection.2.4.1}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-5}
-\contentsline {chapter}{\numberline {3}The Initial Approach : A Haskell Interpreter in ASP}{19}{chapter.3}
-\contentsline {section}{\numberline {3.1}Target Language}{19}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Program Representation}{19}{subsection.3.1.1}
-\contentsline {section}{\numberline {3.2}Evaluating Rules}{20}{section.3.2}
-\contentsline {subsubsection}{Internal Predicates}{20}{section*.9}
-\contentsline {subsubsection}{Computation Rules}{21}{section*.10}
-\contentsline {section}{\numberline {3.3}A Worked Example : Greatest Common Divisor}{26}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}A Simple Input}{26}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}A More Complex Example}{27}{subsection.3.3.2}
+\contentsline {chapter}{\numberline {3}The Initial Approach : A Haskell Interpreter in ASP}{20}{chapter.3}
+\contentsline {section}{\numberline {3.1}Target Language}{20}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Program Representation}{20}{subsection.3.1.1}
+\contentsline {section}{\numberline {3.2}Evaluating Rules}{21}{section.3.2}
+\contentsline {subsubsection}{Internal Predicates}{21}{section*.10}
+\contentsline {subsubsection}{Computation Rules}{22}{section*.11}
+\contentsline {section}{\numberline {3.3}A Worked Example : Greatest Common Divisor}{27}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}A Simple Input}{27}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}A More Complex Example}{28}{subsection.3.3.2}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-6}
-\contentsline {chapter}{\numberline {4}Learning from Examples}{32}{chapter.4}
-\contentsline {section}{\numberline {4.1}Additional Rules}{32}{section.4.1}
-\contentsline {section}{\numberline {4.2}Skeleton Rules}{32}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Generating Skeleton Rules}{33}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Choice Rules}{33}{subsection.4.2.2}
-\contentsline {subsection}{\numberline {4.2.3}Rule combinations}{33}{subsection.4.2.3}
-\contentsline {subsection}{\numberline {4.2.4}Learning Match Rules}{34}{subsection.4.2.4}
-\contentsline {section}{\numberline {4.3}Multiple Solutions and Optimisation}{35}{section.4.3}
-\contentsline {section}{\numberline {4.4}A Worked Example : Learning GCD}{35}{section.4.4}
-\contentsline {section}{\numberline {4.5}Performance Issues}{37}{section.4.5}
-\contentsline {subsection}{\numberline {4.5.1}Potential Optimisations}{38}{subsection.4.5.1}
+\contentsline {chapter}{\numberline {4}Learning from Examples}{33}{chapter.4}
+\contentsline {section}{\numberline {4.1}Additional Rules}{33}{section.4.1}
+\contentsline {section}{\numberline {4.2}Skeleton Rules}{33}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Generating Skeleton Rules}{34}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Choice Rules}{34}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Rule combinations}{34}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}Learning Match Rules}{35}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}Multiple Solutions and Optimisation}{36}{section.4.3}
+\contentsline {section}{\numberline {4.4}A Worked Example : Learning GCD}{36}{section.4.4}
+\contentsline {section}{\numberline {4.5}Performance Issues}{38}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Potential Optimisations}{39}{subsection.4.5.1}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-7}
-\contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{39}{chapter.5}
-\contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{39}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}Dealing with termination}{40}{subsection.5.1.1}
-\contentsline {section}{\numberline {5.2}ASP Representation}{40}{section.5.2}
-\contentsline {section}{\numberline {5.3}Learning}{42}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Using inbuilt arithmetic}{42}{subsection.5.3.1}
-\contentsline {section}{\numberline {5.4}A Worked Example : Greatest common divisor}{43}{section.5.4}
-\contentsline {section}{\numberline {5.5}Performance}{44}{section.5.5}
-\contentsline {subsection}{\numberline {5.5.1}Reducing the language bias}{44}{subsection.5.5.1}
+\contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{40}{chapter.5}
+\contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{40}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Dealing with termination}{41}{subsection.5.1.1}
+\contentsline {section}{\numberline {5.2}ASP Representation}{41}{section.5.2}
+\contentsline {section}{\numberline {5.3}Learning}{43}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Using inbuilt arithmetic}{43}{subsection.5.3.1}
+\contentsline {section}{\numberline {5.4}A Worked Example : Greatest common divisor}{44}{section.5.4}
+\contentsline {section}{\numberline {5.5}Performance}{45}{section.5.5}
+\contentsline {subsection}{\numberline {5.5.1}Reducing the language bias}{45}{subsection.5.5.1}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-8}
-\contentsline {chapter}{\numberline {6}Front end implementation : Building a working UI}{45}{chapter.6}
-\contentsline {section}{\numberline {6.1}User's Manual}{45}{section.6.1}
-\contentsline {subsection}{\numberline {6.1.1}Entering examples}{45}{subsection.6.1.1}
-\contentsline {subsection}{\numberline {6.1.2}The Learning Step}{45}{subsection.6.1.2}
-\contentsline {subsection}{\numberline {6.1.3}Example autocompletion}{46}{subsection.6.1.3}
-\contentsline {subsection}{\numberline {6.1.4}Combining functions}{47}{subsection.6.1.4}
-\contentsline {subsection}{\numberline {6.1.5}Restricting the Language Bias}{47}{subsection.6.1.5}
-\contentsline {subsection}{\numberline {6.1.6}Handling errors}{47}{subsection.6.1.6}
-\contentsline {section}{\numberline {6.2}The Design Process}{48}{section.6.2}
-\contentsline {section}{\numberline {6.3}Writing the Backend}{48}{section.6.3}
-\contentsline {section}{\numberline {6.4}Technologies Used}{49}{section.6.4}
-\contentsline {subsection}{\numberline {6.4.1}Play Framework and Akka}{49}{subsection.6.4.1}
-\contentsline {subsection}{\numberline {6.4.2}Bootstrap}{49}{subsection.6.4.2}
-\contentsline {section}{\numberline {6.5}User Feedback and Evaluation}{49}{section.6.5}
+\contentsline {chapter}{\numberline {6}Front end implementation : Building a working UI}{46}{chapter.6}
+\contentsline {section}{\numberline {6.1}User's Manual}{46}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}Entering examples}{46}{subsection.6.1.1}
+\contentsline {subsection}{\numberline {6.1.2}The Learning Step}{46}{subsection.6.1.2}
+\contentsline {subsection}{\numberline {6.1.3}Example autocompletion}{47}{subsection.6.1.3}
+\contentsline {subsection}{\numberline {6.1.4}Combining functions}{48}{subsection.6.1.4}
+\contentsline {subsection}{\numberline {6.1.5}Restricting the Language Bias}{48}{subsection.6.1.5}
+\contentsline {subsection}{\numberline {6.1.6}Handling errors}{48}{subsection.6.1.6}
+\contentsline {section}{\numberline {6.2}The Design Process}{49}{section.6.2}
+\contentsline {section}{\numberline {6.3}Writing the Backend}{49}{section.6.3}
+\contentsline {section}{\numberline {6.4}Technologies Used}{50}{section.6.4}
+\contentsline {subsection}{\numberline {6.4.1}Play Framework and Akka}{50}{subsection.6.4.1}
+\contentsline {subsection}{\numberline {6.4.2}Bootstrap}{50}{subsection.6.4.2}
+\contentsline {section}{\numberline {6.5}User Feedback and Evaluation}{50}{section.6.5}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-9}
-\contentsline {chapter}{\numberline {7}Critical Evaluation}{50}{chapter.7}
-\contentsline {section}{\numberline {7.1}Generated Code}{51}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}Factorial}{51}{subsection.7.1.1}
-\contentsline {subsection}{\numberline {7.1.2}Fibonacci}{51}{subsection.7.1.2}
-\contentsline {subsection}{\numberline {7.1.3}Powers of 2}{52}{subsection.7.1.3}
-\contentsline {subsection}{\numberline {7.1.4}Tail Recursive Factorial}{53}{subsection.7.1.4}
-\contentsline {subsection}{\numberline {7.1.5}Greatest Common Divisor}{53}{subsection.7.1.5}
-\contentsline {section}{\numberline {7.2}Performance Statistics}{54}{section.7.2}
-\contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{55}{section.7.3}
-\contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{55}{subsection.7.3.1}
-\contentsline {subsection}{\numberline {7.3.2}Igor II}{55}{subsection.7.3.2}
+\contentsline {chapter}{\numberline {7}Critical Evaluation}{51}{chapter.7}
+\contentsline {section}{\numberline {7.1}Generated Code}{52}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}Factorial}{52}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}Fibonacci}{52}{subsection.7.1.2}
+\contentsline {subsection}{\numberline {7.1.3}Powers of 2}{53}{subsection.7.1.3}
+\contentsline {subsection}{\numberline {7.1.4}Tail Recursive Factorial}{54}{subsection.7.1.4}
+\contentsline {subsection}{\numberline {7.1.5}Greatest Common Divisor}{54}{subsection.7.1.5}
+\contentsline {section}{\numberline {7.2}Performance Statistics}{55}{section.7.2}
+\contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{56}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{56}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}Igor II}{56}{subsection.7.3.2}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-10}
-\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{57}{chapter.8}
-\contentsline {section}{\numberline {8.1}Conclusions}{57}{section.8.1}
-\contentsline {subsection}{\numberline {8.1.1}Learning}{57}{subsection.8.1.1}
-\contentsline {subsection}{\numberline {8.1.2}UI}{57}{subsection.8.1.2}
-\contentsline {section}{\numberline {8.2}Future Work}{58}{section.8.2}
-\contentsline {subsection}{\numberline {8.2.1}Type Usage}{58}{subsection.8.2.1}
-\contentsline {subsection}{\numberline {8.2.2}Lists and Strings}{58}{subsection.8.2.2}
-\contentsline {subsection}{\numberline {8.2.3}Expanding the Background Knowledge}{59}{subsection.8.2.3}
-\contentsline {subsection}{\numberline {8.2.4}Advanced Skeleton Rule Generation}{60}{subsection.8.2.4}
-\contentsline {subsection}{\numberline {8.2.5}Supporting Multiple Function Calls}{61}{subsection.8.2.5}
-\contentsline {subsection}{\numberline {8.2.6}Parallel Learning}{61}{subsection.8.2.6}
+\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{58}{chapter.8}
+\contentsline {section}{\numberline {8.1}Conclusions}{58}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Learning}{58}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}UI}{58}{subsection.8.1.2}
+\contentsline {section}{\numberline {8.2}Future Work}{59}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Type Usage}{59}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Lists and Strings}{59}{subsection.8.2.2}
+\contentsline {subsection}{\numberline {8.2.3}Expanding the Background Knowledge}{60}{subsection.8.2.3}
+\contentsline {subsection}{\numberline {8.2.4}Advanced Skeleton Rule Generation}{61}{subsection.8.2.4}
+\contentsline {subsection}{\numberline {8.2.5}Supporting Multiple Function Calls}{62}{subsection.8.2.5}
+\contentsline {subsection}{\numberline {8.2.6}Parallel Learning}{62}{subsection.8.2.6}
 \gdef \the@ipfilectr {}
 \gdef \the@ipfilectr {@-11}
-\contentsline {chapter}{\numberline {A}Full Experimental Results}{63}{appendix.A}
-\contentsline {section}{\numberline {A.1}One Argument Programs}{63}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Factorial}{63}{subsection.A.1.1}
-\contentsline {subsection}{\numberline {A.1.2}Fibonacci}{64}{subsection.A.1.2}
-\contentsline {subsection}{\numberline {A.1.3}Powers of 2}{65}{subsection.A.1.3}
-\contentsline {section}{\numberline {A.2}Two Argument Programs}{66}{section.A.2}
-\contentsline {subsection}{\numberline {A.2.1}Tail Recursive Factorial}{66}{subsection.A.2.1}
-\contentsline {subsection}{\numberline {A.2.2}Greatest Common Divisor}{67}{subsection.A.2.2}
+\contentsline {chapter}{\numberline {A}Full Experimental Results}{64}{appendix.A}
+\contentsline {section}{\numberline {A.1}One Argument Programs}{64}{section.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Factorial}{64}{subsection.A.1.1}
+\contentsline {subsection}{\numberline {A.1.2}Fibonacci}{65}{subsection.A.1.2}
+\contentsline {subsection}{\numberline {A.1.3}Powers of 2}{66}{subsection.A.1.3}
+\contentsline {section}{\numberline {A.2}Two Argument Programs}{67}{section.A.2}
+\contentsline {subsection}{\numberline {A.2.1}Tail Recursive Factorial}{67}{subsection.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}Greatest Common Divisor}{68}{subsection.A.2.2}
 \gdef \the@ipfilectr {}
