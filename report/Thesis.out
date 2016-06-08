@@ -78,12 +78,13 @@
 \BOOKMARK [2][-]{subsection.8.2.3}{Expanding the Background Knowledge}{section.8.2}% 78
 \BOOKMARK [2][-]{subsection.8.2.4}{Advanced Skeleton Rule Generation}{section.8.2}% 79
 \BOOKMARK [2][-]{subsection.8.2.5}{Supporting Multiple Function Calls}{section.8.2}% 80
-\BOOKMARK [2][-]{subsection.8.2.6}{Parallel Learning}{section.8.2}% 81
-\BOOKMARK [0][-]{appendix.A}{Full Experimental Results}{}% 82
-\BOOKMARK [1][-]{section.A.1}{One Argument Programs}{appendix.A}% 83
-\BOOKMARK [2][-]{subsection.A.1.1}{Factorial}{section.A.1}% 84
-\BOOKMARK [2][-]{subsection.A.1.2}{Fibonacci}{section.A.1}% 85
-\BOOKMARK [2][-]{subsection.A.1.3}{Powers of 2}{section.A.1}% 86
-\BOOKMARK [1][-]{section.A.2}{Two Argument Programs}{appendix.A}% 87
-\BOOKMARK [2][-]{subsection.A.2.1}{Tail Recursive Factorial}{section.A.2}% 88
-\BOOKMARK [2][-]{subsection.A.2.2}{Greatest Common Divisor}{section.A.2}% 89
+\BOOKMARK [2][-]{subsection.8.2.6}{Advanced Optimisation}{section.8.2}% 81
+\BOOKMARK [2][-]{subsection.8.2.7}{Parallel Learning}{section.8.2}% 82
+\BOOKMARK [0][-]{appendix.A}{Full Experimental Results}{}% 83
+\BOOKMARK [1][-]{section.A.1}{One Argument Programs}{appendix.A}% 84
+\BOOKMARK [2][-]{subsection.A.1.1}{Factorial}{section.A.1}% 85
+\BOOKMARK [2][-]{subsection.A.1.2}{Fibonacci}{section.A.1}% 86
+\BOOKMARK [2][-]{subsection.A.1.3}{Powers of 2}{section.A.1}% 87
+\BOOKMARK [1][-]{section.A.2}{Two Argument Programs}{appendix.A}% 88
+\BOOKMARK [2][-]{subsection.A.2.1}{Tail Recursive Factorial}{section.A.2}% 89
+\BOOKMARK [2][-]{subsection.A.2.2}{Greatest Common Divisor}{section.A.2}% 90
