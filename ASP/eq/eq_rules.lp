@@ -8,7 +8,6 @@ function to_num(x)
 end
 #end_lua.
 
-
 #hide const_number/1.
 #hide const/1.
 #hide expr_const/1.
@@ -30,31 +29,37 @@ const(X) :- const_number(X).
 const(e).
 const_range(-100..100).
 
-
-
 eq(In, Out) :- example(In, Out).
 :- eq(N1, N2), const_range(N1), const_range(N2), N1 != N2.
 :- eq(mul(0, B), Val), Val > 0.
 :- eq(mul(A, 0), Val), Val > 0.
 :- eq(mul(A, B), Val), const_number(B), B > 0, Val #mod @to_num(B) != 0.
 :- eq(mul(A, B), Val), const_number(A), A > 0, Val #mod @to_num(A) != 0.
-%:- eq(div(A, 0), Val).
-%:- eq(div(0, B), Val).
 :- example(In, Out), not terminates(In).
 
 is_call(call(F, Expr)):- eq(call(F, Expr), Out).
 
-eq(Expr, Val) :- rule(Index, F, Arg_Expr, Expr), match(F, Index, Arg_Expr), eq(call(F, Arg_Expr), Val).
+eq(Expr, Val) :- 
+	rule(Index, F, Arg_Expr, Expr), 
+	match(F, Index, Arg_Expr), 
+	eq(call(F, Arg_Expr), Val).
+	
 eq(A, Val - @to_num(B)) :- eq(add(A, B), Val), const_number(B), B <= Val.
 eq(B, Val - @to_num(A)) :- eq(add(A, B), Val), const_number(A), A <= Val.
 eq(A, Val / @to_num(B)) :- eq(mul(A, B), Val), const_number(B), B > 0.
 eq(B, Val / @to_num(A)) :- eq(mul(A, B), Val), const_number(A), A > 0.
-eq(A, Val + @to_num(B)) :- eq(sub(A, B), Val), const_number(B), const_number(Val).
-eq(B, Val + @to_num(A)) :- eq(sub(A, B), Val), const_number(A), const_number(Val).
+eq(A, Val + @to_num(B)) :- 
+	eq(sub(A, B), Val), 
+	const_number(B), 
+	const_number(Val).
+	
+eq(B, Val + @to_num(A)) :- 
+	eq(sub(A, B), Val), 
+	const_number(A), 
+	const_number(Val).
+	
 eq(X, Val) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
 eq(Xs, Vals) :- eq((X, Xs), (Val, Vals)), const_number(X), const_number(Val).
-%eq(A, Val * B) :- eq(div(A, B), Val), const_number(Val), const_number(B), const_number(Val * B).
-%eq(B, Val * A) :- eq(div(A, B), Val), const_number(Val), const_number(A), const_number(Val * A).
 
 terminates(Expr) :- next_step(Expr, Val), const(Val).
 terminates(Expr) :- next_step(Expr, Term_Expr), terminates(Term_Expr).
@@ -67,8 +72,6 @@ next_step(mul(A, B), B) :- is_next_step(mul(A, B)), const_number(A).
 next_step(mul(A, B), A) :- is_next_step(mul(A, B)), const_number(B).
 next_step(sub(A, B), A) :- is_next_step(sub(A, B)), const_number(B).
 next_step(sub(A, B), B) :- is_next_step(sub(A, B)), const_number(A).
-%next_step(div(A, B), A) :- is_next_step(div(A, B)), const_number(B).
-%next_step(div(A, B), B) :- is_next_step(div(A, B)), const_number(A).
 next_step((X, Xs), Xs) 	:- is_next_step((X, Xs)), const_number(X).
 is_next_step(X) :- next_step(_, X).
 
