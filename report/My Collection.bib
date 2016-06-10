@@ -1,35 +1,4 @@
-@conference{IFPsummary,
-	author = "Hofmann, M. and Kitzelmann, E. and Schmid, U.",
-	title = "A Unifying Framework for Analysis and Evaluation of Inductive Programming Systems",
-	url = "http://agi-conf.org/2009/papers/paper_10.pdf",
-	year = "2009",
-	booktitle = "The Second Conference on Artificial General Intelligence"
-}
-
-@inbook{negAsFailure,
-	author = "Clark, K.",
-	title = "Readings in nonmonotonic reasoning",
-	chapter = "Negation as failure",
-	pages = "311-325",
-	publisher = "Morgan Kaufmann Publishers",
-	year = "1987"
-}
-
-@manual{clingoguide,
-	author = "Gebser, M. and Kaminski, R. and Kaufmann, B. and Ostrowski, M. and Schaub, T. and Thiele, S.",
-	title = "A User's guide to gringo, clasp, clingo and iclingo",
-	url = "https://www.cs.utexas.edu/users/vl/teaching/lbai/clingo_guide.pdf",
-	type = "Manual",
-	year = "2010"
-}
-
-@manual{igordemo,
-	author = "Hofmann, M.",
-	title = "Igor II - an Analytical Inductive Functional Programming System",
-	year = "2010"
-}
-
-@article{Katayama12,
+@article{Katayama2012,
 abstract = {Inductive functional programming (IFP) is a research field extending from software science to artificial intelligence that deals with functional program synthesis based on generalization from ambiguous specifications, usually given as input-output example pairs. Currently, the approaches to IFP can be categorized into two general groups: the analytical approach that is based on analysis of the input-output example pairs, and the generate-and-test approach that is based on generation and testing of many candidate programs. The analytical approach shows greater promise for application to greater problems because the search space is restricted by the given example set, but it requires much more examples written in order to yield results that reflect the user's intention, which is bothersome and causes the algorithm to slow down. On the other hand, the generate-and-test approach does not require long description of input-output examples, but does not restrict the search space using the example set. This paper proposes a new approach taking the best of the two, called "analytically-generate-and-test approach", which is based on analytical generation and testing of many program candidates. For generating many candidate programs, the proposed system uses a new variant of IGOR II, the exemplary analytical inductive functional programming algorithm. This new system preserves the efficiency features of analytical approaches, while minimizing the possibility of generating unintended programs even when using fewer input-output examples. Copyright {\textcopyright} 2012 ACM.},
 author = {Katayama, S},
 isbn = {9781450311182},
@@ -41,21 +10,16 @@ title = {{An analytical inductive functional programming system that avoids unin
 url = {http://www.scopus.com/inward/record.url?eid=2-s2.0-84857814672{\&}partnerID=40{\&}md5=1746ba69421ca6355877a10b359d2ce3},
 year = {2012}
 }
-
-@misc{IFPnotes,
-	author = "Schmid, U.",
-	title = "Inductive Functional Programming",
-	url = "https://excape.cis.upenn.edu/webinarTalks/IFPExCape15_UteSchmid.pdf"
-}
-
-@misc{ASPnotes,
-	author = "Law, M.",
-	title = {{Notes on ASP from course 304, Logic Based Learning}},
-	url = "https://www.doc.ic.ac.uk/~ml1909/#teaching"
-}
-
-@misc{KRnotes,
-	author = "Sergot, M.",
-	title = {{Notes on Answer Sets and The Stable Model Semantics from course 491, Knowledge Representation}},
-	url = "http://www.doc.ic.ac.uk/~mjs/teaching/491.html"
+@article{Kitzelmann2006,
+abstract = {We describe an approach to the inductive synthesis of recursive equations from input/output-examples which is based on the classical two-step approach to induction of functional Lisp programs of Summers (1977). In a first step, I/O-examples are rewritten to traces which explain the outputs given the respective inputs based on a datatype theory. These traces can be integrated into one conditional expression which represents a non-recursive program. In a second step, this initial program term is generalized into recursive equations by searching for syntactical regularities in the term. Our approach extends the classical work in several aspects. The most important extensions are that we are able to induce a set of recursive equations in one synthesizing step, the equations may contain more than one recursive call, and additionally needed parameters are automatically introduced.},
+author = {Kitzelmann, Emanuel and Schmid, Ute},
+isbn = {1532-4435},
+issn = {15324435},
+journal = {Journal of Machine Learning Research},
+keywords = {based generalization,explanation,inductive functional programming,inductive program synthesis,recursive program schemes},
+pages = {429--454},
+title = {{Inductive Synthesis of Functional Programs : An Explanation Based Generalization Approach}},
+url = {http://portal.acm.org/citation.cfm?id=1248562},
+volume = {7},
+year = {2006}
 }

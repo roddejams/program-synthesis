@@ -366,7 +366,7 @@ Preference Bias introduces an idea of optimisation to the task such that the lea
 Here I will discuss two modern IFP systems which I will use to compare to my system as part of my evaluation:
 
 \begin{itemize}
-\item \textbf{MagicHaskeller} is based on the generate and test approach to IFP, and works by generating a stream of progressively more complicated programs and then testing them against the given specification. This search is exhaustive and performed in a breadth-first manner with application of a variant of Spivey's Monad.\\
+\item \textbf{MagicHaskeller} \cite{Katayama12} is based on the generate and test approach to IFP, and works by generating a stream of progressively more complicated programs and then testing them against the given specification. This search is exhaustive and performed in a breadth-first manner with application of a variant of Spivey's Monad.\\
 
 MagicHaskeller has the advantage of being easy to use as you only have to give the specification of the desired function as an argument, which is typically no more than a few lines of code in the target language. The tool also has a particularly large component library of built-in Haskell primitives which the tool uses where possible.\\
 
@@ -407,7 +407,7 @@ f x = x * y
 This program simply multiplies by 5, as the variable \lstinline!y! has value 5 and is substituted in.
 
 %\renewcommand\bibname{{References}}
-\bibliography{References}
+%\bibliography{References}
 %\bibliographystyle{plain}
 
 \pagebreak

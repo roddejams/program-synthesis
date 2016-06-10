@@ -6,4 +6,15 @@ K.~Clark.
   failure, pages 311--325.
 \newblock Morgan Kaufmann Publishers, 1987.
 
+\bibitem{Katayama12}
+S~Katayama.
+\newblock {An analytical inductive functional programming system that avoids
+  unintended programs}.
+\newblock {\em Conference Record of the Annual ACM Symposium on Principles of
+  Programming Languages}, pages 43--52, 2012.
+
+\bibitem{IFPnotes}
+U.~Schmid.
+\newblock Inductive functional programming.
+
 \end{thebibliography}

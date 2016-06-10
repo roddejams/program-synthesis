@@ -1,212 +1,344 @@
 \chapter{The Initial Approach : A Haskell Interpreter in ASP}
 
-As a way of better understanding how to represent the target language of the tool, my first step was to implement an Interpreter for the simple target language of my tool.
+In this chapter, I describe the Haskell Interpreter that is used heavily in my first learning attempt. Given a set of ASP rules representing some Haskell function and a valid input to this function, this interpreter returns the output from running that function with those examples.
 
 \section{Target Language}
 
-Initially, I chose to target a simple sub language of Haskell with the following terms :
+Initially, I chose to target a simple subset of the Haskell syntax, emulating the following language features :
 
 \begin{itemize}
 \item Addition
 \item Subtraction
 \item Multiplication
-\item Function Calls (including recursion) with any number of arguments.
+\item Function calls with arbitrary number of arguments.
+\item Recursion
+\item Guards
 %\item Lists
 \end{itemize}
-
-I chose these terms as I felt they were expressive enough to be able to represent sufficiently complicated test examples, while not overcomplicating my first attempt at writing the interpreter. 
+\mbox{}\\
+To avoid overcomplication, I decided to not include lists in this first attempt, instead focusing on implementing recursion efficiently, making this is a sufficient feature set. 
 
 \subsection{Program Representation}
-To represent a generic Haskell program in ASP, first I had to choose various predicates to represent different parts of the program.\\ \\
-For the arithmetic operations present in my target language, I decided to use simple binary predicates. For example, addition is represented by the \lstinline{add(X, Y).} predicate, and subtraction and multiplication follow in the same way. \\ \\%{
-To represent function calls, I have introduced the \lstinline{call(F, Args).} predicate. Here, F is the name of the function being called, and Args represents an (arbitrary length) list of function arguments. \\ \\ %{
-Using these predicates, I can represent the Haskell implementation of the recursive factorial program
-\lstinputlisting[language=Haskell, firstline=5, lastline=7]{../ASP/examples/factorial_obs.lp}
-by the ASP program
-\lstinputlisting[language=Prolog, firstline=11, lastline=15]{../ASP/examples/factorial_obs_with_where.lp}
-To explain further, each line (or recursive case) of the target Haskell program is represented by with a rule with a \lstinline{rule(Num, FuncName, Input, Output).} predicate in the head. \\ \\%{
-Because of the vast algorithmic complexity of the combinations of arithmetic operations, I was struggling with performance issues. To sufficiently cover the possible program space, the required number of skeleton rules was overwhelming even for comparatively simple programs. \\ \\
-As a solution to this issue, I make heavy use of \lstinline{where(Var, Args, Body).} predicates. These "where" predicates are semantically identical to the Haskell equivalent, specifying replacement rules for the given variables in the scope of the rule. \\ \\%{
-For example, in the program above, instead of one rule
+To represent a generic Haskell program in ASP, first I had to choose various predicates to represent different parts of the program. By representing Haskell operations with logic predicates it becomes possible to evaluate operations on arbitrary expressions. Binary arithmetic operations are represented by corresponding binary predicates, and function calls by a binary predicate with arguments for function name and function arguments.  \\ \\
+
+\begin{center}
+\begin{tabular}{| c | c |}
+\hline
+\textbf{ASP Term} & \textbf{Haskell Syntax} \\
+\hline
+\lstinline!add(X, Y).! & \lstinline!x + y! \\
+\hline
+\lstinline!sub(X, Y).! & \lstinline!x - y! \\
+\hline
+\lstinline!mul(X, Y).! & \lstinline!x * y! \\
+\hline
+\lstinline!call(f, N).! & \lstinline!f n! \\
+\hline
+\end{tabular}
+\end{center}
+\mbox{}\\
+Using these predicates, the representation the Haskell implementation of the recursive factorial program \\
 \begin{lstlisting}
-rule(2, f, N, mul(N, call(f, sub(N, 1)))).
+factorial x :: Int -> Int
+factorial x 
+	| x == 0 = 1
+	| otherwise = x * f (x - 1)
 \end{lstlisting}
-We instead use
-\lstinputlisting[language=Prolog, firstline=12, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
-nesting each operation in its own clause.
+\mbox{}\\
+is given by the ASP terms \\
+\begin{lstlisting}
+rule(1, factorial, N, 1).
+rule(2, factorial, N, mul(N, call(factorial, sub(N, 1)))).
+
+match_guard(factorial, 1, Input) :- Input == 0.
+match_guard(factorial, 2, Input).
+\end{lstlisting}
+\mbox{}\\
+Each line (or recursive case) of the target Haskell program is represented by with a rule with a \lstinline!rule! term in the head, where the guard condition of each rule is represented by the corresponding \lstinline!match_guard! term.
+
+%Because of the vast algorithmic complexity of the combinations of arithmetic operations, I was struggling with performance issues. To sufficiently cover the possible program space, the required number of skeleton rules was overwhelming even for comparatively simple programs. \\ \\
+%As a solution to this issue, I make heavy use of \lstinline{where(Var, Args, Body).} predicates. These "where" predicates are semantically identical to the Haskell equivalent, specifying replacement rules for the given variables in the scope of the rule. \\ \\%{
+%For example, in the program above, instead of one rule
+%\begin{lstlisting}
+%rule(2, f, N, mul(N, call(f, sub(N, 1)))).
+%\end{lstlisting}
+%We instead use
+%\lstinputlisting[language=Prolog, firstline=12, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
+%nesting each operation in its own clause.
 
 \section{Evaluating Rules}
 
-The goal of my interpreter is to be able to evaluate these rules with some given input, to get the correct output.
-
 \subsubsection{Internal Predicates}
-As part of the interpreter, I have declared a number of my own predicates, some of which it may not be clear what they represent. As such, this section details them in a succinct manner.
+As part of the interpreter, I have declared a number of predicates used to represent various states of expression value throughout execution. 
  
-\begin{itemize}
-\item \lstinline{input(Expr)} and \lstinline{output(Expr, Val)} : These predicates represent input and output to the learned function. If a function has some input Expr, then it is expected that there is an output predicate with a matching Expr.
-\item \lstinline{match(F, Index, Inputs)} : This predicate represents which function inputs match a respective line in the program. It may be helpful to think of this predicate as a concrete way of stating pattern matching behaviour. Since I am trying to learn Haskell programs, I need some way to match cases, either one of the base cases or the recursive case.
-\item \lstinline{match_guard(F, Index, Inputs)} : This predicate is functionally similar to a guard expression is Haskell. Semantically, it represents the case in which the rule with the same Index matches, in comparison to the first \lstinline{match} predicate being general over all rules.
-\item \lstinline{value(Expr, Val)} : This predicate represents the value of a given simple expression, i.e \lstinline{sub(3, 1)} has value 2.
-\item \lstinline{value_with(Expr, Val, Args)} : This predicate represents the value of an expression, given input arguments. The extra argument is necessary due to the inclusion of "where" predicates. As the expression "x1" could have multiple values throughout execution, I have to keep track of the value at each step of execution.
-\item \lstinline{eval_with(Expr, Args)} : This predicate is used to represent which expressions we want to find the value of, because we do not want to find the value of every possible expression, only expressions we care about. As with \lstinline{value_with}, the extra argument is necessary as the values of "where" clauses could change throughout execution. 
-\item \lstinline{complex(Expr)} and \lstinline{n_complex(Expr)} : A predicate is "complex" if it references a "where" variable. This predicate is used to determine if the \lstinline{value_with} or \lstinline{value} predicate should be used.
-\item \lstinline{check_if_complex(Expr)} : Similarly to \lstinline{eval_with}, because we don't want to check if every possible expression is complex, just ones we care about.
-\end{itemize}
+\begin{center}
+\begin{tabular}{| c | m{0.6\linewidth} |}
+\hline
+\textbf{ASP Term} & \textbf{Semantics} \\
+\hline
+\lstinline!rule(Index, F, Args, Expr).! 
+&
+\mbox{}\newline
+A recursive case in the executed function. \newline
+\lstinline!Index! represents which line number of the function where the case appears, used for identification.\newline
+\lstinline!F! is the name of the function the case belongs to. \newline
+\lstinline!Args! are the arguments of the function.\newline
+\lstinline!Expr! is the expression that is evaluated when this recursive case is reached.\newline
+\\
+\hline
+\lstinline!match_guard(F, Index, Inputs)! 
+&
+\mbox{}\newline
+A guard statements, which shows what function inputs match a rule. The conditional is defined as the body of the rule, with the \lstinline!otherwise! case being represented by having no conditional. \newline
+\lstinline!F! is the name of the function that matches. \newline
+\lstinline!Index! represents which recursive case in the named function this term matches with. \newline
+\lstinline!Inputs! represents what inputs match the respective case.\newline
+\\
+\hline
+\lstinline!match(F, Index, Inputs)! 
+&
+\mbox{}\newline
+Represents which function inputs match a respective line in the function. This is distinct from the \lstinline!match_guard! predicate as this predicate considers all possible matches and returns the correct one. \newline
+\lstinline!F! is the name of the function that matches. \newline
+\lstinline!Index! represents which recursive case in the named function this term matches with. \newline
+\lstinline!Inputs! represents what inputs match the respective case.\newline
+\\
+\hline
+\lstinline!input(call(F, Args))!
+&
+\mbox{}\newline
+The input to the interpreter. \lstinline!call(F, Args)! is an expression representing a call to the function to be ran, with some arguments. \newline
+\\
+\hline
+\lstinline!output(call(F, Args), Val)! 
+& 
+\mbox{}\newline
+The output of the interpreter. \lstinline!call(F, Args)! is the input function call, and \lstinline!Val! is the value returned after that function has been executed. \newline
+\\
+\hline
+\lstinline!eval(Expr)! 
+& 
+\mbox{}\newline
+An expression to be evaluated. To avoid evaluating every possible expression, these terms are generated by the interpreter each time the value of an expression is needed. \newline
+\lstinline!Expr! represents the arbitrary expression to be evaluated. \newline 
+\\
+\hline
+\lstinline!value(Expr, Val)! 
+& 
+\mbox{}\newline
+The value of an expression. After an expression is selected to be evaluated, its value is represented with this predicate.\newline 
+\\
+\hline
+\end{tabular}
+\end{center}
+ 
+%\begin{itemize}
+%\item \lstinline{input(Expr)} and \lstinline{output(Expr, Val)} : These predicates represent input and output to the learned function. If a function has some input Expr, then it is expected that there is an output predicate with a matching Expr.
+%\item \lstinline{match(F, Index, Inputs)} : This predicate represents which function inputs match a respective line in the program. It may be helpful to think of this predicate as a concrete way of stating pattern matching behaviour. Since I am trying to learn Haskell programs, I need some way to match cases, either one of the base cases or the recursive case.
+%\item \lstinline{match_guard(F, Index, Inputs)} : This predicate is functionally similar to a guard expression is Haskell. Semantically, it represents the case in which the rule with the same Index matches, in comparison to the first \lstinline{match} predicate being general over all rules.
+%\item \lstinline{value(Expr, Val)} : This predicate represents the value of a given simple expression, i.e \lstinline{sub(3, 1)} has value 2.
+%\item \lstinline{value_with(Expr, Val, Args)} : This predicate represents the value of an expression, given input arguments. The extra argument is necessary due to the inclusion of "where" predicates. As the expression "x1" could have multiple values throughout execution, I have to keep track of the value at each step of execution.
+%\item \lstinline{eval_with(Expr, Args)} : This predicate is used to represent which expressions we want to find the value of, because we do not want to find the value of every possible expression, only expressions we care about. As with \lstinline{value_with}, the extra argument is necessary as the values of "where" clauses could change throughout execution. 
+%\item \lstinline{complex(Expr)} and \lstinline{n_complex(Expr)} : A predicate is "complex" if it references a "where" variable. This predicate is used to determine if the \lstinline{value_with} or \lstinline{value} predicate should be used.
+%\item \lstinline{check_if_complex(Expr)} : Similarly to \lstinline{eval_with}, because we don't want to check if every possible expression is complex, just ones we care about.
+%\end{itemize}
 
 %\end{lstlisting}
 
 \subsubsection{Computation Rules}
 To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. \\ \\
-To start, I needed a rule to calculate the output, given inputs and a rule to follow. \\
+To start, a rule is needed to calculate the output, given inputs and a rule to follow. \\
 
-\begin{lstlisting}
-output(call(F, Args), Out) :- 
-    	rule(Index, F, Args, Expr), 
-    	match(F, Index, Args), 
-    	value_with(Expr, Out, Args).
+\begin{lstlisting}[caption={Output generation}, label={lst:simple_out}, firstnumber=55]
+output(call(F, Args), Out) :- (*@\Suppressnumber@*)
+		match(F, Index, Args), 
+		rule(Index, F, Args, Expr), 
+		value(Expr, Out).(*@\Reactivatenumber@*)	
 \end{lstlisting}
 \mbox{} \\
-This rule generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
+\ref{lst:simple_out} generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
 
-\begin{lstlisting}
-input(call(F, Inputs)) :- 
-		eval_with(call(F, Args_new), Args_old), 
-		value_with(Args_new, Inputs, Args_old).
-\end{lstlisting}
-\mbox{} \\
-This rule represents generation of more input predicates. If you have to evaluate a function call, and the arguments have value \lstinline{Inputs}, then you take the function call argument \lstinline{Inputs} as additional function input. \\
-
-\begin{lstlisting}
-match(F, Index, Inputs) :- 
+\begin{lstlisting}[caption={Match rules}, label={lst:simple_match}, firstnumber=123]
+match(F, Index, Inputs) :- (*@\Suppressnumber@*)
 		not smaller_match(F, Index, Inputs), 
 		rule(Index, F, Inputs, _), 
 		match_guard(F, Index, Inputs).
-		
+(*@\Reactivatenumber@*)	
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
 \end{lstlisting}
 \mbox{} \\
-These rules handle choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it. \\
+\ref{lst:simple_match} handles choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it. \\
+
+\begin{lstlisting}[caption={Eval introduction}, label={lst:simple_eval_init}, firstnumber=75]
+eval(Expr) :- (*@\Suppressnumber@*)
+	input(call(F, Input)), 
+	rule(Index, F, Input, Expr), 
+	match(F, Index, Input).(*@\Reactivatenumber@*)	
+\end{lstlisting}
+\mbox{}\\
+\ref{lst:simple_eval_init} introduces \lstinline!eval! terms. If there is a call to a function as input, then evaluate the rule body which matches the arguments to the call. \\
+
+\begin{lstlisting}[caption={Eval propagation}, label={lst:simple_eval}, firstnumber=77]
+eval(Expr) :- eval(call(F, Expr)).
+eval(A) :- eval(mul(A, B)).
+eval(B) :- eval(mul(A, B)).
+eval(A) :- eval(sub(A, B)).
+eval(B) :- eval(sub(A, B)).
+eval(A) :- eval(add(A, B)).
+eval(B) :- eval(add(A, B)).
+\end{lstlisting}
+\mbox{}\\
+In \ref{lst:simple_eval}, more \lstinline!eval! terms are generated. If a function call is to be evaluated, then its arguments should also be evaluated, and if an arithmetic expression is to be evaluated then both of its sub-expressions should be evaluated. \\ 
+
+\begin{lstlisting}[caption={Value generation for arithmetic}, label={lst:simple_value_math}, firstnumber=69]
+value(mul(A, B), V1 * V2) :- eval(mul(A, B)), value(A, V1), value(B, V2).
+value(sub(A, B), V1 - V2) :- eval(sub(A, B)), value(A, V1), value(B, V2).
+value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2).
+\end{lstlisting}
+\mbox{}\\
+\ref{lst:simple_value_math} details generating the values of arithmetic expressions. If both sub expressions have values \lstinline!V1! and \lstinline!V2! respectively, then the value of the overall expression is these values applied to the arithmetic expression. \\
+
+\begin{lstlisting}[caption={Value generation for function calls}, label={lst:simple_value_fn}, firstnumber=72]
+value(call(F, Expr), Out) :- (*@\Suppressnumber@*)
+		eval(call(F, Expr)), 
+		output(call(F, Input), Out), 
+		value(Expr, Input).(*@\Reactivatenumber@*)	
+value(N, N) :- eval(N).
+\end{lstlisting}
+\mbox{}\\
+\ref{lst:simple_value_fn} describes value generation for function calls. If a function call has some output, then the value of that function call is that output. This rule works together with \ref{lst:simple_input}, which generates new \lstinline!input! terms, which then in turn generate new \lstinline!output! terms\\
+
+\begin{lstlisting}[caption={Input generation}, label={lst:simple_input}, firstnumber=121]
+input(call(F, Inputs)) :- eval(call(F, Args_new)), value(Args_new, Inputs).
+\end{lstlisting}
+\mbox{} \\
+\ref{lst:simple_input} represents generation of more input predicates. If you have to evaluate a function call, and the arguments have value \lstinline!Inputs!, then you take the function call argument \lstinline!Inputs! as additional function input. This rule semantically represents calling the interpreter with a new input.
+
+\subsection{Solutions}
+The output from the interpreter is a subset of the Answer Set generated when ran with the ASP solver, \textit{clingo}. Although this Answer Set contains all the ground atoms generated throughout execution, the subset which represents the interpreter output contains only \lstinline!output! atoms. One \lstinline!output! atom is generated each time a function is called, for example when the factorial program is ran with initial input \lstinline!input(call(factorial, 3))!, the solution contains the atoms \\
 
 \begin{lstlisting}
-value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- 
+output(call(f, 0), 1)
+output(call(f, 1), 1) 
+output(call(f, 2), 2) 
+output(call(f, 3), 6)
+\end{lstlisting}
+\mbox{}\\
+The overall solution is the atom corresponding to the \lstinline!input!, \lstinline!output(call(f, 3), 6).!
+
+\subsection{Handling Multiple Arguments}
+The interpreter detailed until now only handles single argument functions. Because of the need to evaluate function arguments before evaluating the function call, the interpreter needs some way to evaluate all arguments within the same step. \\ \\
+This is solved through the introduction of tuples. More than one program argument is represented as a nested tuple. For example, a function \lstinline!f! with four arguments has form \lstinline!call(f, (A, (B, (C, D))))!. Then, rules to handle evaluation and values of tuples are added. 
+
+\begin{lstlisting}[caption={Tuple rules}, label={lst:tuple_rule}, firstnumber=78]
+eval(A) :- eval((A, B)).
+eval(B) :- eval((A, B)).
+
+value((A, B), (V1, V2)) :- eval((A, B)), value(A, V1), value(B, V2).
+\end{lstlisting}
+\mbox{}\\
+\ref{lst:tuple_rule} details tuple handling. The eval rules propagate, so when evaluating a tuple you evaluate both halves of the tuple. The value rule states that if you have to evaluate a tuple, then the value of that is a tuple containing the values of both halves of the tuple.
+
+\subsection{Where Rules}
+One major optimisation I have implemented is the usage of \lstinline!where! rules. The \lstinline!where! statement in Haskell allows for a variable to be substituted by a defined expression, and in my ASP implementation the semantics are the same. For instance, the factorial program defined in Haskell traditionally as \\
+
+\begin{lstlisting}
+factorial x :: Int -> Int
+factorial x 
+	| x == 0 = 1
+	| otherwise = x * f (x - 1)
+\end{lstlisting}
+\mbox{}\\
+Can be alternatively defined as \\
+
+\begin{lstlisting}
+factorial x :: Int -> Int
+factorial x 
+	| x == 0 = 1
+	| otherwise = x * x1
+	where x1 = f x2
+		where x2 = x - 1
+\end{lstlisting}
+\mbox{}\\
+Similarly, these where rules can be encoded as ASP terms in the following way, while \lstinline!match_guard! rules stay the same.\\
+
+\begin{lstlisting}
+rule(1, f, 0, 1).
+rule(2, f, N, mul(N, x1)).
+
+where(x1, N, call(f, x2)).
+where(x2, N, sub(N, 1)).
+\end{lstlisting}
+\mbox{}\\
+To handle these new terms, the existing rules have to be modified. If this were to be implemented naively, then the value of a where variable would be defined using the rule \\
+
+\begin{lstlisting}
+value_with(X, Val) :- 
+		eval_with(X), 
+		where(X, Args,  Expr), 
+		value_with(Expr, Val).
+\end{lstlisting}
+\mbox{}\\
+However, the problem with this is that the state of the \lstinline!Args! variable is not known. If the same where variable needs to be evaluated multiple times throughout execution (i.e. through recursive calls), then multiple \lstinline!value! terms appear for the same where variable. For the program above, the returned Answer Set would contain the atoms \\
+
+\begin{lstlisting}
+value_with(x1, 2)
+value_with(x1, 1)
+value_with(x2, 2)
+value_with(x2, 1)
+\end{lstlisting}
+\mbox{}\\
+To handle this, I introduce new predicates which keep track of input arguments.
+
+\begin{center}
+\begin{tabular}{| c | m{0.6\linewidth} |}
+\hline
+\textbf{ASP Term} & \textbf{Semantics} \\
+\hline
+\lstinline!value_with(Expr, Val, Args)! 
+&
+\mbox{}\newline
+Expression value with respect to some \lstinline!Args!. \newline
+\\
+\hline
+\lstinline!eval_with(Expr, Args)! 
+&
+\mbox{}\newline
+Selects \lstinline!Expr! to be evaluated with respect to some \lstinline!Args!. \newline
+\\
+\hline
+\end{tabular}
+\end{center}
+\mbox{}\\
+These new predicates are then used to replace the existing \lstinline!value! and \lstinline!eval! predicates and their corresponding rules. For example, to calculate the value of a multiplication statement, the following rule is added.
+
+\begin{lstlisting}[caption={Second attempt at multiplication}, label={lst:comp_mult}, firstnumber=57]
+value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- (*@\Suppressnumber@*)
 		eval_with(mul(A, B), Args), 
 		value_with(A, V1, Args), 
 		value_with(B, V2, Args), 
-		const_number(@to_num(V1)*@to_num(V2)).
-		
-value_with(sub(A, B), @to_num(V1) - @to_num(V2), Args) :- 
-		eval_with(sub(A, B), Args), 
-		value_with(A, V1, Args), 
-		value_with(B, V2, Args), 
-		const_number(@to_num(V1)-@to_num(V2)).
-		
-value_with(add(A, B), @to_num(V1) + @to_num(V2), Args) :- 
-		eval_with(add(A, B), Args), 
-		value_with(A, V1, Args), 
-		value_with(B, V2, Args), 
-		const_number(@to_num(V1)+@to_num(V2)).
+		const_number(@to_num(V1)*@to_num(V2)).(*@\Reactivatenumber@*)
 \end{lstlisting}
 \mbox{} \\
-These rules handle calculating the value of arithmetic expressions. Note the use of a lua function \lstinline{@to_num()}, as a bug workaround. \\%{
+Similar rules exist for addition and subtraction. Note the use of a lua function \lstinline!@to_num()!, as a bug workaround. This bug throws an error if any in-built arithmetic operations are called without integer operations, and although all values should be integers at this point, an error still occurs. \\ \\
+Now I can re-define how to evaluate and calculate the value of a \lstinline!where! variable. \\
 
-\begin{lstlisting}
-value_with(call(F, Args_new), Out, Args_old) :- 
-		eval_with(call(F, Args_new), Args_old), 
-		output(call(F, Inputs), Out), 
-		value_with(Args_new, Inputs, Args_old).
+\begin{lstlisting}[caption={Handling where evaluation}, label={lst:comp_where_eval}, firstnumber=76]
+eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
 \end{lstlisting}
 \mbox{} \\
-This rule handles the value of a function call. Given some argument expressions, they have a computed value, which is then used to call the function and is returned as the output. \\
-
-\begin{lstlisting}
-value_with((A, B), (V1, V2), Args) :- 
-		eval_with((A, B), Args), 
-		value_with(A, V1, Args), 
-		value_with(B, V2, Args).
-\end{lstlisting}
-\mbox{} \\
-This rule deals with paired expressions. If you have two or more expressions to evaluate at the same time, (when dealing with multiple-argument functions, for example), it calculates the value of both and returns the paired result. \\
-
-\begin{lstlisting}
-value_with(X, V, Args) :- 
+\ref{lst:comp_where_eval} states that if you have to evaluate a \lstinline!where! variable then you evaluate the corresponding \lstinline!Expr!. \\
+ 
+\begin{lstlisting}[caption={Handling where values}, label={lst:comp_where_val}, firstnumber=64]
+value_with(X, V, Args) :- (*@\Suppressnumber@*)
 		eval_with(X, Args), 
 		where(X, Args, Expr), 
-		value_with(Expr, V, Args).
+		value_with(Expr, V, Args).(*@\Reactivatenumber@*)
 \end{lstlisting}
 \mbox{} \\
-This rule handles the value of "where" expressions. If you have defined a where variable to define an expression, and that expression has a value, then the "where" variable also has that value.\\
+\ref{lst:comp_where_val} handles values. A \lstinline!where! variable has the value \lstinline!Val! if a corresponding \lstinline!where! rule exists with respect to arguments called. \\
 
-\begin{lstlisting}
-value_with(X, V, Args) :- eval_with(X, Args), value(X, V).
-value_with(N, N, Args) :- eval_with(N, Args), const(N).
-value_with(N, N, Args) :- const_number(N), input(call(F, Args)).
-\end{lstlisting}
-\mbox{} \\
-These rules handle simple values. They mainly exist for correctness, so that a simple "value" can be used to calculate outputs. \\
-
-\begin{lstlisting}
-value(mul(A, B), @to_num(V1) * @to_num(V2)) :- 
-		const_number(V1), 
-		const_number(V2), 
-		n_complex(mul(A, B)), 
-		value(A, V1), 
-		value(B, V2), 
-		const_number(@to_num(V1)*@to_num(V2)).
-		
-value(sub(A, B), @to_num(V1) - @to_num(V2)) :- 
-		const_number(V1), 
-		const_number(V2), 
-		n_complex(sub(A, B)), 
-		value(A, V1), 
-		value(B, V2), 
-		const_number(@to_num(V1)-@to_num(V2)).
-		
-value(add(A, B), @to_num(V1) + @to_num(V2)) :- 
-		const_number(V1), 
-		const_number(V2), 
-		n_complex(add(A, B)), 
-		value(A, V1), 
-		value(B, V2), 
-		const_number(@to_num(V1)+@to_num(V2)).
-		
-value((A, B), (V1, V2)) :- n_complex((A, B)), value(A, V1), value(B, V2).
-
-value(N, N) :- n_complex(N), const_number(N).
-\end{lstlisting}
-\mbox{} \\
-These rules represent calculating values for non complex expressions. They work similarly to the \lstinline{value_with} predicate described above.\\ %{
-
-\begin{lstlisting}
-eval_with(Expr, Inputs) :- 
-		input(call(F, Inputs)), 
-		rule(Index, F, Inputs, Expr), 
-		match(F, Index, Inputs).
-\end{lstlisting}
-\mbox{} \\
-This rule handles initialisation of the \lstinline{eval_with} predicate. Semantically, if there is there an input to a matching rule, then you evaluate the body of that rule. \\ %{
-
-\begin{lstlisting}
-eval_with(A, Args) :- complex(A), eval_with(mul(A, B), Args).
-eval_with(B, Args) :- complex(B), eval_with(mul(A, B), Args).
-eval_with(A, Args) :- complex(A), eval_with(sub(A, B), Args).
-eval_with(B, Args) :- complex(B), eval_with(sub(A, B), Args).
-eval_with(A, Args) :- complex(A), eval_with(add(A, B), Args).
-eval_with(B, Args) :- complex(B), eval_with(add(A, B), Args).
-\end{lstlisting}
-\mbox{} \\
-These rules define rule propagation of the \lstinline{eval_with} predicate. If you are evaluating an arithmetic rule, then you have also have to evaluate all complex sub-expressions. \\ %{
-
-\begin{lstlisting}
-eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
-eval_with(Args_new, Args_old) :- 
-		complex(Args_new), 
-		eval_with(call(F, Args_new), Args_old).
-
-eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
-eval_with(B, Args) :- complex(B), eval_with((A, B), Args).
-\end{lstlisting}
-\mbox{} \\
-Similarly, these rules define \lstinline{eval_with} propagation for more complicated expressions. If you call a function, or have more than one expression together than you evaluate all complex sub-expressions \\ %{
+\subsection{Complex and Non-Complex Expressions}
 
 \begin{lstlisting}
 check_if_complex(Expr) :- eval_with(Expr, _).

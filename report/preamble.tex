@@ -20,9 +20,9 @@
 \usepackage[intoc]{nomencl}
 \usepackage{color}
 \input{ImpStyle.sty}
-%\includeonly{CA1/chapterA1}
 \usepackage{keystroke}
 \usepackage{xcolor}
+\definecolor{mygrey}{rgb}{0.9,0.9,0.9}
 \usepackage{listings}
 \lstset{
   basicstyle=\ttfamily,  %basicstyle=\footnotesize,
@@ -33,8 +33,28 @@
   language=Prolog,
   showstringspaces=false,
   breakatwhitespace=true,
-  escapeinside={(*@}{@*)}
+  escapeinside={(*@}{@*)},
+  numbers=left,
+  backgroundcolor=\color{mygrey}
 }
+\let\origthelstnumber\thelstnumber
+\makeatletter
+\newcommand*\Suppressnumber{%
+  \lst@AddToHook{OnNewLine}{%
+    \let\thelstnumber\relax%
+     \advance\c@lstnumber-\@ne\relax%
+    }%
+}
+
+\newcommand*\Reactivatenumber{%
+  \lst@AddToHook{OnNewLine}{%
+   \let\thelstnumber\origthelstnumber%
+   \advance\c@lstnumber\@ne\relax}%
+}
+
+
+\makeatother
+
 \usepackage{setspace}
 \usepackage{amsmath}
 \usepackage{upgreek}
@@ -46,8 +66,7 @@
 \floatstyle{plaintop}
 \restylefloat{table}
 \usepackage[version=3]{mhchem}
-\usepackage[sectionbib]{chapterbib}
-\bibliographystyle{plain}
+%\usepackage[sectionbib]{chapterbib}
 %\usepackage{bibentry}
 %\usepackage{biblatex}
 %\usepackage{navigator}

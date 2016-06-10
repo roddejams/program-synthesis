@@ -1,5 +1,4 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: Thesis.aux
-The style file: plain.bst
 A level-1 auxiliary file: C0/Abstract.aux
 A level-1 auxiliary file: C0/Acknowledgements.aux
 A level-1 auxiliary file: C1/chapter1.aux
@@ -11,9 +10,5 @@ A level-1 auxiliary file: C5/chapter5.aux
 A level-1 auxiliary file: C6/chapter6.aux
 A level-1 auxiliary file: C7/chapter7.aux
 A level-1 auxiliary file: CA1/chapterA1.aux
-Illegal, another \bibdata command---line 57 of file Thesis.aux
- : \bibdata
- :         {References}
-I'm skipping whatever remains of this command
+The style file: plain.bst
 Database file #1: References.bib
-(There was 1 error message)
