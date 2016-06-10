@@ -1,9 +1,22 @@
 \chapter{Learning from Examples}
 
-This chapter will detail how I use the interpreter discussed in chapter 3 to perform learning. The tool enumerates all possible rules, then chooses the ones which cover all of the examples.
+This chapter details how we extend the interpreter discussed in chapter 3 to perform learning. The tool enumerates all possible rules, then chooses a subset which correctly evaluates all of the examples.
+
+\section{The Learning Task}
+Formally, the learning task described in this section is defined as : \\ \\
+Given a set of skeleton rules which describe all potential learned programs, and a set of examples in the form of Input / Output pairs, the Learning Task returns a subset of the skeleton rules which covers all examples. \\ \\
+An example is covered by some rules if, when the inputs of that example are ran by the interpreter, it returns the same result specified by the example.
 
 \section{Additional Rules}
-Together with my interpreter, I need the following addition predicates and rules :
+Together with my interpreter, the following addition predicates and rules are needed.
+\begin{center}
+\begin{tabular}{| c | m{0.6\linewidth} |}
+\hline
+\textbf{ASP Term} & \textbf{Semantics} \\
+\hline
+\end{tabular}
+\end{center}
+
 \begin{itemize}
 \item \lstinline{example(Input, Output)} : This predicate represents an Input / Output pair.
 \item \lstinline{choose(R, N)} and \lstinline{choose_where(N)} : These predicates represent the choice of a rule, with depth R, that covers all of the examples.

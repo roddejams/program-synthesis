@@ -28,68 +28,70 @@
 \BOOKMARK [1][-]{section.3.3}{A Worked Example : Greatest Common Divisor}{chapter.3}% 28
 \BOOKMARK [2][-]{subsection.3.3.1}{A Simple Input}{section.3.3}% 29
 \BOOKMARK [2][-]{subsection.3.3.2}{A More Complex Example}{section.3.3}% 30
-\BOOKMARK [0][-]{chapter.4}{Learning from Examples}{}% 31
-\BOOKMARK [1][-]{section.4.1}{Additional Rules}{chapter.4}% 32
-\BOOKMARK [1][-]{section.4.2}{Skeleton Rules}{chapter.4}% 33
-\BOOKMARK [2][-]{subsection.4.2.1}{Generating Skeleton Rules}{section.4.2}% 34
-\BOOKMARK [2][-]{subsection.4.2.2}{Choice Rules}{section.4.2}% 35
-\BOOKMARK [2][-]{subsection.4.2.3}{Rule combinations}{section.4.2}% 36
-\BOOKMARK [2][-]{subsection.4.2.4}{Learning Match Rules}{section.4.2}% 37
-\BOOKMARK [1][-]{section.4.3}{Multiple Solutions and Optimisation}{chapter.4}% 38
-\BOOKMARK [1][-]{section.4.4}{A Worked Example : Learning GCD}{chapter.4}% 39
-\BOOKMARK [1][-]{section.4.5}{Performance Issues}{chapter.4}% 40
-\BOOKMARK [2][-]{subsection.4.5.1}{Potential Optimisations}{section.4.5}% 41
-\BOOKMARK [0][-]{chapter.5}{A Second Approach : Constraint Based Learning}{}% 42
-\BOOKMARK [1][-]{section.5.1}{Top Down Vs. Bottom Up}{chapter.5}% 43
-\BOOKMARK [2][-]{subsection.5.1.1}{Dealing with termination}{section.5.1}% 44
-\BOOKMARK [1][-]{section.5.2}{ASP Representation}{chapter.5}% 45
-\BOOKMARK [1][-]{section.5.3}{Learning}{chapter.5}% 46
-\BOOKMARK [2][-]{subsection.5.3.1}{Using inbuilt arithmetic}{section.5.3}% 47
-\BOOKMARK [1][-]{section.5.4}{A Worked Example : Greatest common divisor}{chapter.5}% 48
-\BOOKMARK [1][-]{section.5.5}{Performance}{chapter.5}% 49
-\BOOKMARK [2][-]{subsection.5.5.1}{Reducing the language bias}{section.5.5}% 50
-\BOOKMARK [0][-]{chapter.6}{Front end implementation : Building a working UI}{}% 51
-\BOOKMARK [1][-]{section.6.1}{User's Manual}{chapter.6}% 52
-\BOOKMARK [2][-]{subsection.6.1.1}{Entering examples}{section.6.1}% 53
-\BOOKMARK [2][-]{subsection.6.1.2}{The Learning Step}{section.6.1}% 54
-\BOOKMARK [2][-]{subsection.6.1.3}{Example autocompletion}{section.6.1}% 55
-\BOOKMARK [2][-]{subsection.6.1.4}{Combining functions}{section.6.1}% 56
-\BOOKMARK [2][-]{subsection.6.1.5}{Restricting the Language Bias}{section.6.1}% 57
-\BOOKMARK [2][-]{subsection.6.1.6}{Handling errors}{section.6.1}% 58
-\BOOKMARK [1][-]{section.6.2}{The Design Process}{chapter.6}% 59
-\BOOKMARK [1][-]{section.6.3}{Writing the Backend}{chapter.6}% 60
-\BOOKMARK [1][-]{section.6.4}{Technologies Used}{chapter.6}% 61
-\BOOKMARK [2][-]{subsection.6.4.1}{Play Framework and Akka}{section.6.4}% 62
-\BOOKMARK [2][-]{subsection.6.4.2}{Bootstrap}{section.6.4}% 63
-\BOOKMARK [1][-]{section.6.5}{User Feedback and Evaluation}{chapter.6}% 64
-\BOOKMARK [0][-]{chapter.7}{Critical Evaluation}{}% 65
-\BOOKMARK [1][-]{section.7.1}{Generated Code}{chapter.7}% 66
-\BOOKMARK [2][-]{subsection.7.1.1}{Factorial}{section.7.1}% 67
-\BOOKMARK [2][-]{subsection.7.1.2}{Fibonacci}{section.7.1}% 68
-\BOOKMARK [2][-]{subsection.7.1.3}{Powers of 2}{section.7.1}% 69
-\BOOKMARK [2][-]{subsection.7.1.4}{Tail Recursive Factorial}{section.7.1}% 70
-\BOOKMARK [2][-]{subsection.7.1.5}{Greatest Common Divisor}{section.7.1}% 71
-\BOOKMARK [1][-]{section.7.2}{Performance Statistics}{chapter.7}% 72
-\BOOKMARK [1][-]{section.7.3}{Comparison to Existing Tools}{chapter.7}% 73
-\BOOKMARK [2][-]{subsection.7.3.1}{MagicHaskeller}{section.7.3}% 74
-\BOOKMARK [2][-]{subsection.7.3.2}{Igor II}{section.7.3}% 75
-\BOOKMARK [0][-]{chapter.8}{Conclusions and Future Work}{}% 76
-\BOOKMARK [1][-]{section.8.1}{Conclusions}{chapter.8}% 77
-\BOOKMARK [2][-]{subsection.8.1.1}{Learning}{section.8.1}% 78
-\BOOKMARK [2][-]{subsection.8.1.2}{UI}{section.8.1}% 79
-\BOOKMARK [1][-]{section.8.2}{Future Work}{chapter.8}% 80
-\BOOKMARK [2][-]{subsection.8.2.1}{Type Usage}{section.8.2}% 81
-\BOOKMARK [2][-]{subsection.8.2.2}{Lists and Strings}{section.8.2}% 82
-\BOOKMARK [2][-]{subsection.8.2.3}{Expanding the Background Knowledge}{section.8.2}% 83
-\BOOKMARK [2][-]{subsection.8.2.4}{Advanced Skeleton Rule Generation}{section.8.2}% 84
-\BOOKMARK [2][-]{subsection.8.2.5}{Supporting Multiple Function Calls}{section.8.2}% 85
-\BOOKMARK [2][-]{subsection.8.2.6}{Advanced Optimisation}{section.8.2}% 86
-\BOOKMARK [2][-]{subsection.8.2.7}{Parallel Learning}{section.8.2}% 87
-\BOOKMARK [0][-]{appendix.A}{Full Experimental Results}{}% 88
-\BOOKMARK [1][-]{section.A.1}{One Argument Programs}{appendix.A}% 89
-\BOOKMARK [2][-]{subsection.A.1.1}{Factorial}{section.A.1}% 90
-\BOOKMARK [2][-]{subsection.A.1.2}{Fibonacci}{section.A.1}% 91
-\BOOKMARK [2][-]{subsection.A.1.3}{Powers of 2}{section.A.1}% 92
-\BOOKMARK [1][-]{section.A.2}{Two Argument Programs}{appendix.A}% 93
-\BOOKMARK [2][-]{subsection.A.2.1}{Tail Recursive Factorial}{section.A.2}% 94
-\BOOKMARK [2][-]{subsection.A.2.2}{Greatest Common Divisor}{section.A.2}% 95
+\BOOKMARK [1][-]{section.3.4}{Full code listing}{chapter.3}% 31
+\BOOKMARK [0][-]{chapter.4}{Learning from Examples}{}% 32
+\BOOKMARK [1][-]{section.4.1}{The Learning Task}{chapter.4}% 33
+\BOOKMARK [1][-]{section.4.2}{Additional Rules}{chapter.4}% 34
+\BOOKMARK [1][-]{section.4.3}{Skeleton Rules}{chapter.4}% 35
+\BOOKMARK [2][-]{subsection.4.3.1}{Generating Skeleton Rules}{section.4.3}% 36
+\BOOKMARK [2][-]{subsection.4.3.2}{Choice Rules}{section.4.3}% 37
+\BOOKMARK [2][-]{subsection.4.3.3}{Rule combinations}{section.4.3}% 38
+\BOOKMARK [2][-]{subsection.4.3.4}{Learning Match Rules}{section.4.3}% 39
+\BOOKMARK [1][-]{section.4.4}{Multiple Solutions and Optimisation}{chapter.4}% 40
+\BOOKMARK [1][-]{section.4.5}{A Worked Example : Learning GCD}{chapter.4}% 41
+\BOOKMARK [1][-]{section.4.6}{Performance Issues}{chapter.4}% 42
+\BOOKMARK [2][-]{subsection.4.6.1}{Potential Optimisations}{section.4.6}% 43
+\BOOKMARK [0][-]{chapter.5}{A Second Approach : Constraint Based Learning}{}% 44
+\BOOKMARK [1][-]{section.5.1}{Top Down Vs. Bottom Up}{chapter.5}% 45
+\BOOKMARK [2][-]{subsection.5.1.1}{Dealing with termination}{section.5.1}% 46
+\BOOKMARK [1][-]{section.5.2}{ASP Representation}{chapter.5}% 47
+\BOOKMARK [1][-]{section.5.3}{Learning}{chapter.5}% 48
+\BOOKMARK [2][-]{subsection.5.3.1}{Using inbuilt arithmetic}{section.5.3}% 49
+\BOOKMARK [1][-]{section.5.4}{A Worked Example : Greatest common divisor}{chapter.5}% 50
+\BOOKMARK [1][-]{section.5.5}{Performance}{chapter.5}% 51
+\BOOKMARK [2][-]{subsection.5.5.1}{Reducing the language bias}{section.5.5}% 52
+\BOOKMARK [0][-]{chapter.6}{Front end implementation : Building a working UI}{}% 53
+\BOOKMARK [1][-]{section.6.1}{User's Manual}{chapter.6}% 54
+\BOOKMARK [2][-]{subsection.6.1.1}{Entering examples}{section.6.1}% 55
+\BOOKMARK [2][-]{subsection.6.1.2}{The Learning Step}{section.6.1}% 56
+\BOOKMARK [2][-]{subsection.6.1.3}{Example autocompletion}{section.6.1}% 57
+\BOOKMARK [2][-]{subsection.6.1.4}{Combining functions}{section.6.1}% 58
+\BOOKMARK [2][-]{subsection.6.1.5}{Restricting the Language Bias}{section.6.1}% 59
+\BOOKMARK [2][-]{subsection.6.1.6}{Handling errors}{section.6.1}% 60
+\BOOKMARK [1][-]{section.6.2}{The Design Process}{chapter.6}% 61
+\BOOKMARK [1][-]{section.6.3}{Writing the Backend}{chapter.6}% 62
+\BOOKMARK [1][-]{section.6.4}{Technologies Used}{chapter.6}% 63
+\BOOKMARK [2][-]{subsection.6.4.1}{Play Framework and Akka}{section.6.4}% 64
+\BOOKMARK [2][-]{subsection.6.4.2}{Bootstrap}{section.6.4}% 65
+\BOOKMARK [1][-]{section.6.5}{User Feedback and Evaluation}{chapter.6}% 66
+\BOOKMARK [0][-]{chapter.7}{Critical Evaluation}{}% 67
+\BOOKMARK [1][-]{section.7.1}{Generated Code}{chapter.7}% 68
+\BOOKMARK [2][-]{subsection.7.1.1}{Factorial}{section.7.1}% 69
+\BOOKMARK [2][-]{subsection.7.1.2}{Fibonacci}{section.7.1}% 70
+\BOOKMARK [2][-]{subsection.7.1.3}{Powers of 2}{section.7.1}% 71
+\BOOKMARK [2][-]{subsection.7.1.4}{Tail Recursive Factorial}{section.7.1}% 72
+\BOOKMARK [2][-]{subsection.7.1.5}{Greatest Common Divisor}{section.7.1}% 73
+\BOOKMARK [1][-]{section.7.2}{Performance Statistics}{chapter.7}% 74
+\BOOKMARK [1][-]{section.7.3}{Comparison to Existing Tools}{chapter.7}% 75
+\BOOKMARK [2][-]{subsection.7.3.1}{MagicHaskeller}{section.7.3}% 76
+\BOOKMARK [2][-]{subsection.7.3.2}{Igor II}{section.7.3}% 77
+\BOOKMARK [0][-]{chapter.8}{Conclusions and Future Work}{}% 78
+\BOOKMARK [1][-]{section.8.1}{Conclusions}{chapter.8}% 79
+\BOOKMARK [2][-]{subsection.8.1.1}{Learning}{section.8.1}% 80
+\BOOKMARK [2][-]{subsection.8.1.2}{UI}{section.8.1}% 81
+\BOOKMARK [1][-]{section.8.2}{Future Work}{chapter.8}% 82
+\BOOKMARK [2][-]{subsection.8.2.1}{Type Usage}{section.8.2}% 83
+\BOOKMARK [2][-]{subsection.8.2.2}{Lists and Strings}{section.8.2}% 84
+\BOOKMARK [2][-]{subsection.8.2.3}{Expanding the Background Knowledge}{section.8.2}% 85
+\BOOKMARK [2][-]{subsection.8.2.4}{Advanced Skeleton Rule Generation}{section.8.2}% 86
+\BOOKMARK [2][-]{subsection.8.2.5}{Supporting Multiple Function Calls}{section.8.2}% 87
+\BOOKMARK [2][-]{subsection.8.2.6}{Advanced Optimisation}{section.8.2}% 88
+\BOOKMARK [2][-]{subsection.8.2.7}{Parallel Learning}{section.8.2}% 89
+\BOOKMARK [0][-]{appendix.A}{Full Experimental Results}{}% 90
+\BOOKMARK [1][-]{section.A.1}{One Argument Programs}{appendix.A}% 91
+\BOOKMARK [2][-]{subsection.A.1.1}{Factorial}{section.A.1}% 92
+\BOOKMARK [2][-]{subsection.A.1.2}{Fibonacci}{section.A.1}% 93
+\BOOKMARK [2][-]{subsection.A.1.3}{Powers of 2}{section.A.1}% 94
+\BOOKMARK [1][-]{section.A.2}{Two Argument Programs}{appendix.A}% 95
+\BOOKMARK [2][-]{subsection.A.2.1}{Tail Recursive Factorial}{section.A.2}% 96
+\BOOKMARK [2][-]{subsection.A.2.2}{Greatest Common Divisor}{section.A.2}% 97

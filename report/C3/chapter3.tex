@@ -56,16 +56,6 @@ match_guard(factorial, 2, Input).
 \mbox{}\\
 Each line (or recursive case) of the target Haskell program is represented by with a rule with a \lstinline!rule! term in the head, where the guard condition of each rule is represented by the corresponding \lstinline!match_guard! term.
 
-%Because of the vast algorithmic complexity of the combinations of arithmetic operations, I was struggling with performance issues. To sufficiently cover the possible program space, the required number of skeleton rules was overwhelming even for comparatively simple programs. \\ \\
-%As a solution to this issue, I make heavy use of \lstinline{where(Var, Args, Body).} predicates. These "where" predicates are semantically identical to the Haskell equivalent, specifying replacement rules for the given variables in the scope of the rule. \\ \\%{
-%For example, in the program above, instead of one rule
-%\begin{lstlisting}
-%rule(2, f, N, mul(N, call(f, sub(N, 1)))).
-%\end{lstlisting}
-%We instead use
-%\lstinputlisting[language=Prolog, firstline=12, lastline=16]{../ASP/examples/factorial_obs_with_where.lp}
-%nesting each operation in its own clause.
-
 \section{Evaluating Rules}
 
 \subsubsection{Internal Predicates}
@@ -132,48 +122,35 @@ The value of an expression. After an expression is selected to be evaluated, its
 \end{tabular}
 \end{center}
  
-%\begin{itemize}
-%\item \lstinline{input(Expr)} and \lstinline{output(Expr, Val)} : These predicates represent input and output to the learned function. If a function has some input Expr, then it is expected that there is an output predicate with a matching Expr.
-%\item \lstinline{match(F, Index, Inputs)} : This predicate represents which function inputs match a respective line in the program. It may be helpful to think of this predicate as a concrete way of stating pattern matching behaviour. Since I am trying to learn Haskell programs, I need some way to match cases, either one of the base cases or the recursive case.
-%\item \lstinline{match_guard(F, Index, Inputs)} : This predicate is functionally similar to a guard expression is Haskell. Semantically, it represents the case in which the rule with the same Index matches, in comparison to the first \lstinline{match} predicate being general over all rules.
-%\item \lstinline{value(Expr, Val)} : This predicate represents the value of a given simple expression, i.e \lstinline{sub(3, 1)} has value 2.
-%\item \lstinline{value_with(Expr, Val, Args)} : This predicate represents the value of an expression, given input arguments. The extra argument is necessary due to the inclusion of "where" predicates. As the expression "x1" could have multiple values throughout execution, I have to keep track of the value at each step of execution.
-%\item \lstinline{eval_with(Expr, Args)} : This predicate is used to represent which expressions we want to find the value of, because we do not want to find the value of every possible expression, only expressions we care about. As with \lstinline{value_with}, the extra argument is necessary as the values of "where" clauses could change throughout execution. 
-%\item \lstinline{complex(Expr)} and \lstinline{n_complex(Expr)} : A predicate is "complex" if it references a "where" variable. This predicate is used to determine if the \lstinline{value_with} or \lstinline{value} predicate should be used.
-%\item \lstinline{check_if_complex(Expr)} : Similarly to \lstinline{eval_with}, because we don't want to check if every possible expression is complex, just ones we care about.
-%\end{itemize}
-
-%\end{lstlisting}
-
 \subsubsection{Computation Rules}
-To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. \\ \\
+To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. A full listing is available in Section 3.4 and in the Appendix.\\ \\
 To start, a rule is needed to calculate the output, given inputs and a rule to follow. \\
 
 \begin{lstlisting}[caption={Output generation}, label={lst:simple_out}, firstnumber=55]
-output(call(F, Args), Out) :- (*@\Suppressnumber@*)
+output(call(F, Args), Out) :- 
 		match(F, Index, Args), 
 		rule(Index, F, Args, Expr), 
-		value(Expr, Out).(*@\Reactivatenumber@*)	
+		value(Expr, Out).	
 \end{lstlisting}
 \mbox{} \\
 \ref{lst:simple_out} generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
 
 \begin{lstlisting}[caption={Match rules}, label={lst:simple_match}, firstnumber=123]
-match(F, Index, Inputs) :- (*@\Suppressnumber@*)
+match(F, Index, Inputs) :- 
 		not smaller_match(F, Index, Inputs), 
 		rule(Index, F, Inputs, _), 
 		match_guard(F, Index, Inputs).
-(*@\Reactivatenumber@*)	
+	
 smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
 \end{lstlisting}
 \mbox{} \\
 \ref{lst:simple_match} handles choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it. \\
 
 \begin{lstlisting}[caption={Eval introduction}, label={lst:simple_eval_init}, firstnumber=75]
-eval(Expr) :- (*@\Suppressnumber@*)
+eval(Expr) :- 
 	input(call(F, Input)), 
 	rule(Index, F, Input, Expr), 
-	match(F, Index, Input).(*@\Reactivatenumber@*)	
+	match(F, Index, Input).	
 \end{lstlisting}
 \mbox{}\\
 \ref{lst:simple_eval_init} introduces \lstinline!eval! terms. If there is a call to a function as input, then evaluate the rule body which matches the arguments to the call. \\
@@ -199,10 +176,10 @@ value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2).
 \ref{lst:simple_value_math} details generating the values of arithmetic expressions. If both sub expressions have values \lstinline!V1! and \lstinline!V2! respectively, then the value of the overall expression is these values applied to the arithmetic expression. \\
 
 \begin{lstlisting}[caption={Value generation for function calls}, label={lst:simple_value_fn}, firstnumber=72]
-value(call(F, Expr), Out) :- (*@\Suppressnumber@*)
+value(call(F, Expr), Out) :- 
 		eval(call(F, Expr)), 
 		output(call(F, Input), Out), 
-		value(Expr, Input).(*@\Reactivatenumber@*)	
+		value(Expr, Input).	
 value(N, N) :- eval(N).
 \end{lstlisting}
 \mbox{}\\
@@ -313,11 +290,11 @@ Selects \lstinline!Expr! to be evaluated with respect to some \lstinline!Args!. 
 These new predicates are then used to replace the existing \lstinline!value! and \lstinline!eval! predicates and their corresponding rules. For example, to calculate the value of a multiplication statement, the following rule is added.
 
 \begin{lstlisting}[caption={Second attempt at multiplication}, label={lst:comp_mult}, firstnumber=57]
-value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- (*@\Suppressnumber@*)
+value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- 
 		eval_with(mul(A, B), Args), 
 		value_with(A, V1, Args), 
 		value_with(B, V2, Args), 
-		const_number(@to_num(V1)*@to_num(V2)).(*@\Reactivatenumber@*)
+		const_number(@to_num(V1)*@to_num(V2)).
 \end{lstlisting}
 \mbox{} \\
 Similar rules exist for addition and subtraction. Note the use of a lua function \lstinline!@to_num()!, as a bug workaround. This bug throws an error if any in-built arithmetic operations are called without integer operations, and although all values should be integers at this point, an error still occurs. \\ \\
@@ -330,23 +307,27 @@ eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
 \ref{lst:comp_where_eval} states that if you have to evaluate a \lstinline!where! variable then you evaluate the corresponding \lstinline!Expr!. \\
  
 \begin{lstlisting}[caption={Handling where values}, label={lst:comp_where_val}, firstnumber=64]
-value_with(X, V, Args) :- (*@\Suppressnumber@*)
+value_with(X, V, Args) :- 
 		eval_with(X, Args), 
 		where(X, Args, Expr), 
-		value_with(Expr, V, Args).(*@\Reactivatenumber@*)
+		value_with(Expr, V, Args).
 \end{lstlisting}
 \mbox{} \\
 \ref{lst:comp_where_val} handles values. A \lstinline!where! variable has the value \lstinline!Val! if a corresponding \lstinline!where! rule exists with respect to arguments called. \\
 
 \subsection{Complex and Non-Complex Expressions}
 
-\begin{lstlisting}
+The need to pass around arguments with terms unfortunately had the effect of greatly increasing the number of atoms in the grounding. Each expression to be evaluated can appear multiple times with different combinations of arguments, even if the expression does not depend on the value of those arguments. For example, the value of expressions \lstinline!mul(3, 2)! will always be the same, regardless of input arguments. \\ \\
+To handle this, I introduce the idea of ``complex'' and ``non-complex'' expressions. An expression is complex if it contains a where variable, requiring arguments to be passed in. For example, \lstinline!mul(4, x1)! is complex, but \lstinline!mul(4, 2)! is not. \\ \\
+This concept of complexity is represented in ASP by the predicates \lstinline!complex! and \lstinline!n_complex!. I will now describe the rules which create these predicates.\\
+
+\begin{lstlisting}[caption={Check for complexity}, label={lst:comp_check}, firstnumber=88]
 check_if_complex(Expr) :- eval_with(Expr, _).
 \end{lstlisting}
 \mbox{} \\
-This rule initialises \lstinline{check_if_complex} predicates. If you have to evaluate an expression, you also have to check if it is complex \\%{
+\ref{lst:comp_check} initialises \lstinline!check_if_complex! predicates. If you have to evaluate an expression, you also have to check if it is complex \\
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Checking propagation}, label={lst:comp_check_prop}, firstnumber=90]
 check_if_complex(Args) :- check_if_complex(call(F, Args)).
 check_if_complex(A) :- check_if_complex((A, B)).
 check_if_complex(B) :- check_if_complex((A, B)).
@@ -358,9 +339,9 @@ check_if_complex(A) :- check_if_complex(add(A, B)).
 check_if_complex(B) :- check_if_complex(add(A, B)).
 \end{lstlisting}
 \mbox{} \\
-These rules define propagation of \lstinline{check_if_complex} predicates, similarly to \lstinline{eval_with} propagation. \\
+\ref{lst:comp_check_prop} defines propagation of \lstinline!check_if_complex! predicates, similarly to \lstinline!eval_with! propagation. If you have to check that an expression is complex, then you also have to check both sub-expressions\\
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Complex generation}, label={lst:comp_gen}, firstnumber=100]
 complex(x0;x1;x2;x3).
 
 complex((A, B))        :- complex(A), check_if_complex((A, B)).
@@ -373,15 +354,16 @@ complex(add(A, B))     :- complex(A), check_if_complex(add(A, B)).
 complex(add(A, B))     :- complex(B), check_if_complex(add(A, B)).
 \end{lstlisting}
 \mbox{} \\
-These rules define propagation of \lstinline{complex} predicates. The base case for a complex term is \lstinline{complex(x0;x1;..;xN)} where N is the depth of the learned program. Then, if either sub-expression of an expression is complex, then the entire expression is complex. \\
+\ref{lst:comp_gen} defines propagation of \lstinline!complex! predicates. \\
+The base case for a complex term is \lstinline!complex(x0;x1;..;xN)!, where \lstinline!x0, x1, ..., xN! are the possible where variables. Then, if either sub-expression of an expression is complex, then the entire expression is complex. \\
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Non complex introduction}, label={lst:ncomp_intro}, firstnumber=111]
 n_complex(A) :- const(A), check_if_complex(A).
 \end{lstlisting}
 \mbox{} \\
-This rule introduces \lstinline{n_complex} predicates. If a term is a constant, then it is not complex. \\ %{
+\ref{lst:ncomp_intro} introduces \lstinline!n_complex! predicates. If a term is a constant, then it is not complex. \\
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Non complex propagation}, label={lst:ncomp_prop}, firstnumber=113]
 n_complex(call(F, Args)) :- n_complex(Args), check_if_complex(call(F, Args)).
 n_complex((A, B))        :- n_complex(A), n_complex(B), check_if_complex((A, B)).
 
@@ -393,8 +375,31 @@ n_complex(add(A, B))     :-
 		n_complex(A), n_complex(B), check_if_complex(add(A, B)).
 \end{lstlisting}
 \mbox{} \\
-These rules represent propagation of \lstinline{n_complex} terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ %{
+\ref{lst:ncomp_prop} represents propagation of \lstinline!n_complex! terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ \\
+These \lstinline!complex! and \lstinline!n_complex! terms are now used to modify the existing rules. First, \lstinline!eval_with! rules are modified to only propagate when the sub-expression is complex. \\
 
+\begin{lstlisting}[caption={Eval with modification}, label={lst:eval_mod}, firstnumber=78]
+eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with((A, B), Args).
+eval_with(A, Args) :- complex(A), eval_with(mul(A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with(mul(A, B), Args).
+eval_with(A, Args) :- complex(A), eval_with(sub(A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with(sub(A, B), Args).
+eval_with(A, Args) :- complex(A), eval_with(add(A, B), Args).
+eval_with(B, Args) :- complex(B), eval_with(add(A, B), Args).
+\end{lstlisting}
+\mbox{}\\
+Next, I re-introduce the \lstinline!value! predicate. This predicate is only generated when the expression to be evaluated is non complex. For example, to calculate the value of a simple multiplication, the following rule is used : 
+
+\begin{lstlisting}[caption={Value with modification}, label={lst:value_mod}, firstnumber=69]
+value(mul(A, B), @to_num(V1) * @to_num(V2)) :- 
+		const_number(V1), 
+		const_number(V2), 
+		n_complex(mul(A, B)), 
+		value(A, V1), 
+		value(B, V2), 
+		const_number(@to_num(V1)*@to_num(V2)).
+\end{lstlisting}
 \pagebreak
 
 \section{A Worked Example : Greatest Common Divisor}
@@ -409,7 +414,7 @@ gcd x y
 \end{lstlisting}
 \mbox{} \\
 You may notice this is not the typical definition of Euler's algorithm, as it does not make use of modulo. This is because my current language bias does not support the modulo operator. \\ \\
-I represent these Haskell rules in ASP as :\\
+This Haskell function is represented in ASP as :\\
 
 \begin{lstlisting}
 rule(1, gcd, (A, B), A) :- input(call(gcd, (A, B))).
@@ -434,7 +439,7 @@ To start with, I will work through a simple example which matches the base case,
 The first predicates generated are related to matching. As \lstinline{(3 == 3)}, the first \lstinline{match_guard} rule is applied and a the term \lstinline{match_guard(gcd, 1, (3, 3))} is added to the output.\\ \\ %{
 The rule next applied is \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=197]
 match(F, Index, Inputs) :- 
 		not smaller_match(F, Index, Inputs), 
 		rule(Index, F, Inputs, _), 
@@ -444,7 +449,7 @@ match(F, Index, Inputs) :-
 As the relevant ground \lstinline{rule} and \lstinline{match_guard} terms exist, and there are no smaller matches, (as 1 is the smallest Index), I generate a \lstinline{match(gcd, 1, (3, 3))} term for the output. \\ \\ %{
 Next, the tool has to decide what to evaluate, by generating \lstinline{eval_with} terms. The rule applied is :\\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=128]
 eval_with(Expr, Inputs) :- 
 		input(call(F, Inputs)), 
 		rule(Index, F, Inputs, Expr), 
@@ -454,14 +459,14 @@ eval_with(Expr, Inputs) :-
 Because the tool knows the ground \lstinline{rule} term \lstinline{rule(1, gcd, (3, 3), 3)}, it \lstinline{match} that rule with the term \lstinline{match(gcd, 1, (3, 3))} and it knows the \lstinline{input} term \lstinline{input(call(gcd, (3, 3)))}, it can apply this rule and get the expected term, \lstinline{eval_with(3, (3, 3))}, as part of the output. Semantically, this makes sense, as we want to evaluate the body of the called function, with respective arguments. \\ \\%{
 Now, the tool can work out values, through application of the rule \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=97]
 value_with(N, N, Args) :- eval_with(N, Args), const(N).
 \end{lstlisting}
 \mbox{} \\
 The tool just generated the term \lstinline{eval_with(3, (3, 3))}, and it knows that 3 is a constant, so it can output that \lstinline{value_with(3, 3, (3, 3))}. \\ \\
 Finally, we can generate output. Using the rule \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=55]
 output(call(F, Args), Out) :- 
 		rule(Index, F, Args, Expr), 
 		match(F, Index, Args), 
@@ -474,7 +479,7 @@ In the same way to earlier rule applications, the tool knows the relevant ground
 Now I will detail a more complicated example, where the tool visits where rules and more complicated expressions. As input, I will use \lstinline{gcd(9, 6)}, which is represented in ASP as the term \lstinline{input(call(gcd, (9, 6)))}. \\ \\
 Once again, initially the tool generates \lstinline{match} terms using the rule : \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=197]
 match(F, Index, Inputs) :-
 		not smaller_match(F, Index, Inputs), 
 		rule(Index, F, Inputs, _), 
@@ -483,76 +488,76 @@ match(F, Index, Inputs) :-
 \mbox{} \\
 This time, it generates the ground term \lstinline{match(gcd, 2, (9, 6))}, as $(9 > 6)$ it hits the second rule guard. It then attempts to determine which rules to evaluate, using the rule : \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=128]
 eval_with(Expr, Inputs) :- 
 		input(call(F, Inputs)), 
 		rule(Index, F, Inputs, Expr), 
 		match(F, Index, Inputs).
 \end{lstlisting}
 \mbox{} \\
-This rule generates the term \lstinline{eval_with(call(gcd, (x1, 6)), (9, 6))}. This is where is example diverges from the first. We first have to evaluate the arguments, because they are complex. \\ \\%{
-I know these rules are complex because we have checked them. Using this rule : \\
+This rule generates the term \lstinline!eval_with(call(gcd, (x1, 6)), (9, 6))!. This is where is example diverges from the first. We first have to evaluate the arguments, because they are complex. \\ \\
+The tool knows these rules are complex because it has checked them. Using this rule : \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=149]
 check_if_complex(Expr) :- eval_with(Expr, _).
 \end{lstlisting}
 \mbox{} \\
-This rule generates the term \lstinline{check_complex(call(gcd, (x1, 6)))}. Then using the next rule I check the complexity of the arguments \\ %{
+This rule generates the term \lstinline!check_complex(call(gcd, (x1, 6)))!. Then using the next rule, the tool checks the complexity of the arguments \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=151]
 check_if_complex(Args) :- check_if_complex(call(F, Args)).
 \end{lstlisting}
 \mbox{} \\
-This then generates the term \lstinline{check_complex((x1, 6))}. It then checks each argument individually, using the rules  \\ %{
+This then generates the term \lstinline!check_complex((x1, 6))!. It then checks each argument individually, using the rules  \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=152]
 check_if_complex(A) :- check_if_complex((A, B)).
 check_if_complex(B) :- check_if_complex((A, B)).
 \end{lstlisting}
 \mbox{} \\
-Now, the tool knows that \lstinline{x1} is defined as complex, so we can start rebuilding the argument expression as complex. Using the rule  \\ %{
+Now, the tool knows that \lstinline!x1! is defined as complex, so we can start rebuilding the argument expression as complex. Using the rule  \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=163]
 complex((A, B))        :- complex(A), check_if_complex((A, B)).
 \end{lstlisting}
 \mbox{} \\
-This tells the tool to include the term \lstinline{complex((x1, 6))}. Now, having checked that the arguments are complex, we can evaluate them, using \\ %{
+This tells the tool to include the term \lstinline!complex((x1, 6))!. Now, having checked that the arguments are complex, we can evaluate them, using \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=135]
 eval_with(Args_new, Args_old) :- 
 		complex(Args_new), 
 		eval_with(call(F, Args_new), Args_old).
 \end{lstlisting}
 \mbox{} \\
-The tool now knows to \lstinline{eval_with((x1, 6), (9,6))}. To do this, it evaluates all of the complex sub-expressions, using the rule \\ %{
+The tool now knows to \lstinline!eval_with((x1, 6), (9,6))!. To do this, it evaluates all of the complex sub-expressions, using the rule \\ 
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=139]
 eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
 \end{lstlisting}
 \mbox{} \\
 This produces the term \lstinline{eval_with(x1, (9, 6))}. Because it has to now evaluate a where variable, it chooses the rule \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=133]
 eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
 \end{lstlisting}
 \mbox{} \\
-As I have already defined the body of the where rule referenced by \lstinline{x1} to be \lstinline{where(x1, (A, B), sub(A, B))}, the tool then takes the ground version of this definition and applies the rule to get the term \lstinline{eval_with(sub(9, 6), (9,6))}. \\ \\%{
+As the body of the where rule referenced by \lstinline{x1} to be \lstinline{where(x1, (A, B), sub(A, B))} is already defined, the tool then takes the ground version of this definition and applies the rule to get the term \lstinline{eval_with(sub(9, 6), (9,6))}. \\ \\%{
 This rule is why the tool needs to pass the relevant arguments around as it evaluates terms. If the \lstinline{(9, 6)} was missing, then the tool would not know which ground version of the rule to use.\\ %{
-The tool has now reached the end of evaluating, because \lstinline{eval_with(sub(9, 6), (9, 6))} is not complex. In the same way the tool checked for complexity, checking if an expression is not complex relies on \lstinline{check_if_complex} terms. Once again, I use the rule\\
+The tool has now reached the end of evaluating, because \lstinline{eval_with(sub(9, 6), (9, 6))} is not complex. In the same way the tool checked for complexity, checking if an expression is not complex relies on \lstinline{check_if_complex} terms. Once again, it uses the rule\\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=149]
 check_if_complex(Expr) :- eval_with(Expr, _).
 \end{lstlisting}
 \mbox{} \\
 Which introduces the term \lstinline{check_if_complex(sub(9, 6))}. As before, this rule then propagates, generating \lstinline{check_if_complex(9)} and \lstinline{check_if_complex(6)} terms. Now, as 9 and 6 are constants, they are not complex, as defined by this rule \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=172]
 n_complex(A) :- const(A), check_if_complex(A).
 \end{lstlisting}
 \mbox{} \\
 Now the tool knows \lstinline{n_complex(9)} and \lstinline{n_complex(6)}. It then uses the rule \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=181]
 n_complex(sub(A, B))     :- 
 		n_complex(A), 
 		n_complex(B), 
@@ -561,7 +566,7 @@ n_complex(sub(A, B))     :-
 \mbox{} \\
 Which produces the term \lstinline{n_complex(sub(9, 6))}, as expected. This term can now have its value calculated, as it is not complex. Using the rule \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=197]
 value(sub(A, B), @to_num(V1) - @to_num(V2)) :- 
 		const_number(V1), 
 		const_number(V2), 
@@ -573,7 +578,7 @@ value(sub(A, B), @to_num(V1) - @to_num(V2)) :-
 \mbox{} \\
 This generates the term \lstinline{value(sub(9, 6), 3)}, as it already knows \lstinline{value(9, 9)} and \lstinline{value(6, 6)}, as they are constants. Now, the tool can work out the value of the where variable, \lstinline{x1}, using this rule : \\
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=90]
 value_with(X, V, Args) :- 
 		eval_with(X, Args), 
 		where(X, Args, Expr), 
@@ -582,7 +587,7 @@ value_with(X, V, Args) :-
 \mbox{} \\
 This gives the tool the term \lstinline{value_with(x1, 3, (9, 6))}. Now the tool has almost calculated the value of the function call arguments, all it has to do it use this rule \\%{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=85]
 value_with((A, B), (V1, V2), Args) :- 
 		eval_with((A, B), Args), 
 		value_with(A, V1, Args), 
@@ -592,7 +597,7 @@ value_with((A, B), (V1, V2), Args) :-
 Which combines the terms \lstinline{value_with(x1, 3, (9, 6))} and \lstinline{value_with(6, 6, (9, 6))}, to get \lstinline{value_with((x1, 6), (3, 6), (9, 6))}. \\ \\ %{
 Remember that the overall goal of this was to be able to evaluate the term \lstinline{eval_with(call(gcd, (x1, 6)), (9, 6))}. Now, this is possible as the tool has generated the value of the arguments. The tool applies the following rule \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=193]
 input(call(F, Inputs)) :- 
 		eval_with(call(F, Args_new), Args_old), 
 		value_with(Args_new, Inputs, Args_old).
@@ -601,26 +606,25 @@ input(call(F, Inputs)) :-
 Which generates a new \lstinline{input(call(gcd, (3, 6)))} term, effectively starting the process again for a new input. This input is processed in a very similar way to the last one, with the only difference being that the third rule is matched, as \lstinline{3 < 6}. This means that the rule body to be evaluated produces the term \lstinline{eval_with(call(gcd, (3, x2)))}. \\ \\%{
 Once again, this evaluation proceeds by attempting to calculate the value of the arguments, more specifically the complex one, \lstinline{x2}. Using the definition, \lstinline{where(x2, (A, B), sub(B, A))}, the tool can generate the ground term \lstinline{value_with(x2, 3, (3, 6))}. This term is then combined with the non complex argument to produce the term \lstinline{value_with((3, x2), (3, 3), (3, 6))}. Then, it generates a new input predicate again by applying the rule \\ 
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=193]
 input(call(F, Inputs)) :- 
 		eval_with(call(F, Args_new), Args_old), 
 		value_with(Args_new, Inputs, Args_old).
 \end{lstlisting}
 \mbox{} \\
-Now, we reach the base case, as the input generated is \lstinline{input(call(gcd, (3, 3)))}. As I explained in the first example, this input generates an output term in the Answer Set of \lstinline{output(call(gcd, (3, 3)), 3)}. It reaches this conclusion by matching to the base case, which is defined to return the first argument. \\ \\
+Now, we reach the base case, as the input generated is \lstinline{input(call(gcd, (3, 3)))}. As I explained in the first example, this input generates an output term of \lstinline{output(call(gcd, (3, 3)), 3)}. It reaches this conclusion by matching to the base case, which is defined to return the first argument. \\ \\
 With this \lstinline{output} term, the tool can now traverse back up the call stack, to compute a final result. By applying the following rule \\ %{
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=79]
 value_with(call(F, Args_new), Out, Args_old) :- 
 		eval_with(call(F, Args_new), Args_old), 
 		output(call(F, Inputs), Out), 
 		value_with(Args_new, Inputs, Args_old).
 \end{lstlisting}
 \mbox{} \\
-I can generate the term \lstinline{value_with(call(gcd, (3, x2)), 3, (3, 6))}. This then allows me to use the rule : \\%{
+This allows the tool to generate the term \lstinline{value_with(call(gcd, (3, x2)), 3, (3, 6))}. This then allows me to use the rule : \\%{
 
-\lstinputlisting[language=Prolog, firstline=54, lastline=54]{../ASP/rules.lp}
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=55]
 output(call(F, Args), Out) :- 
 		rule(Index, F, Args, Expr), 
 		match(F, Index, Args),
@@ -628,7 +632,11 @@ output(call(F, Args), Out) :-
 \end{lstlisting}
 \mbox{} \\
 Which gives a corresponding \lstinline{output} term \lstinline{output(call(gcd, (3, 6)), 3)}. Once again, I can use this output to generate the term \lstinline{value_with(call(gcd, (x1, 6)), 3)}, and then use this term to generate the final \lstinline{output} term, \lstinline{output(call(gcd, (9, 6)), 3)}, as expected! \\ \\%{
-TODO: Put Diagram here. Derivation / Expression tree pictures, with eval-with and value-with branches.
+
+\pagebreak
+
+\section{Full code listing}
+\lstinputlisting[firstline=55, firstnumber=55]{../ASP/rules.lp}
 
 \pagebreak
 %\renewcommand\bibname{{References}}
