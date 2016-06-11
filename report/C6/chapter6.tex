@@ -8,7 +8,7 @@ The five examples I am running are defined as follows.
 \item \textbf{Fibonacci} : The Fibonacci numbers belong to the following sequence - \lstinline{1, 1, 2, 3, 5, 8, 13}, where each member of the sequence is equal to the sum of the previous two numbers. %{
 \item \textbf{Powers of Two} : A simple function which recursively defines the calculation of $2^n$.
 \item \textbf{Tail Recursive Factorial} : The tail-recursive definition of the factorial function. Takes two arguments, where the second is an accumulator in which the product is calculated.
-\item \textbf{Greatest Common Divisor} : A version of Euler's algorithm to calculate the greatest common divisor of two numbers.
+\item \textbf{Greatest Common Divisor} : A version of Euclid's algorithm to calculate the greatest common divisor of two numbers.
 \end{itemize}
 All examples have been run on --LAB PC SPECS-- \\ \\
 
@@ -28,7 +28,6 @@ example(call(fac, 3), 6).
 \begin{multicols}{2}
 
 \underline{\textbf{Interpreted approach results}}
-
 \begin{lstlisting}
 fac x
   | x == 0 = 1
@@ -106,7 +105,6 @@ power2 x
   | otherwise = (f (x - 1)) * 2 
 \end{lstlisting}
 \end{multicols}
-\pagebreak
 
 \subsection{Tail Recursive Factorial}
 \underline{\textbf{Input Examples}}
@@ -128,7 +126,7 @@ fac x y
   where x0 = x - 1
   	where x1 = x * y
 \end{lstlisting}
-\vspace*{\fill}
+%\vspace*{\fill}
 \columnbreak
 \underline{\textbf{Constraint approach results}}
 \begin{lstlisting}
@@ -138,6 +136,7 @@ fac x y
 \end{lstlisting}
 \end{multicols}
 %\pagebreak
+\pagebreak
 \subsection{Greatest Common Divisor}
 \underline{\textbf{Input Examples}}
 \begin{lstlisting}
@@ -149,7 +148,7 @@ example(call(gcd, (9, 6)), 3).
 example(call(gcd, (4, 7)), 1).
 example(call(gcd, (9, 3)), 3).
 \end{lstlisting}
-\begin{multicols*}{2}
+\begin{multicols}{2}
 \underline{\textbf{Interpreted approach results}}
 \begin{lstlisting}
 gcd x y
@@ -168,13 +167,14 @@ gcd x y
 	| x > y	 = gcd (x - y) y
 	| x < y	 = gcd y x
 \end{lstlisting}
-\end{multicols*}
-\pagebreak
+\end{multicols}
 
 \section{Performance Statistics}
-
 The results from these experiments tend to show the result that apart from in the simple case, the constraint based approach performs around 50\% better than the interpreted approach across all examples. In the simple factorial example, the interpreted approach was quicker due to the small set of skeleton rules effecting performance in relatively small way. \\ \\
+The one case where the constraint based approach performs worse to the interpreted approach is the GCD example. While it is not clear why this is the case, it is most likely due to the way skeleton rules are generated. Due to the need to enumerate over all possible skeleton rules in the constraint based approach, this means that many rules could be semantically equal to each other, reducing performance in this case. This effect only appears here as the number of skeleton rules needed to correctly learn gcd is much higher than the other functions. \\ \\
 However, the constraint based approach is less expressive, as highlighted by the fibonacci example. The fibonacci program consists of two recursive calls, which cannot be learned by this approach as it becomes difficult to maintain the equality constraints. For example, consider the equality constraint \lstinline{eq(add(call(f, (x - 1)), call(f, (x - 2))), 4).} The tool cannot continue evaluating this constraint as it does not know the value of either \lstinline{call} expressions.%{
+
+\pagebreak
 
 \begin{table}[h!]
 \centering
@@ -260,17 +260,26 @@ Time        : 1599.420 \newline
 \label{table:3}
 \end{table}
 
-
+\pagebreak
 \section{Comparison to Existing Tools}
 
 In this section, I will detail how other existing inductive functional programming (IFP) tools perform in comparison to mine, highlighting any benefits or restrictions to both mine and the existing tools. More information on these tools can be found in the background section. \\ \\
 For evaluation, I have ran both systems on the examples detailed in the section above, showing a comparison between code generated and running time between both existing systems and my tool's constraint based approach.
 
 \subsection{MagicHaskeller}
-MagicHaskeller is an IFP system that is based on the generate-and-test approach to IFP. It works by systematically generating a stream of gradually more complicated functions (based on length), and keeping the ones which cover the input examples. The system is made more efficient through smart restrictions of target programs based on the type of the input examples, and through heavy use of in built functions, both linear and higher order. \\ \\
+MagicHaskeller \cite{Katayama2012} is an IFP system that is based on the generate-and-test approach to IFP. It works by systematically generating a stream of gradually more complicated functions (based on length), and keeping the ones which cover the input examples. \\ \\
 Input to MagicHaskeller is any Haskell expression which returns a boolean value, as long as it does not contain any \lstinline{let} or \lstinline{while} clauses. For example, to learn the factorial program, you can give as input the examples \lstinline{\f -> ( f 0 == 1 )  && ( f 1 == 1 )  && ( f 2 == 2 )  && ( f 3 == 6 )}. Here, each positive example is concatenated with \lstinline{&&} to produce the overall input.\\ \\
-Full tables of generated programs and performance timings can be found respectively in tables \ref{table:1} and \ref{table:2} \\ \\
+Full tables of generated programs and performance timings can be found respectively in Tables \ref{table:1} and \ref{table:2} \\ \\
 What is notable from these results is that MagicHaskeller fails to learn direct recursion, relying instead on its large library of in-built functions. This is most visible on the GCD and Fibonacci examples, where MagicHaskeller can simply make use of Haskell's inbuilt gcd function, but cannot learn the purely recursive Fibonacci. This is because of a deliberate choice by the creator of MagicHaskeller, as removing direct recursion decreases the complexity of the search space.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{C7/magichaskeller_fail.png}
+\caption{MagicHaskeller fibonacci attempt}
+\label{fig:magichaskeller_fail}
+\end{figure}
+
+\Suppressnumber
 
 \begin{table}[h!]
 \centering
@@ -282,15 +291,33 @@ Function & My Solution & MagicHaskeller Solution \\
 \hline
 Factorial 
 &
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 f x
   | x == 0 = 1
   | otherwise = x * f(x - 1)
 \end{lstlisting}
 & 
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 f = 
   (\a -> product [1..a])
+\end{lstlisting}
+\\
+\hline
+\mbox{}\newline
+Power \newline
+of \newline
+Two \newline
+&
+\mbox{}\newline
+\begin{lstlisting}[backgroundcolor = \color{white}]
+f x
+  | x == 0 = 1
+  | otherwise = 2 * f(x - 1)
+\end{lstlisting}
+& 
+\begin{lstlisting}[backgroundcolor = \color{white}]
+f = 
+  (\a -> product (replicate a 2))
 \end{lstlisting}
 \\
 \hline
@@ -299,13 +326,13 @@ Tail \newline
 Recursive \newline
 Factorial \newline
 &
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 f x n
   | x == 0 = n
   | otherwise = f (x - 1) (x * n)
 \end{lstlisting}
 & 
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 f = 
   (\a b -> product [b..a])
 \end{lstlisting}
@@ -313,21 +340,21 @@ f =
 \hline
 GCD 
 &
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 gcd x y
   | x == y = x
   | x > y  = gcd x - y y
   | x < y  = gcd y x
 \end{lstlisting}	
 &
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 f = (flip gcd)
 \end{lstlisting}
 \\
 \hline
 Fibonacci
 &
-\begin{lstlisting}
+\begin{lstlisting}[backgroundcolor = \color{white}]
 fib x
   | x == 1 = x
   | x == 2 = x - 1
@@ -345,6 +372,7 @@ No Result!
 \caption{MagicHaskeller Generated Code Comparison }
 \label{table:1}
 \end{table}
+\Reactivatenumber
 
 \begin{table}[h!]
 \centering
@@ -366,10 +394,9 @@ Fibonacci & & \\
 \caption{MagicHaskeller Performance Comparison }
 \label{table:2}
 \end{table}
-\mbox{} \\
 
 \subsection{Igor II}
-Igor II is an IFP system that is designed to learn purely recursive programs, and is different to my tool in important ways.
+Igor II \cite{Kitzelmann2006} is an IFP system that is designed to learn purely recursive programs, and is different to the tool described in this report in important ways.
 \begin{itemize}
 \item Igor II does not have any built in background knowledge, which means that any functions to be learned need all basic operations and constants defined at the same time as the examples. This is only a small restriction for learning lists because the set of constants and operations to be defined are limited to the empty list and list prepending respectively. However, when learning arithmetic functions it is very complicated to define addition and multiplication in terms of the basic succession operation.
 \item The output from Igor II is a list of hypotheses, rather than a program or lambda function. While this increases the expressivity, it severely reduces readability and usability by users less experienced in the field.

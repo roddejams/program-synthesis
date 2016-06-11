@@ -91,25 +91,25 @@ where(x3, (N0), call(f, (x1 ))) :- input(call(f, (N0))), choose_where(80).
 
 1 {
 choose(R, 1;2;4;5;6;7;9;10;11;12;14;15;16;17;18;19;20;84) ,
-choose(R, 3;8;13, C0) : expr_const(C0) 
+choose(R, 3;8;13, C0) : expr_const(C0)
 } 1 :- num_rules(R).
 #minimise [choose(1, N)=N, choose(1, N, _)=N ].
 #minimise [choose_where(R)=1, choose_where(R, _)=1 ].
 0 {
 choose_where(21;23;24;25;27;28;29;31;32;33;34;35;81) ,
-choose_where(22;26;30, C0) : expr_const(C0) 
+choose_where(22;26;30, C0) : expr_const(C0)
 } 1.
 0 {
 choose_where(36;38;39;40;42;43;44;46;47;48;49;50;82) ,
-choose_where(37;41;45, C0) : expr_const(C0) 
+choose_where(37;41;45, C0) : expr_const(C0)
 } 1.
 0 {
 choose_where(51;53;54;55;57;58;59;61;62;63;64;65;83) ,
-choose_where(52;56;60, C0) : expr_const(C0) 
+choose_where(52;56;60, C0) : expr_const(C0)
 } 1.
 0 {
 choose_where(66;68;69;70;72;73;74;76;77;78;79;80) ,
-choose_where(67;71;75, C0) : expr_const(C0) 
+choose_where(67;71;75, C0) : expr_const(C0)
 } 1.
 1 {
 choose_match(R, 2) ,

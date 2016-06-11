@@ -1,5 +1,9 @@
 \addcontentsline{toc}{chapter}{Abstract}
 
 \begin{abstract}
-
+Automatic program generation has long been a goal for many academics, striving to create a system expressive enough to handle synthesis of any program. Although such a system seems unachievable, work continues on solving this problem in a variety of areas.\\ \\
+This report describes a novel program synthesis system, focusing on the learning on functional programs. The system learns Haskell programs given an incomplete specification in the form of a set of Input / Output examples. Through use of Answer Set Programming this system implements two approaches to program synthesis. The first makes use of a Haskell interpreter implemented in ASP, and the second maintains a set of ``Equality Constraints'', which fail if some contradiction is reached. \\ \\
+To make the system easier to use, we implement a user interface specialised towards helping new programmers. If a student is unsure about how a Haskell program will be implemented but knows the value of some inputs and outputs, they can use this tool to aid their understanding, by generating the unknown function or sub-function. \\ \\
+We present an evaluation of the tool, performed by learning a series of one and two argument test functions on both approaches. We found that while the second approach has improved performance, it has the trade off of being less expressive, being able to learn a smaller set of programs. \\ \\
+Finally we discuss possible extensions to the tool, including the implementation of list and multiple type operations, and offer insight into how these extensions would be implemented.
 \end{abstract}

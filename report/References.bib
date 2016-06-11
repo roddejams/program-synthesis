@@ -6,6 +6,15 @@
 	booktitle = "The Second Conference on Artificial General Intelligence"
 }
 
+@inproceedings{Katayama2011,
+author = {Katayama, S},
+file = {:C$\backslash$:/Users/James/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Unknown - Unknown - katayama{\_}short.pdf:pdf},
+title = {{MagicHaskeller: System demonstration}},
+url = {http://www.cogsys.wiai.uni-bamberg.de/aaip11/accepted/katayama{\_}short.pdf},
+year = {2011}
+}
+
+
 @inbook{negAsFailure,
 	author = "Clark, K.",
 	title = "Readings in nonmonotonic reasoning",
@@ -15,21 +24,95 @@
 	year = "1987"
 }
 
-@manual{clingoguide,
-	author = "Gebser, M. and Kaminski, R. and Kaufmann, B. and Ostrowski, M. and Schaub, T. and Thiele, S.",
-	title = "A User's guide to gringo, clasp, clingo and iclingo",
-	url = "https://www.cs.utexas.edu/users/vl/teaching/lbai/clingo_guide.pdf",
-	type = "Manual",
-	year = "2010"
-}
-
 @manual{igordemo,
 	author = "Hofmann, M.",
 	title = "Igor II - an Analytical Inductive Functional Programming System",
 	year = "2010"
 }
-
-@article{Katayama12,
+@inproceedings{Gulwani2012,
+abstract = {Millions of computer end users need to perform tasks over large spreadsheet data, yet lack the programming knowledge to do such tasks automatically. We present a programming by example methodology that allows end users to automate such repetitive tasks. Our methodology involves designing a domain-specific language and developing a synthesis algorithm that can learn programs in that language from user-provided examples. We present instantiations of this methodology for particular domains of tasks: (a) syntactic transformations of strings using restricted forms of regular expressions, conditionals, and loops, (b) semantic transformations of strings involving lookup in relational tables, and (c) layout transformations on spreadsheet tables. We have implemented this technology as an add-in for the Microsoft Excel Spreadsheet system and have evaluated it successfully over several benchmarks picked from various Excel help forums. [ABSTRACT FROM AUTHOR]},
+author = {Gulwani, Sumit and Harris, William R. and Singh, Rishabh},
+booktitle = {Communications of the ACM},
+doi = {10.1145/2240236.2240260},
+issn = {00010782},
+number = {8},
+pages = {97},
+title = {{Spreadsheet data manipulation using examples}},
+volume = {55},
+year = {2012}
+}
+@article{Gulwani2014,
+abstract = {Example-based reasoning techniques developed for programming languages also help automate repetitive tasks in education.},
+author = {Gulwani, Sumit},
+doi = {10.1145/2634273},
+issn = {15577317},
+journal = {Communications of the ACM},
+number = {8},
+pages = {70--80},
+title = {{Example-Based Learning in Computer-Aided STEM Education}},
+volume = {57},
+year = {2014}
+}
+@article{Clark1978,
+abstract = {ИЗ NEGATION AS FAILURE Keith L. Clark Department of Computer Science {\&} Statistics Queen Mary College, London, England ABSTRACT A query evaluation process for a logic data base comprising a set of clauses is described. It is essentially a Horn clause theo- rem prover ...},
+author = {Clark, K L},
+doi = {10.1007/BF01530760},
+isbn = {0934613451},
+journal = {Logic and data bases},
+keywords = {negation},
+title = {{Negation as failure}},
+url = {http://centria.di.fct.unl.pt/{~}ag/Clarke-LogicAndDatabases78.pdf$\backslash$npapers2://publication/uuid/4E0BB65B-75A0-498F-B785-8BE6E4B3865E},
+year = {1978}
+}
+@article{Eiter2008,
+abstract = {This document provides an introduction to the Answer Set Programming (ASP) tools gringo, clasp, clingo, and iclingo, developed at the University of Potsdam. The first tool, gringo, is a grounder capable of translating logic pro- grams provided by users into equivalent propositional logic programs. The answer sets of such programs can be computed by clasp, which is a solver. The third tool, clingo, integrates the functionalities of gringo and clasp, thus, acting as a monolithic solver for user programs. Finally, iclingo extends clingo by an incremental mode that incorporates both grounding and solving. For one, this document aims at enabling ASP novices to make use of the aforementioned tools. For another, it provides a reference of their features that ASP adepts might be tempted to exploit.},
+author = {Eiter, Thomas and Faber, Wolfgang and Fink, Michael and Woltran, Stefan},
+doi = {10.1007/s10472-008-9086-5},
+issn = {1012-2443},
+journal = {Annals of Mathematics and Artificial Intelligence},
+number = {2-4},
+pages = {123--165},
+title = {{A user's guide to gringo, clasp, clingo, and iclingo}},
+url = {http://link.springer.com/10.1007/s10472-008-9086-5$\backslash$nftp://ftp3.ie.freebsd.org/pub/sourceforge/p/project/po/potassco/potassco{\_}guide/2008-11-09/guide.ps},
+volume = {51},
+year = {2008}
+}
+@inproceedings{Gebser2007,
+abstract = {We introduce an approach to computing answer sets of logic programs, based on concepts successfully applied in Satisfiability (SAT) checking. The idea is to view inferences in Answer Set Programming (ASP) as unit propagation on nogoods. This provides us with a uniform constraint-based framework capturing diverse inferences encountered in ASP solving. Moreover, our approach allows us to apply advanced solving techniques from the area of SAT. As a result, we present the first full-fledged algorithmic framework for native conflict-driven ASP solving. Our approach is implemented in the ASP solver clasp that has demonstrated its competitiveness and versatility by winning first places at various solver contests. ?? 2012 Elsevier B.V. All rights reserved.},
+author = {Gebser, Martin and Kaufmann, Benjamin and Neumann, Andr{\'{e}} and Schaub, Torsten},
+booktitle = {IJCAI International Joint Conference on Artificial Intelligence},
+doi = {10.1016/j.artint.2012.04.001},
+isbn = {978-3-540-72199-4},
+issn = {10450823},
+pages = {386--392},
+title = {{Conflict-driven answer set solving}},
+year = {2007}
+}
+@inproceedings{Hofmann2010,
+abstract = {The analytical inductive programming system IGOR II is an implemented prototype for constructing recursive functional programs from few non-recursive, possibly non-ground example equations describing a subset of the input/output (I/O) behaviour of a function. Starting from an initial, overly general program hypothesis, stepwise several refinement operators are applied which compute successor hypotheses. Organised as an uniformed-cost search, the hypothesis with the lowest costs is developed and replaced by its successors until the best does not contain any unbound variables. Copyright {\textcopyright} 2010 ACM.},
+author = {Hofmann, M},
+booktitle = {Proceedings of the ACM SIGPLAN Symposium on Partial Evaluation and Semantics-Based Program Manipulation},
+doi = {10.1145/1706356.1706364},
+isbn = {9781605587271},
+keywords = {Computer software selection and evaluation; Mathe,Functional programming,Functional programs; Input/output; Programming sys},
+pages = {29--32},
+title = {{IGOR2 - An analytical inductive functional programming system: Tool demo}},
+url = {http://www.scopus.com/inward/record.url?eid=2-s2.0-77950914314{\&}partnerID=40{\&}md5=49ec237dd9d74105fa2f093ec5f83f6c},
+year = {2010}
+}
+@inproceedings{Lifschitz1999,
+abstract = {In ``answer set programming,'' solutions to a problem are represented by answer sets, and not by answer substitutions produced in response to a query, as in conventional logic programming. Instead of Prolog, answer set programming uses software systems capable of computing answer sets. This paper is about applications of this idea to planning.},
+author = {Lifschitz, Vladimir},
+booktitle = {Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)},
+doi = {10.1007/3-540-46767-X_28},
+isbn = {3540667490},
+issn = {16113349},
+pages = {373--374},
+title = {{Answer set planning}},
+volume = {1730},
+year = {1999}
+}
+@article{Katayama2012,
 abstract = {Inductive functional programming (IFP) is a research field extending from software science to artificial intelligence that deals with functional program synthesis based on generalization from ambiguous specifications, usually given as input-output example pairs. Currently, the approaches to IFP can be categorized into two general groups: the analytical approach that is based on analysis of the input-output example pairs, and the generate-and-test approach that is based on generation and testing of many candidate programs. The analytical approach shows greater promise for application to greater problems because the search space is restricted by the given example set, but it requires much more examples written in order to yield results that reflect the user's intention, which is bothersome and causes the algorithm to slow down. On the other hand, the generate-and-test approach does not require long description of input-output examples, but does not restrict the search space using the example set. This paper proposes a new approach taking the best of the two, called "analytically-generate-and-test approach", which is based on analytical generation and testing of many program candidates. For generating many candidate programs, the proposed system uses a new variant of IGOR II, the exemplary analytical inductive functional programming algorithm. This new system preserves the efficiency features of analytical approaches, while minimizing the possibility of generating unintended programs even when using fewer input-output examples. Copyright {\textcopyright} 2012 ACM.},
 author = {Katayama, S},
 isbn = {9781450311182},
@@ -41,21 +124,166 @@ title = {{An analytical inductive functional programming system that avoids unin
 url = {http://www.scopus.com/inward/record.url?eid=2-s2.0-84857814672{\&}partnerID=40{\&}md5=1746ba69421ca6355877a10b359d2ce3},
 year = {2012}
 }
+@article{Kitzelmann2006,
+abstract = {We describe an approach to the inductive synthesis of recursive equations from input/output-examples which is based on the classical two-step approach to induction of functional Lisp programs of Summers (1977). In a first step, I/O-examples are rewritten to traces which explain the outputs given the respective inputs based on a datatype theory. These traces can be integrated into one conditional expression which represents a non-recursive program. In a second step, this initial program term is generalized into recursive equations by searching for syntactical regularities in the term. Our approach extends the classical work in several aspects. The most important extensions are that we are able to induce a set of recursive equations in one synthesizing step, the equations may contain more than one recursive call, and additionally needed parameters are automatically introduced.},
+author = {Kitzelmann, Emanuel and Schmid, Ute},
+isbn = {1532-4435},
+issn = {15324435},
+journal = {Journal of Machine Learning Research},
+keywords = {based generalization,explanation,inductive functional programming,inductive program synthesis,recursive program schemes},
+pages = {429--454},
+title = {{Inductive Synthesis of Functional Programs : An Explanation Based Generalization Approach}},
+url = {http://portal.acm.org/citation.cfm?id=1248562},
+volume = {7},
+year = {2006}
+}
+@article{Corapi2012,
+author = {Corapi, Domenico and Russo, Alessandra and Lupu, Emil},
+doi = {10.1007/978-3-642-31951-8_12},
+file = {:C$\backslash$:/Users/James/Downloads/ilp2011{\_}submission{\_}20.pdf:pdf},
+isbn = {9783642319501},
+issn = {03029743},
+journal = {Inductive Logic Programming},
+pages = {91--97},
+title = {{Inductive Logic Programming in Answer Set Programming}},
+year = {2012}
+}
+@article{Yang,
+author = {Yang, Fangkai and Khandelwal, Piyush and Leonetti, Matteo and Stone, Peter},
+file = {:C$\backslash$:/Users/James/Downloads/7727-34340-1-PB.pdf:pdf},
+isbn = {9781577356455},
+keywords = {AAAI Technical Report SS-14-05},
+pages = {71--78},
+title = {{Planning in Answer Set Programming while Learning Action Costs for Mobile Robots}}
+}
+@article{Guziolowski2013,
+abstract = {MOTIVATION: Logic modeling is a useful tool to study signal transduction across multiple pathways. Logic models can be generated by training a network containing the prior knowledge to phospho-proteomics data. The training can be performed using stochastic optimization procedures, but these are unable to guarantee a global optima or to report the complete family of feasible models. This, however, is essential to provide precise insight in the mechanisms underlaying signal transduction and generate reliable predictions.$\backslash$n$\backslash$nRESULTS: We propose the use of Answer Set Programming to explore exhaustively the space of feasible logic models. Toward this end, we have developed caspo, an open-source Python package that provides a powerful platform to learn and characterize logic models by leveraging the rich modeling language and solving technologies of Answer Set Programming. We illustrate the usefulness of caspo by revisiting a model of pro-growth and inflammatory pathways in liver cells. We show that, if experimental error is taken into account, there are thousands (11 700) of models compatible with the data. Despite the large number, we can extract structural features from the models, such as links that are always (or never) present or modules that appear in a mutual exclusive fashion. To further characterize this family of models, we investigate the input-output behavior of the models. We find 91 behaviors across the 11 700 models and we suggest new experiments to discriminate among them. Our results underscore the importance of characterizing in a global and exhaustive manner the family of feasible models, with important implications for experimental design.$\backslash$n$\backslash$nAVAILABILITY: caspo is freely available for download (license GPLv3) and as a web service at http://caspo.genouest.org/.$\backslash$n$\backslash$nSUPPLEMENTARY INFORMATION: Supplementary materials are available at Bioinformatics online.$\backslash$n$\backslash$nCONTACT: santiago.videla@irisa.fr.},
+author = {Guziolowski, Carito and Videla, Santiago and Eduati, Federica and Thiele, Sven and Cokelaer, Thomas and Siegel, Anne and Saez-Rodriguez, Julio},
+doi = {10.1093/bioinformatics/btt393},
+isbn = {1367-4811 (Linking)},
+issn = {13674803},
+journal = {Bioinformatics},
+number = {18},
+pages = {2320--2326},
+pmid = {23853063},
+title = {{Exhaustively characterizing feasible logic models of a signaling network using Answer Set Programming}},
+volume = {29},
+year = {2013}
+}
+@article{Crowe2015,
+author = {Crowe, Joseph and Broda, Krysia and Law, Mark},
+file = {:C$\backslash$:/Users/James/Downloads/Joseph{\_}Report.pdf:pdf},
+number = {June},
+pages = {1--39},
+title = {{Synthesis of Simple While Programs Using Answer Set Programming}},
+year = {2015}
+}
+@article{Muggleton1991,
+abstract = {A new research area, Inductive Logic Programming, is presently emerging. While inheriting various positive characteristics of the parent subjects of Logic Programming and Machine Learning, it is hoped that the new area will overcome many of the limitations of its forebears. The background to present developments within this area is discussed and various goals and aspirations for the increasing body of researchers are identified. Inductive Logic Programming needs to be based on sound principles from both Logic and Statistics. On the side of statistical justification of hypotheses we discuss the possible relationship between Algorithmic Complexity theory and Probably-Approximately-Correct (PAC) Learning. In terms of logic we provide a unifying framework for Muggleton and Buntine's Inverse Resolution (IR) and Plotkin's Relative Least General Generalisation (RLGG) by rederiving RLGG in terms of IR. This leads to a discussion of the feasibility of extending the RLGG framework to allow for the invention of new predicates, previously discussed only within the context of IR.},
+author = {Muggleton, Stephen},
+doi = {10.1007/BF03037089},
+isbn = {0125097158},
+issn = {02883635},
+journal = {New Generation Computing},
+keywords = {Learning,induction,information compression,inverse resolution,logic programming,predicate invention},
+number = {4},
+pages = {295--318},
+title = {{Inductive logic programming}},
+volume = {8},
+year = {1991}
+}
+@article{Cabalar2009,
+author = {Cabalar, Pedro and Pearce, David and Valverde, Agust{\'{i}}n},
+doi = {10.1007/978-3-642-04238-6_8},
+file = {:C$\backslash$:/Users/James/Downloads/lpnmr09-cpv.pdf:pdf},
+isbn = {3642042376},
+issn = {03029743},
+journal = {Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)},
+pages = {58--70},
+title = {{A revised concept of safety for general answer set programs}},
+volume = {5753 LNAI},
+year = {2009}
+}
+@article{Law2015,
+author = {Law, Mark and Russo, Alessandra and Broda, Krysia},
+file = {:C$\backslash$:/Users/James/Downloads/DTR15-2.pdf:pdf},
+pages = {1--10},
+title = {{Simplified Reduct for Choice Rules in ASP}},
+year = {2015}
+}
+@inproceedings{Hudak2007,
+abstract = {This paper describes the history of Haskell, including its genesis and principles, technical contributions, implementations and tools, and applications and impact.},
+author = {Hudak, Paul and Hughes, John and Jones, Simon Peyton and Wadler, Philip},
+booktitle = {Proceedings of the third ACM SIGPLAN conference on History of programming languages (HOPL III)},
+doi = {10.1145/1238844.1238856},
+isbn = {978159593766X},
+pages = {Article 12},
+title = {{A History of Haskell}},
+url = {http://dl.acm.org/citation.cfm?id=1238844.1238856},
+year = {2007}
+}
+@article{Katayama2013,
+author = {Katayama, Susumu},
+file = {:C$\backslash$:/Users/James/Downloads/Haskell2013.pdf:pdf},
+isbn = {9783540891963},
+journal = {Haskell Symposium},
+keywords = {again by,automatic programming,different from the user,gramming,if some value is,inductive functional pro-,just one click away,s expectation,she can make search,some random arguments is,web application},
+pages = {1--2},
+title = {{MagicHaskeller on the Web: Automated Programming as a Service}},
+url = {http://nautilus.cs.miyazaki-u.ac.jp/{~}skata/Haskell2013.pdf},
+year = {2013}
+}
+@article{Bauer2016,
+abstract = {In this paper, examples of how an algorithm behaves on particular input are considered as possible means of describing the algorithm. In particular, a simple language for examples (a Computational Description Language) is presented and an algorithm for the synthesis of a procedure from a set of such example computations is described. The algorithm makes use of knowledge about variables, inputs, instructions and procedures during the synthesis process to guide the formation of a procedure. Several examples of procedures actually synthesized are discussed. ?? 1979.},
+author = {Bauer, Michael A.},
+doi = {10.1016/0004-3702(79)90002-X},
+file = {:C$\backslash$:/Users/James/Downloads/pbe16.pdf:pdf},
+isbn = {978-0-934613-12-5},
+issn = {00043702},
+journal = {Artificial Intelligence},
+keywords = {active learning,data wrangling,deductive synthesis,end-user programming,inductive synthesis,log files,program synthesis,programming by examples,semi-structured data,spreadsheets,version space algebras},
+number = {1},
+pages = {1--21},
+title = {{Programming by examples}},
+volume = {12},
+year = {2016}
+}
+
+@misc{Euclid,
+	author = "Gilles Cazelais",
+	title = "Euclid's Algorithm",
+	note = "http://pages.pacificcoast.net/~cazelais/222/euclid.pdf"
+}
 
 @misc{IFPnotes,
 	author = "Schmid, U.",
-	title = "Inductive Functional Programming",
+	title = "Notes on Inductive Functional Programming",
 	url = "https://excape.cis.upenn.edu/webinarTalks/IFPExCape15_UteSchmid.pdf"
 }
 
 @misc{ASPnotes,
 	author = "Law, M.",
-	title = {{Notes on ASP from course 304, Logic Based Learning}},
-	url = "https://www.doc.ic.ac.uk/~ml1909/#teaching"
+	title = {{Notes on Answer Set Programming from Course 304, Logic Based Learning}},
+	url = "https://www.doc.ic.ac.uk/~ml1909/teaching/Unit7.pdf"
 }
 
 @misc{KRnotes,
 	author = "Sergot, M.",
-	title = {{Notes on Answer Sets and The Stable Model Semantics from course 491, Knowledge Representation}},
-	url = "http://www.doc.ic.ac.uk/~mjs/teaching/491.html"
+	title = {{Notes on Answer Sets and The Stable Model Semantics from Course 491, Knowledge Representation}},
+	url = "https://www.doc.ic.ac.uk/~mjs/teaching/KnowledgeRep491/StableModels-2x1.pdf"
+}
+
+@misc{Play,
+	title = "The Play Framework",
+	note = "https://www.playframework.com/documentation/2.5.x/Home"
+}
+
+@misc{Akka,
+	title = "Akka Actors",
+	note = "http://doc.akka.io/docs/akka/snapshot/scala/actors.html"
+}
+
+@misc{Bootstrap,
+	title = "The Bootstrap JS Framework",
+	note = "http://getbootstrap.com/"
 }

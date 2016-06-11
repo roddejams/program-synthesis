@@ -10,5 +10,16 @@ A level-1 auxiliary file: C5/chapter5.aux
 A level-1 auxiliary file: C6/chapter6.aux
 A level-1 auxiliary file: C7/chapter7.aux
 A level-1 auxiliary file: CA1/chapterA1.aux
+A level-1 auxiliary file: CA2/chapterA2.aux
 The style file: plain.bst
 Database file #1: References.bib
+Warning--to sort, need author or key in Play
+Warning--to sort, need author or key in Akka
+Warning--to sort, need author or key in Bootstrap
+Warning--empty journal in Crowe2015
+Warning--there's a number but no volume in Crowe2015
+Warning--can't use both volume and number fields in Gulwani2012
+Warning--empty journal in Law2015
+Warning--empty journal in Yang
+Warning--empty year in Yang
+(There were 9 warnings)

@@ -1,4 +1,33 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{Akka}
+Akka actors.
+\newblock http://doc.akka.io/docs/akka/snapshot/scala/actors.html.
+
+\bibitem{Bootstrap}
+The bootstrap js framework.
+\newblock http://getbootstrap.com/.
+
+\bibitem{Play}
+The play framework.
+\newblock https://www.playframework.com/documentation/2.5.x/Home.
+
+\bibitem{Bauer2016}
+Michael~A. Bauer.
+\newblock {Programming by examples}.
+\newblock {\em Artificial Intelligence}, 12(1):1--21, 2016.
+
+\bibitem{Cabalar2009}
+Pedro Cabalar, David Pearce, and Agust{\'{i}}n Valverde.
+\newblock {A revised concept of safety for general answer set programs}.
+\newblock {\em Lecture Notes in Computer Science (including subseries Lecture
+  Notes in Artificial Intelligence and Lecture Notes in Bioinformatics)}, 5753
+  LNAI:58--70, 2009.
+
+\bibitem{Euclid}
+Gilles Cazelais.
+\newblock Euclid's algorithm.
+\newblock http://pages.pacificcoast.net/~cazelais/222/euclid.pdf.
 
 \bibitem{negAsFailure}
 K.~Clark.
@@ -6,15 +35,104 @@ K.~Clark.
   failure, pages 311--325.
 \newblock Morgan Kaufmann Publishers, 1987.
 
-\bibitem{Katayama12}
+\bibitem{Corapi2012}
+Domenico Corapi, Alessandra Russo, and Emil Lupu.
+\newblock {Inductive Logic Programming in Answer Set Programming}.
+\newblock {\em Inductive Logic Programming}, pages 91--97, 2012.
+
+\bibitem{Crowe2015}
+Joseph Crowe, Krysia Broda, and Mark Law.
+\newblock {Synthesis of Simple While Programs Using Answer Set Programming}.
+\newblock (June):1--39, 2015.
+
+\bibitem{Eiter2008}
+Thomas Eiter, Wolfgang Faber, Michael Fink, and Stefan Woltran.
+\newblock {A user's guide to gringo, clasp, clingo, and iclingo}.
+\newblock {\em Annals of Mathematics and Artificial Intelligence},
+  51(2-4):123--165, 2008.
+
+\bibitem{Gebser2007}
+Martin Gebser, Benjamin Kaufmann, Andr{\'{e}} Neumann, and Torsten Schaub.
+\newblock {Conflict-driven answer set solving}.
+\newblock In {\em IJCAI International Joint Conference on Artificial
+  Intelligence}, pages 386--392, 2007.
+
+\bibitem{Gulwani2012}
+Sumit Gulwani, William~R. Harris, and Rishabh Singh.
+\newblock {Spreadsheet data manipulation using examples}.
+\newblock In {\em Communications of the ACM}, volume~55, page~97, 2012.
+
+\bibitem{Guziolowski2013}
+Carito Guziolowski, Santiago Videla, Federica Eduati, Sven Thiele, Thomas
+  Cokelaer, Anne Siegel, and Julio Saez-Rodriguez.
+\newblock {Exhaustively characterizing feasible logic models of a signaling
+  network using Answer Set Programming}.
+\newblock {\em Bioinformatics}, 29(18):2320--2326, 2013.
+
+\bibitem{igordemo}
+M.~Hofmann.
+\newblock {\em Igor II - an Analytical Inductive Functional Programming
+  System}, 2010.
+
+\bibitem{Hudak2007}
+Paul Hudak, John Hughes, Simon~Peyton Jones, and Philip Wadler.
+\newblock {A History of Haskell}.
+\newblock In {\em Proceedings of the third ACM SIGPLAN conference on History of
+  programming languages (HOPL III)}, page Article 12, 2007.
+
+\bibitem{Katayama2012}
 S~Katayama.
 \newblock {An analytical inductive functional programming system that avoids
   unintended programs}.
 \newblock {\em Conference Record of the Annual ACM Symposium on Principles of
   Programming Languages}, pages 43--52, 2012.
 
+\bibitem{Katayama2013}
+Susumu Katayama.
+\newblock {MagicHaskeller on the Web: Automated Programming as a Service}.
+\newblock {\em Haskell Symposium}, pages 1--2, 2013.
+
+\bibitem{Kitzelmann2006}
+Emanuel Kitzelmann and Ute Schmid.
+\newblock {Inductive Synthesis of Functional Programs : An Explanation Based
+  Generalization Approach}.
+\newblock {\em Journal of Machine Learning Research}, 7:429--454, 2006.
+
+\bibitem{ASPnotes}
+M.~Law.
+\newblock {Notes on Answer Set Programming from Course 304, Logic Based
+  Learning}.
+
+\bibitem{Law2015}
+Mark Law, Alessandra Russo, and Krysia Broda.
+\newblock {Simplified Reduct for Choice Rules in ASP}.
+\newblock pages 1--10, 2015.
+
+\bibitem{Lifschitz1999}
+Vladimir Lifschitz.
+\newblock {Answer set planning}.
+\newblock In {\em Lecture Notes in Computer Science (including subseries
+  Lecture Notes in Artificial Intelligence and Lecture Notes in
+  Bioinformatics)}, volume 1730, pages 373--374, 1999.
+
+\bibitem{Muggleton1991}
+Stephen Muggleton.
+\newblock {Inductive logic programming}.
+\newblock {\em New Generation Computing}, 8(4):295--318, 1991.
+
 \bibitem{IFPnotes}
 U.~Schmid.
-\newblock Inductive functional programming.
+\newblock Notes on inductive functional programming.
+
+\bibitem{KRnotes}
+M.~Sergot.
+\newblock {Notes on Answer Sets and The Stable Model Semantics from Course 491,
+  Knowledge Representation}.
+
+\bibitem{Yang}
+Fangkai Yang, Piyush Khandelwal, Matteo Leonetti, and Peter Stone.
+\newblock {Planning in Answer Set Programming while Learning Action Costs for
+  Mobile Robots}.
+\newblock pages 71--78.
 
 \end{thebibliography}

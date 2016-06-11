@@ -4,17 +4,16 @@ This chapter details how we extend the interpreter discussed in chapter 3 to per
 
 \section{The Learning Task}
 Formally, the learning task described in this section is defined as : \\ \\
-Given a set of skeleton rules which describe all potential learned programs \lstinline!SK!, and a set of examples in the form of Input / Output pairs \lstinline!E!, the Learning Task returns a subset of the skeleton rules which covers all examples. This subset corresponds to the a subset of the Answer Set of \lstinline!SK! $\cup$ \lstinline!E! $\cup$ \lstinline!I!, where \lstinline!I! is the interpreter described in Chapter 3, with some minor adjustments.\\ \\
+Given a set of skeleton rules which describe all potential learned programs \lstinline!SK!, and a set of examples in the form of Input / Output pairs \lstinline!E!, the Learning Task returns a subset of the skeleton rules which covers all examples. This subset corresponds to the a subset of the Answer Set of \lstinline!SK! $\cup$ \lstinline!E! $\cup$ \lstinline!I!, where \lstinline!I! is the interpreter described in Chapter 3.\\ \\
 An example is covered by some rules if, when the inputs of that example are ran by the interpreter, it returns the same result specified by the example.
 
 \section{Skeleton Rules}
-To know what rules are possible to learn, I enumerate all possible combinations of rules, to provide a set for the learning task to choose from. Based on the notion of skeleton rules from the ASP learning algorithm ASPAL, each skeleton rule is a template for a possible rule, with its constants replaced with variables. These variables are then ground when they appear in the choice rule. This replacement shifts the task of finding ground rules to the ASP solver.\\ \\
+To know what rules are possible to learn, I enumerate all possible combinations of rules, to provide a set for the learning task to choose from. Based on the notion of skeleton rules from the ASP learning algorithm ASPAL \cite{Corapi2012}, each skeleton rule is a template for a possible rule, with its constants replaced with variables. These variables are then ground when they appear in the choice rule. This replacement shifts the task of finding ground rules to the ASP solver.\\ \\
 Each skeleton rule has one of the following formats: \\
 
 \begin{lstlisting}
 rule(R, F, Args, Expr) :- input(call(f, Args)), choose(R, N, C1, ..., CN).
 \end{lstlisting}
-\mbox{} \\
 
 \begin{lstlisting}
 where(Var, Args, Expr) :- input(call(f, Args)), choose_where(N, C1, ..., CN).
@@ -217,7 +216,7 @@ f n
 Here, the second function is considered more optimal as it has fewer lines those lines have overall shorter length.
 
 \section{A Worked Example : Learning GCD}
-In the last chapter, I went through the steps that the interpreter takes to produce results when given Euler's algorithm to calculate the greatest common divisor. In this section, I will detail how the tool then learns that program. As a reminder, this function is defined in Haskell as :
+In the last chapter, I went through the steps that the interpreter takes to produce results when given Euclid's algorithm to calculate the greatest common divisor \cite{Euclid}. In this section, I will detail how the tool then learns that program. As a reminder, this function is defined in Haskell as :
 
 \begin{lstlisting}
 gcd x y
@@ -228,7 +227,6 @@ gcd x y
 \mbox{}\\
 As input to the learning task some examples need to be specified. I initially choose the examples \\
 
-\lstinputlisting[language=Prolog, firstline=32, lastline=36]{../ASP/eq/gcd.lp}
 \begin{lstlisting}
 example(call(gcd, (1, 1)), 1).
 example(call(gcd, (2, 1)), 1).
@@ -276,7 +274,7 @@ gcd x y
 	| x < y  = x
 \end{lstlisting}
 \mbox{}\\
-What is interesting is that this is not a correct implementation of Euler's algorithm! However, this result is still returned as it covers all of the examples. For example, the example \lstinline{example(call(gcd, (9, 6)), 3)} generates a \lstinline{input(call(gcd, (9, 6)))} term. This term is then ran through the interpreter with the chose rules, and returns \lstinline{output(call(gcd, (9, 6)), 3)}. As this does not contradict the example, those rules are valid. \\ \\%{
+What is interesting is that this is not a correct implementation of Euclid's algorithm! However, this result is still returned as it covers all of the examples. For example, the example \lstinline{example(call(gcd, (9, 6)), 3)} generates a \lstinline{input(call(gcd, (9, 6)))} term. This term is then ran through the interpreter with the chose rules, and returns \lstinline{output(call(gcd, (9, 6)), 3)}. As this does not contradict the example, those rules are valid. \\ \\%{
 As an attempt to fix this problem, some extra examples can be added. By adding these two examples :\\
 
 \begin{lstlisting}

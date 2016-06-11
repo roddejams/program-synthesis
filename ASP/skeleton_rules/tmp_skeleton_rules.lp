@@ -89,7 +89,8 @@ where(x1, (N0, N1), sub(N0, N1)) :- input(call(gcd, (N0, N1))), choose_where(74)
 where(x1, (N0, N1), sub(N1, N0)) :- input(call(gcd, (N0, N1))), choose_where(77).
 where(x1, (N0, N1), call(gcd, (N0, N1))) :- input(call(gcd, (N0, N1))), choose_where(75).
 1 {
-choose(R, 1;2;3;4;7;9;10;11;12;15;17;18;19;20;23;25;26;27;28;29;30;31;32;76;78;79;80;81) ,
+choose(R, 1;2;3;4;7;9;10;11;12;15;17;18
+           ;19;20;23;25;26;27;28;29;30;31;32;76;78;79;80;81) ,
 choose(R, 5;6;8;13;14;16;21;22;24, C0) : expr_const(C0)
 } 1 :- num_rules(R).
 #minimise [choose_where(R)=1, choose_where(R, _)=1 ].

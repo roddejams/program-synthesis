@@ -1,19 +1,39 @@
-\chapter{Chapter Title}
+\chapter{Code Listings}
 
-\section{First Section Title}
+\section{The Interpreted Approach}
 
-\lipsum[1-2]\cite{Cooper13}
+\subsection{The Interpreter}
 
-\subsection{First Subsection Title}
-
-\lipsum[3]
-
-\section{First Section Title}
-
-\lipsum[4-5]
-
+\lstinputlisting[language=Prolog, firstline=55, firstnumber=55]{../ASP/rules.lp}
 
 \pagebreak
-\renewcommand\bibname{{References}}
-\bibliography{References}
-\bibliographystyle{plain}
+
+\subsection{Skeleton Rules}
+
+\subsubsection{One Argument Rules}
+
+\lstinputlisting[language=Prolog]{../ASP/skeleton_rules/skeleton_rules_3_1.lp}
+\pagebreak
+\subsubsection{Two Argument Rules}
+
+\lstinputlisting[language=Prolog]{../ASP/skeleton_rules/tmp_skeleton_rules.lp}
+\pagebreak
+\section{Constraint Based Approach}
+
+\subsection{Constraint Handling}
+
+\lstinputlisting[language=Prolog, firstline=32, firstnumber=32]{../ASP/eq/eq_rules.lp}
+\pagebreak
+\subsection{Skeleton Rules}
+
+\subsubsection{One Argument Rules}
+
+\lstinputlisting[language=Prolog]{../ASP/eq/eq_skeleton_rules.lp}
+\pagebreak
+\subsubsection{Two Argument Rules}
+
+\lstinputlisting[language=Prolog]{../ASP/eq/short_eq_skeleton_rules.lp}
+\pagebreak
+%\renewcommand\bibname{{References}}
+%\bibliography{References}
+%\bibliographystyle{plain}

@@ -404,7 +404,7 @@ value(mul(A, B), @to_num(V1) * @to_num(V2)) :-
 
 \section{A Worked Example : Greatest Common Divisor}
 
-To illustrate the interpreter, I will walk through a simple example - Euler's algorithm to calculate the Greatest Common Divisor. The Haskell definition of this function is : \\
+To illustrate the interpreter, I will walk through a simple example - Euclid's algorithm to calculate the Greatest Common Divisor \cite{Euclid}. The Haskell definition of this function is : \\
 
 \begin{lstlisting}
 gcd x y
@@ -413,7 +413,7 @@ gcd x y
 	| x < y  = gcd(x, y - x)
 \end{lstlisting}
 \mbox{} \\
-You may notice this is not the typical definition of Euler's algorithm, as it does not make use of modulo. This is because my current language bias does not support the modulo operator. \\ \\
+You may notice this is not the typical definition of Euclid's algorithm, as it does not make use of modulo. This is because my current language bias does not support the modulo operator. \\ \\
 This Haskell function is represented in ASP as :\\
 
 \begin{lstlisting}
