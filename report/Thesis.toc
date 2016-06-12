@@ -91,34 +91,34 @@
 \contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{74}{section.7.3}
 \contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{74}{subsection.7.3.1}
 \contentsline {subsection}{\numberline {7.3.2}Igor II}{76}{subsection.7.3.2}
-\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{77}{chapter.8}
-\contentsline {section}{\numberline {8.1}Conclusions}{77}{section.8.1}
-\contentsline {subsection}{\numberline {8.1.1}Learning}{77}{subsection.8.1.1}
-\contentsline {subsection}{\numberline {8.1.2}UI}{77}{subsection.8.1.2}
-\contentsline {section}{\numberline {8.2}Future Work}{78}{section.8.2}
-\contentsline {subsection}{\numberline {8.2.1}Type Usage}{78}{subsection.8.2.1}
-\contentsline {subsection}{\numberline {8.2.2}Lists and Strings}{78}{subsection.8.2.2}
-\contentsline {subsection}{\numberline {8.2.3}Expanding the Background Knowledge}{79}{subsection.8.2.3}
-\contentsline {subsection}{\numberline {8.2.4}Advanced Skeleton Rule Generation}{80}{subsection.8.2.4}
-\contentsline {subsection}{\numberline {8.2.5}Supporting Multiple Function Calls}{81}{subsection.8.2.5}
-\contentsline {subsection}{\numberline {8.2.6}Advanced Optimisation}{81}{subsection.8.2.6}
-\contentsline {subsection}{\numberline {8.2.7}Parallel Learning}{82}{subsection.8.2.7}
-\contentsline {chapter}{\numberline {A}Full Experimental Results}{83}{appendix.A}
-\contentsline {section}{\numberline {A.1}One Argument Programs}{83}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Factorial}{83}{subsection.A.1.1}
-\contentsline {subsection}{\numberline {A.1.2}Fibonacci}{84}{subsection.A.1.2}
-\contentsline {subsection}{\numberline {A.1.3}Powers of 2}{85}{subsection.A.1.3}
-\contentsline {section}{\numberline {A.2}Two Argument Programs}{86}{section.A.2}
-\contentsline {subsection}{\numberline {A.2.1}Tail Recursive Factorial}{86}{subsection.A.2.1}
-\contentsline {subsection}{\numberline {A.2.2}Greatest Common Divisor}{87}{subsection.A.2.2}
-\contentsline {chapter}{\numberline {B}Code Listings}{88}{appendix.B}
-\contentsline {section}{\numberline {B.1}The Interpreted Approach}{88}{section.B.1}
-\contentsline {subsection}{\numberline {B.1.1}The Interpreter}{88}{subsection.B.1.1}
-\contentsline {subsection}{\numberline {B.1.2}Skeleton Rules}{92}{subsection.B.1.2}
-\contentsline {subsubsection}{One Argument Rules}{92}{section*.27}
-\contentsline {subsubsection}{Two Argument Rules}{95}{section*.28}
-\contentsline {section}{\numberline {B.2}Constraint Based Approach}{100}{section.B.2}
-\contentsline {subsection}{\numberline {B.2.1}Constraint Handling}{100}{subsection.B.2.1}
-\contentsline {subsection}{\numberline {B.2.2}Skeleton Rules}{102}{subsection.B.2.2}
-\contentsline {subsubsection}{One Argument Rules}{102}{section*.29}
-\contentsline {subsubsection}{Two Argument Rules}{105}{section*.30}
+\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{78}{chapter.8}
+\contentsline {section}{\numberline {8.1}Conclusions}{78}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Learning}{78}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}UI}{78}{subsection.8.1.2}
+\contentsline {section}{\numberline {8.2}Future Work}{79}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Type Usage}{79}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Lists and Strings}{79}{subsection.8.2.2}
+\contentsline {subsection}{\numberline {8.2.3}Expanding the Background Knowledge}{80}{subsection.8.2.3}
+\contentsline {subsection}{\numberline {8.2.4}Advanced Skeleton Rule Generation}{81}{subsection.8.2.4}
+\contentsline {subsection}{\numberline {8.2.5}Supporting Multiple Function Calls}{82}{subsection.8.2.5}
+\contentsline {subsection}{\numberline {8.2.6}Advanced Optimisation}{82}{subsection.8.2.6}
+\contentsline {subsection}{\numberline {8.2.7}Parallel Learning}{83}{subsection.8.2.7}
+\contentsline {chapter}{\numberline {A}Full Experimental Results}{84}{appendix.A}
+\contentsline {section}{\numberline {A.1}One Argument Programs}{84}{section.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Factorial}{84}{subsection.A.1.1}
+\contentsline {subsection}{\numberline {A.1.2}Fibonacci}{85}{subsection.A.1.2}
+\contentsline {subsection}{\numberline {A.1.3}Powers of 2}{86}{subsection.A.1.3}
+\contentsline {section}{\numberline {A.2}Two Argument Programs}{87}{section.A.2}
+\contentsline {subsection}{\numberline {A.2.1}Tail Recursive Factorial}{87}{subsection.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}Greatest Common Divisor}{88}{subsection.A.2.2}
+\contentsline {chapter}{\numberline {B}Code Listings}{89}{appendix.B}
+\contentsline {section}{\numberline {B.1}The Interpreted Approach}{89}{section.B.1}
+\contentsline {subsection}{\numberline {B.1.1}The Interpreter}{89}{subsection.B.1.1}
+\contentsline {subsection}{\numberline {B.1.2}Skeleton Rules}{93}{subsection.B.1.2}
+\contentsline {subsubsection}{One Argument Rules}{93}{section*.27}
+\contentsline {subsubsection}{Two Argument Rules}{96}{section*.28}
+\contentsline {section}{\numberline {B.2}Constraint Based Approach}{101}{section.B.2}
+\contentsline {subsection}{\numberline {B.2.1}Constraint Handling}{101}{subsection.B.2.1}
+\contentsline {subsection}{\numberline {B.2.2}Skeleton Rules}{103}{subsection.B.2.2}
+\contentsline {subsubsection}{One Argument Rules}{103}{section*.29}
+\contentsline {subsubsection}{Two Argument Rules}{106}{section*.30}

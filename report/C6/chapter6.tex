@@ -332,7 +332,7 @@ f x n
 & 
 \begin{lstlisting}[backgroundcolor = \color{white}]
 f = 
-  (\a b -> product [b..a])
+  (\a b -> b * product [1..a])
 \end{lstlisting}
 \\
 \hline
@@ -380,13 +380,15 @@ No Result!
 \hline
 Function & My Performance & MagicHaskeller \\
 \hline
-Factorial & & \\
+Factorial & 1.240s & 2.168s\\
 \hline
-Tail Recursive Factorial & & \\
+Power of Two & 5.580s & 2.147s\\
 \hline
-GCD & & \\
+Tail Recursive Factorial & 173.9 & 133.654s\\
 \hline
-Fibonacci & & \\
+GCD & 1599.42 & 2.315586 \\
+\hline
+Fibonacci & 807.24 & No Result\\
 \hline
 \end{tabular}
 \caption{MagicHaskeller Performance Comparison }
@@ -402,8 +404,56 @@ Igor II \cite{Kitzelmann2006} is an IFP system that is designed to learn purely 
 \item The output from Igor II is a list of hypotheses, rather than a program or lambda function. While this increases the expressivity, it severely reduces readability and usability by users less experienced in the field.
 \end{itemize}
 \mbox{}\\
-Because of these differences it was not possible to run any 
+Because of these differences Igor II was unable to learn any of the examples specified in this section. To show why, I will detail the attempt to learn the factorial program. \\ \\
+First, the input examples are specified as follows : \\
 
+\begin{lstlisting}
+fmod FACTORIAL is
+	sorts MyNat InVec .
+
+	*** DT definitions (constructors)
+	op 0 : -> MyNat [ctor] .
+	op s : MyNat -> MyNat [ctor] .
+	
+	op Mult : MyNat MyNat -> MyNat [metadata ""] .
+	op Add : MyNat MyNat -> MyNat [metadata ""] .
+	op Fac : MyNat -> MyNat [metadata "induce"] .
+
+	op in : MyNat -> InVec [ctor] .
+	op in : MyNat MyNat -> InVec [ctor] .
+
+	vars X Y : MyNat .
+	
+	eq Add(0,s(0)) = s(0) .
+	eq Add(s(0),s(0)) = s(s(0)) .
+	eq Add(s(s(0)),s(0)) = s(s(s(0))) .
+	eq Add(0,s(s(0))) = s(s(0)) .
+	eq Add(s(0),s(s(0))) = s(s(s(0))) .
+	eq Add(s(s(0)),s(s(0))) = s(s(s(s(0)))) .	
+	
+	eq Mult(0,X) = 0 .
+	eq Mult(s(0),s(0)) = s(0) .
+	eq Mult(s(s(0)),s(0)) = s(s(0)) .	
+	eq Mult(s(0),s(s(0))) = s(s(0)) .
+	eq Mult(s(s(0)),s(s(0))) = s(s(s(s(0)))) .
+	
+	eq Fac(0) = s(0) .
+	eq Fac(s(0)) = s(0) .
+	eq Fac(s(s(0))) = s(s(0)) .
+	eq Fac(s(s(s(0)))) = s(s(s(s(s(s(0)))))) .
+endfm
+\end{lstlisting}
+\mbox{}\\
+All sub functions are specified by examples, but the tool only learns \lstinline!Fac! as it specified by the \lstinline!metadata "induce"! statement. In addition, as there is no inbuilt arithmetic, the successor operator, \lstinline!s!, is used instead. \lstinline!0! is also defined as a constant. \\ \\
+These examples learn the following program : \\
+
+\begin{lstlisting}
+result Hypo: hypo(true, 3, eq 'Fac['0.MyNat] = 's['0.MyNat] [none] .
+eq 'Fac['s['0.MyNat]] = 's['0.MyNat] [none] .
+eq 'Fac['s['s['X0:MyNat]]] = 's[s'['Mult['s['s['X0:MyNat]], Mult['X0:MyNat, 's['s[X0:MyNat]]]]] .   
+\end{lstlisting}
+\mbox{}\\
+This solution is incorrect as it is not recursive.
 
 \pagebreak
 %\renewcommand\bibname{{References}}

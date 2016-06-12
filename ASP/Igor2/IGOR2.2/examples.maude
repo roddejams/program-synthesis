@@ -1,6 +1,6 @@
 fmod PATH is
 	sorts MyItem MyList MyTree InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 
@@ -14,236 +14,236 @@ fmod PATH is
 	op Path : MyItem MyTree -> MyList [metadata "induce"] .
 	op in : MyItem MyTree -> InVec [ctor] .
 
-	eq Path(a, < leaf , a , < leaf , b , < leaf , c , leaf > > >) =	
+	eq Path(a, < leaf , a , < leaf , b , < leaf , c , leaf > > >) =
 		cons(a,[]) .
-	eq Path(b, < leaf , a , < leaf , b , < leaf , c , leaf > > >) =	
+	eq Path(b, < leaf , a , < leaf , b , < leaf , c , leaf > > >) =
 		cons(b,cons(a,[])) .
-	eq Path(c, < leaf , a , < leaf , b , < leaf , c , leaf > > >) =	
+	eq Path(c, < leaf , a , < leaf , b , < leaf , c , leaf > > >) =
 		cons(c, cons(b,cons(a,[]))) .
 endfm
 
 fmod LAST is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Last : MyList -> MyItem [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z V : MyItem .
-	
+
 	*** examples
 	eq Last(cons(X,[])) = X .
 	eq Last(cons(X,cons(Y,[]))) = Y .
 	eq Last(cons(X,cons(Y,cons(Z,[])))) = Z .
 	*** eq Last(cons(X,cons(Y,cons(Z,cons(V,[]))))) = V .
-endfm 
+endfm
 
 fmod LASTS is
 	sorts MyItem MyList MyOuterList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	op emptyo : -> MyOuterList [ctor] .
 	op conso : MyList MyOuterList -> MyOuterList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Lasts : MyOuterList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyOuterList -> InVec [ctor] .
-	
+
 	vars X Y Z V W : MyItem .
-	
+
 	*** examples
 	eq Lasts(emptyo) = [] .
 	eq Lasts(conso(cons(X,[]),emptyo)) = cons(X,[]) .
 	eq Lasts(conso(cons(X,cons(Y,[])),emptyo)) = cons(Y,[]) .
 	eq Lasts(conso(cons(X,cons(Y,cons(Z,[]))),emptyo)) = cons(Z,[]) .
 
-	eq Lasts(conso(cons(X,[]),conso(cons(Y,[]),emptyo))) = 
+	eq Lasts(conso(cons(X,[]),conso(cons(Y,[]),emptyo))) =
 		cons(X,cons(Y,[])) .
-	eq Lasts(conso(cons(X,cons(Y,[])),conso(cons(Z,[]),emptyo))) = 
+	eq Lasts(conso(cons(X,cons(Y,[])),conso(cons(Z,[]),emptyo))) =
 		cons(Y,cons(Z,[])) .
 	eq Lasts(conso(cons(X,cons(Y,cons(Z,[]))),conso(cons(V,[]),emptyo))) =
 		 cons(Z,cons(V,[])) .
 
-	eq Lasts(conso(cons(X,[]),conso(cons(Y,cons(Z,[])),emptyo))) = 
+	eq Lasts(conso(cons(X,[]),conso(cons(Y,cons(Z,[])),emptyo))) =
 		cons(X,cons(Z,[])) .
-	eq Lasts(conso(cons(X,cons(Y,[])),conso(cons(Z,cons(V,[])),emptyo))) = 
+	eq Lasts(conso(cons(X,cons(Y,[])),conso(cons(Z,cons(V,[])),emptyo))) =
 		cons(Y,cons(V,[])) .
 	eq Lasts(conso(cons(X,cons(Y,cons(Z,[]))),conso(cons(V,cons(W,[])),emptyo))) =
 		 cons(Z,cons(W,[])) .
-endfm 
+endfm
 
 
 
 
 fmod STRING-TEST is
 	inc STRING .
-	
+
 	sorts MyList InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons : String MyList -> MyList [ctor] .
-	
+
 	***ops "eins" "zwei "drei" : -> String [ctor] .
 
 	op Rev : MyList -> MyList [metadata "induce"] .
 	op in : MyList -> InVec [ctor] .
-	
+
 	eq Rev([]) = [] .
 	eq Rev(cons("eins",[])) = cons("eins",[]) .
 	eq Rev(cons("zwei",[])) = cons("zwei",[]) .
 	eq Rev(cons("drei",[])) = cons("drei",[]) .
-	
+
 	eq Rev(cons("eins",cons("zwei",[]))) = cons("zwei",cons("eins",[])) .
 	eq Rev(cons("zwei",cons("eins",[]))) = cons("eins",cons("zwei",[])) .
 	eq Rev(cons("eins",cons("drei",[]))) = cons("drei",cons("eins",[])) .
 	eq Rev(cons("drei",cons("eins",[]))) = cons("eins",cons("drei",[])) .
 	eq Rev(cons("zwei",cons("drei",[]))) = cons("drei",cons("zwei",[])) .
 	eq Rev(cons("drei",cons("zwei",[]))) = cons("zwei",cons("drei",[])) .
-	
-	eq Rev(cons("eins",cons("zwei",cons("drei",[])))) = 
+
+	eq Rev(cons("eins",cons("zwei",cons("drei",[])))) =
 		cons("drei",cons("zwei",cons("eins",[]))) .
-	***eq Rev(cons("drei",cons("zwei",cons("eins",[])))) = 
+	***eq Rev(cons("drei",cons("zwei",cons("eins",[])))) =
 	***	cons("eins",cons("zwei",cons("drei",[]))) .
 endfm
 
 fmod PREPROC is
 	sorts MyList MyItem MySep InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons1 : MyItem MyList -> MyList [ctor] .
 	op cons2 : MySep MyList -> MyList [ctor] .
 	ops a b c d : -> MyItem [ctor] .
 	op s : -> MySep [ctor metadata "separator nomatch"] .
-	
+
 	op Test : MyList -> MyList [metadata "induce"] .
 	op in : MyList -> InVec [ctor] .
-	
+
 	eq Test([]) = [] .
 	eq Test(cons1(a,[])) = cons1(a,[]) .
 	eq Test(cons1(b,[])) = cons1(b,[]) .
 	eq Test(cons1(a,cons2(s,cons1(b,[])))) = cons1(b,cons2(s,cons1(a,[]))) .
 	eq Test(cons1(b,cons2(s,cons1(a,[])))) = cons1(a,cons2(s,cons1(b,[]))) .
-	eq Test(cons1(a,cons2(s,cons1(b,cons2(s,cons1(c,[])))))) = 
+	eq Test(cons1(a,cons2(s,cons1(b,cons2(s,cons1(c,[])))))) =
 		cons1(c,cons2(s,cons1(b,cons2(s,cons1(a,[]))))) .
-	eq Test(cons1(b,cons2(s,cons1(c,cons2(s,cons1(a,[])))))) = 
+	eq Test(cons1(b,cons2(s,cons1(c,cons2(s,cons1(a,[])))))) =
 		cons1(a,cons2(s,cons1(c,cons2(s,cons1(b,[]))))) .
-	eq Test(cons1(a,cons2(s,cons1(b,cons2(s,cons1(c,cons2(s,cons1(d,[])))))))) = 
+	eq Test(cons1(a,cons2(s,cons1(b,cons2(s,cons1(c,cons2(s,cons1(d,[])))))))) =
 		cons1(d,cons2(s,cons1(c,cons2(s,cons1(b,cons2(s,cons1(a,[]))))))) .
-	eq Test(cons1(b,cons2(s,cons1(c,cons2(s,cons1(d,cons2(s,cons1(a,[])))))))) = 
+	eq Test(cons1(b,cons2(s,cons1(c,cons2(s,cons1(d,cons2(s,cons1(a,[])))))))) =
 		cons1(a,cons2(s,cons1(d,cons2(s,cons1(c,cons2(s,cons1(b,[]))))))) .
-endfm 
+endfm
 
 
 fmod INIT is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Init : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
-	
+
 	*** examples
 	eq Init(cons(X,[])) = [] .
 	eq Init(cons(X,cons(Y,[]))) = cons(X,[]) .
 	eq Init(cons(X,cons(Y,cons(Z,[])))) =  cons(X,cons(Y,[])) .
-endfm 
+endfm
 
 
 fmod SNOC is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Snoc : MyList MyItem -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList MyItem -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
-	
+
 	*** examples
 	eq Snoc([],Z) = cons(Z,[]) .
 	eq Snoc(cons(X,[]),Z) = cons(X,cons(Z,[])) .
 	eq Snoc(cons(X,cons(Y,[])),Z) = cons(X,cons(Y,cons(Z,[]))) .
-endfm 
+endfm
 
 
 fmod EVENPOS is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Evenpos : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z V : MyItem .
-	
+
 	*** examples
 	eq Evenpos([]) = [] .
 	eq Evenpos(cons(X,[])) = [] .
 	eq Evenpos(cons(X,cons(Y,[]))) = cons(Y,[]) .
 	eq Evenpos(cons(X,cons(Y,cons(Z,[])))) =  cons(Y,[]) .
 	eq Evenpos(cons(X,cons(Y,cons(Z,cons(V,[]))))) =  cons(Y,cons(V,[])) .
-endfm 
+endfm
 
 
 fmod SWITCH is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Switch : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z V : MyItem .
-	
+
 	*** examples
 	***eq Switch([]) = [] .
 	eq Switch(cons(X,[])) = cons(X,[]) .
 	eq Switch(cons(X,cons(Y,[]))) = cons(Y,cons(X,[])) .
 	eq Switch(cons(X,cons(Y,cons(Z,[])))) =  cons(Y,cons(X,cons(Z,[]))) .
 	eq Switch(cons(X,cons(Y,cons(Z,cons(V,[]))))) =  cons(Y,cons(X,cons(V,cons(Z,[])))) .
-endfm 
+endfm
 
 
 fmod SWAP is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Swap : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z V W : MyItem .
-	
+
 	*** examples
 	eq Swap([]) = [] .
 	eq Swap(cons(X,[])) = cons(X,[]) .
@@ -251,7 +251,7 @@ fmod SWAP is
 	eq Swap(cons(X,cons(Y,cons(Z,[])))) =  cons(Z,cons(Y,cons(X,[]))) .
 	eq Swap(cons(X,cons(Y,cons(Z,cons(V,[]))))) =  cons(V,cons(Y,cons(Z,cons(X,[])))) .
 	eq Swap(cons(X,cons(Y,cons(Z,cons(V,cons(W,[])))))) =  cons(W,cons(Y,cons(Z,cons(V,cons(X,[]))))) .
-endfm 
+endfm
 
 
 fmod LENGTH is
@@ -298,15 +298,15 @@ endfm
 
 fmod ODD is
 	sorts MyNat MyBool InVec .
-	
+
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
 	op t : -> MyBool [ctor] .
 	op f : -> MyBool [ctor] .
-	
+
 	op Odd : MyNat -> MyBool [metadata "induce"] .
 	op in : MyNat -> InVec [ctor] .
-	
+
 	eq Odd(0) = f .
 	eq Odd(s(0)) = t .
 	eq Odd(s(s(0))) = f .
@@ -317,20 +317,20 @@ endfm
 
 fmod EVENODD is
 	sorts MyNat MyBool InVec .
-	
+
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
 	op t : -> MyBool [ctor] .
 	op f : -> MyBool [ctor] .
-	
+
 	op Even : MyNat -> MyBool [metadata "induce"] .
 	op Odd : MyNat -> MyBool [metadata "induce"] .
 	op in : MyNat -> InVec [ctor] .
-	
+
 	eq Even(0) = t .
 	eq Even(s(0)) = f .
 	eq Even(s(s(0))) = t .
-	
+
 	eq Odd(0) = f .
 	eq Odd(s(0)) = t .
 	eq Odd(s(s(0))) = f .
@@ -340,20 +340,20 @@ endfm
 
 fmod TAKE is
 	sorts MyItem MyList MyNat InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Take : MyList MyNat -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList MyNat -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
-	
+
 	*** examples
 	eq Take([],0) = [] .
 	eq Take(cons(X,[]),0) = [] .
@@ -362,23 +362,23 @@ fmod TAKE is
 	eq Take(cons(X,cons(Y,[])),s(0)) = cons(X,[]) .
 	eq Take(cons(X,cons(Y,[])),s(s(0))) = cons(X,cons(Y,[])) .
 	***eq Take(cons(X,cons(Y,cons(Z,[])))) =  cons(X,cons(Y,[])) .
-endfm 
+endfm
 
 
 fmod SUM is
 	sorts MyList MyNat InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyNat MyList -> MyList [ctor] .
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Sum : MyList -> MyNat [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	eq Sum([]) = 0 .
 	eq Sum(cons(0,[])) = 0 .
 	eq Sum(cons(s(0),[])) = s(0) .
@@ -392,19 +392,19 @@ endfm
 
 fmod REVERSE-CONST is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	ops a b c d : -> MyItem [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Reverse : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	*** vars X Y Z V : MyItem .
-	
+
 	*** examples
 	eq Reverse([]) = [] .
 	eq Reverse(cons(a,[])) = cons(a,[]) .
@@ -423,26 +423,26 @@ fmod REVERSE-CONST is
 	eq Reverse(cons(d,cons(a,cons(b,[])))) = cons(b,cons(a,cons(d,[]))) .
 	eq Reverse(cons(d,cons(a,[]))) = cons(a,cons(d,[])) .
 	eq Reverse(cons(d,[])) = cons(d,[]) .
-	
-	eq Reverse(cons(d,cons(a,cons(b,cons(c,[]))))) = 
+
+	eq Reverse(cons(d,cons(a,cons(b,cons(c,[]))))) =
 		cons(c,cons(b,cons(a,cons(d,[])))) .
-endfm 
+endfm
 
 
 fmod REVERSE is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Reverse : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z V : MyItem .
-	
+
 	*** examples
 	eq Reverse([]) = [] .
 	eq Reverse(cons(X,[])) = cons(X,[]) .
@@ -451,7 +451,7 @@ fmod REVERSE is
 	eq Reverse(cons(X,cons(Y,cons(Z,cons(V,[]))))) = cons(V,cons(Z,cons(Y,cons(X,[])))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,[])))))) = cons(W,cons(V,cons(Z,cons(Y,cons(X,[]))))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,cons(Q,[]))))))) = cons(Q,cons(W,cons(V,cons(Z,cons(Y,cons(X,[])))))) .
-endfm 
+endfm
 
 
 *** doesn't work yet because the recursive call in reverse-aux is equal
@@ -460,19 +460,19 @@ endfm
 *** applied by FFOIL this would work (as well as ackermann)
 fmod REV-AUX is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Reverse : MyList MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList MyList -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
 	var L : MyList .
-	
+
 	*** examples
 	eq Reverse([],L) = L .
 	eq Reverse(cons(X,[]),L) = cons(X,L) .
@@ -481,25 +481,25 @@ fmod REV-AUX is
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,[])))),L) = cons(V,cons(Z,cons(Y,cons(X,L)))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,[])))))) = cons(W,cons(V,cons(Z,cons(Y,cons(X,[]))))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,cons(Q,[]))))))) = cons(Q,cons(W,cons(V,cons(Z,cons(Y,cons(X,[])))))) .
-endfm 
+endfm
 
 
 
 
 fmod SHIFT-R is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op ShiftR : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
-	
+
 	*** examples
 	eq ShiftR([]) = [] .
 	eq ShiftR(cons(X,[])) = cons(X,[]) .
@@ -508,23 +508,23 @@ fmod SHIFT-R is
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,[]))))) = cons(V,cons(Z,cons(Y,cons(X,[])))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,[])))))) = cons(W,cons(V,cons(Z,cons(Y,cons(X,[]))))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,cons(Q,[]))))))) = cons(Q,cons(W,cons(V,cons(Z,cons(Y,cons(X,[])))))) .
-endfm 
+endfm
 
 
 fmod SHIFT-L is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op ShiftL : MyList -> MyList [metadata "induce"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
-	
+
 	*** examples
 	eq ShiftL([]) = [] .
 	eq ShiftL(cons(X,[])) = cons(X,[]) .
@@ -533,86 +533,86 @@ fmod SHIFT-L is
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,[]))))) = cons(V,cons(Z,cons(Y,cons(X,[])))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,[])))))) = cons(W,cons(V,cons(Z,cons(Y,cons(X,[]))))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,cons(Q,[]))))))) = cons(Q,cons(W,cons(V,cons(Z,cons(Y,cons(X,[])))))) .
-endfm 
+endfm
 
 
 fmod MIRROR is
 	sorts MyItem MyTree InVec .
-	
+
 	*** DT definitions (constructors)
 	op leaf : -> MyTree [ctor] .
 	op <_,_,_> : MyTree MyItem MyTree -> MyTree [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Mirror : MyTree -> MyTree [metadata "induce"] .
 	*** input encapsulation
 	op in : MyTree -> InVec [ctor] .
-	
+
 	vars X Y Z K A B C : MyItem .
-	
+
 	eq Mirror(leaf) = leaf .
 	eq Mirror(< leaf , X , leaf >) = < leaf , X , leaf > .
-	eq Mirror(< < leaf , X , leaf > , Y , < leaf , Z , leaf > >) = 
+	eq Mirror(< < leaf , X , leaf > , Y , < leaf , Z , leaf > >) =
 		< < leaf , Z , leaf > , Y , < leaf , X , leaf > > .
-	eq Mirror(< < < leaf , X , leaf > , Y , < leaf , Z , leaf > > , K , < < leaf , A , leaf > , B , < leaf , C , leaf > > >) = 
+	eq Mirror(< < < leaf , X , leaf > , Y , < leaf , Z , leaf > > , K , < < leaf , A , leaf > , B , < leaf , C , leaf > > >) =
 		< < < leaf , C , leaf > , B , < leaf , A , leaf > > , K , < < leaf , Z , leaf > , Y , < leaf , X , leaf > > > .
 endfm
 
 
 fmod FLATTEN is
 	sorts MyItem MyList MyTree InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	op leaf : -> MyTree [ctor] .
 	op <_,_,_> : MyTree MyItem MyTree -> MyTree [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Flatten : MyTree -> MyList [metadata "induce"] .
 	op Append : MyList MyList -> MyList [metadata ""] .
 	*** input encapsulation
 	op in : MyTree -> InVec [ctor] .
 	op in : MyList MyList -> InVec [ctor] .
-	
+
 	vars X Y Z K A B C : MyItem .
 	***var L : MyList .
-	
+
 	eq Flatten(leaf) = [] .
 	eq Flatten(< leaf , X , leaf >) = cons(X,[]) .
-	eq Flatten(< < leaf , X , leaf > , Y , < leaf , Z , leaf > >) = 
+	eq Flatten(< < leaf , X , leaf > , Y , < leaf , Z , leaf > >) =
 		cons(X,cons(Y,cons(Z,[]))) .
-	eq Flatten(< < < leaf , X , leaf > , Y , < leaf , Z , leaf > > , K , < < leaf , A , leaf > , B , < leaf , C , leaf > > >) = 
+	eq Flatten(< < < leaf , X , leaf > , Y , < leaf , Z , leaf > > , K , < < leaf , A , leaf > , B , < leaf , C , leaf > > >) =
 		cons(X,cons(Y,cons(Z,cons(K,cons(A,cons(B,cons(C,[]))))))) .
-		
+
 	eq Append([],[]) = [] .
 	eq Append([],cons(X,cons(Y,[]))) = cons(X,cons(Y,[])) .
 	eq Append([],cons(X,cons(Y,cons(Z,[])))) = cons(X,cons(Y,cons(Z,[]))) .
 	eq Append([],cons(X,cons(Y,cons(Z,cons(A,[]))))) = cons(X,cons(Y,cons(Z,cons(A,[])))) .
-	
+
 	eq Append(cons(X,[]),[]) =  cons(X,[]) .
 	eq Append(cons(X,[]),cons(Y,[])) =  cons(X,cons(Y,[])) .
 	eq Append(cons(A,[]),cons(X,cons(Y,cons(Z,[])))) = cons(A,cons(X,cons(Y,cons(Z,[])))) .
 	eq Append(cons(B,[]),cons(X,cons(Y,cons(Z,cons(A,[]))))) = cons(B,cons(X,cons(Y,cons(Z,cons(A,[]))))) .
-	
+
 	eq Append(cons(X,cons(Y,[])),[]) =  cons(X,cons(Y,[])) .
 	eq Append(cons(X,cons(Y,[])),cons(Z,[])) =  cons(X,cons(Y,cons(Z,[]))) .
 	eq Append(cons(X,cons(Y,[])),cons(Z,cons(A,[]))) =  cons(X,cons(Y,cons(Z,cons(A,[])))) .
 	eq Append(cons(B,cons(A,[])),cons(X,cons(Y,cons(Z,[])))) = cons(B,cons(A,cons(X,cons(Y,cons(Z,[]))))) .
 	eq Append(cons(C,cons(B,[])),cons(X,cons(Y,cons(Z,cons(A,[]))))) = cons(C,cons(B,cons(X,cons(Y,cons(Z,cons(A,[])))))) .
-	
-	eq Append(cons(X,cons(Y,cons(Z,[]))),[]) = 
+
+	eq Append(cons(X,cons(Y,cons(Z,[]))),[]) =
 		cons(X,cons(Y,cons(Z,[]))) .
-	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(C,[])) = 
+	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(C,[])) =
 		cons(X,cons(Y,cons(Z,cons(C,[])))) .
-	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(B,cons(C,[]))) = 
+	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(B,cons(C,[]))) =
 		cons(X,cons(Y,cons(Z,cons(B,cons(C,[]))))) .
-	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(A,cons(B,cons(C,[])))) = 
+	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(A,cons(B,cons(C,[])))) =
 		cons(X,cons(Y,cons(Z,cons(A,cons(B,cons(C,[])))))) .
-	
+
 	eq Append([],cons(X,[])) = cons(X,[]) .
 	eq Append(cons(X,[]),cons(Y,cons(Z,[]))) = cons(X,cons(Y,cons(Z,[]))) .
-	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(K,cons(A,cons(B,cons(C,[]))))) = 
+	eq Append(cons(X,cons(Y,cons(Z,[]))),cons(K,cons(A,cons(B,cons(C,[]))))) =
 		cons(X,cons(Y,cons(Z,cons(K,cons(A,cons(B,cons(C,[]))))))) .
 endfm
 
@@ -631,43 +631,43 @@ fmod SORT is
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 	op in : MyNat MyList -> InVec [ctor] .
-	
-	
+
+
 	var X : MyNat .
-	
+
 	eq Sort([]) = [] .
-	
+
 	eq Sort(cons(0,[])) = cons(0,[]) .
 	eq Sort(cons(s(0),[])) = cons(s(0),[]) .
 	***eq Sort(cons(s(s(0)),[])) = cons(s(s(0)),[]) .
-	
+
 	eq Sort(cons(0,cons(s(0),[]))) = cons(0,cons(s(0),[])) .
 	***eq Sort(cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(s(0)),[])) .
 	eq Sort(cons(s(0),cons(0,[]))) = cons(0,cons(s(0),[])) .
 	***eq Sort(cons(s(0),cons(s(s(0)),[]))) = cons(s(0),cons(s(s(0)),[])) .
 	***eq Sort(cons(s(s(0)),cons(0,[]))) = cons(0,cons(s(s(0)),[])) .
 	***eq Sort(cons(s(s(0)),cons(s(0),[]))) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	***eq Sort(cons(0,cons(s(0),cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(0,cons(s(s(0)),cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(0),cons(0,cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(0),cons(s(s(0)),cons(0,[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(s(0)),cons(0,cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(s(s(0)),cons(s(0),cons(0,[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
-	
-	
-	
+
+
+
 	eq Ins(0,[]) = cons(0,[]) .
 	eq Ins(s(0),[]) = cons(s(0),[]) .
 	***eq Ins(s(s(0)),[]) = cons(s(s(0)),[]) .
-	
+
 	eq Ins(0,cons(s(0),[])) = cons(0,cons(s(0),[])) .
 	eq Ins(0,cons(s(s(0)),[])) = cons(0,cons(s(s(0)),[])) .
 	eq Ins(s(0),cons(0,[])) = cons(0,cons(s(0),[])) .
 	eq Ins(s(0),cons(s(s(0)),[])) = cons(s(0),cons(s(s(0)),[])) .
 	***eq Ins(s(s(0)),cons(0,[])) = cons(0,cons(s(s(0)),[])) .
 	***eq Ins(s(s(0)),cons(s(0),[])) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	eq Ins(0,cons(s(0),cons(s(s(0)),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Ins(s(0),cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Ins(s(s(0)),cons(0,cons(s(0),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
@@ -688,38 +688,38 @@ fmod SORT2 is
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 	op in : MyNat MyList -> InVec [ctor] .
-	
+
 	eq Sort([]) = [] .
-	
+
 	vars X Y : MyNat .
 	var L : MyList .
-	
+
 	***eq Sort(cons(0,[])) = cons(0,[]) .
 	***eq Sort(cons(s(0),[])) = cons(s(0),[]) .
 	***eq Sort(cons(s(s(0)),[])) = cons(s(s(0)),[]) .
 	eq Sort(cons(X,[])) = cons(X,[]) .
-	
+
 	eq Sort(cons(0,cons(s(0),[]))) = cons(0,cons(s(0),[])) .
 	eq Sort(cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(s(0)),[])) .
 	eq Sort(cons(s(0),cons(0,[]))) = cons(0,cons(s(0),[])) .
 	eq Sort(cons(s(0),cons(s(s(0)),[]))) = cons(s(0),cons(s(s(0)),[])) .
 	eq Sort(cons(s(s(0)),cons(0,[]))) = cons(0,cons(s(s(0)),[])) .
 	eq Sort(cons(s(s(0)),cons(s(0),[]))) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	eq Sort(cons(0,cons(s(0),cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(0,cons(s(s(0)),cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(s(0),cons(0,cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(s(0),cons(s(s(0)),cons(0,[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(s(s(0)),cons(0,cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(s(s(0)),cons(s(0),cons(0,[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
-	
-	
-	
+
+
+
 	***eq Ins(0,[]) = cons(0,[]) .
 	***eq Ins(s(0),[]) = cons(s(0),[]) .
 	***eq Ins(s(s(0)),[]) = cons(s(s(0)),[]) .
 	eq Ins(X,[]) = cons(X,[]) .
-	
+
 	***eq Ins(0,cons(s(0),[])) = cons(0,cons(s(0),[])) .
 	***eq Ins(0,cons(s(s(0)),[])) = cons(0,cons(s(s(0)),[])) .
 	eq Ins(0,cons(Y,L)) = cons(0,cons(Y,L)) .
@@ -727,7 +727,7 @@ fmod SORT2 is
 	eq Ins(s(0),cons(s(s(0)),[])) = cons(s(0),cons(s(s(0)),[])) .
 	eq Ins(s(s(0)),cons(0,[])) = cons(0,cons(s(s(0)),[])) .
 	eq Ins(s(s(0)),cons(s(0),[])) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	***eq Ins(0,cons(s(0),cons(s(s(0)),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Ins(s(0),cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Ins(s(s(0)),cons(0,cons(s(0),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
@@ -740,7 +740,7 @@ fmod MULTI is
      op i[] : -> MyInner [ctor] .
      op icons : MyElem MyInner -> MyInner [ctor] .
      op o[] : -> MyOuter [ctor] .
-     op ocons : MyInner MyOuter -> MyOuter [ctor] .   
+     op ocons : MyInner MyOuter -> MyOuter [ctor] .
 
      op Multi : MyOuter -> MyOuter [metadata "induce"] .
      op in : MyOuter -> InVec [ctor] .
@@ -771,7 +771,7 @@ fmod MULTI2 is
      op i[] : -> MyInner [ctor] .
      op icons : MyElem MyInner -> MyInner [ctor] .
      op o[] : -> MyOuter [ctor] .
-     op ocons : MyInner MyOuter -> MyOuter [ctor] .   
+     op ocons : MyInner MyOuter -> MyOuter [ctor] .
 
      op Multi : MyOuter -> MyInner [metadata "induce"] .
      op in : MyOuter -> InVec [ctor] .
@@ -802,7 +802,7 @@ fmod DEL-ODDS is
     op [] : -> MyList [ctor] .
     op cons : MyNat MyList -> MyList [ctor] .
     op 0 : -> MyNat [ctor] .
-    op s : MyNat -> MyNat [ctor] . 
+    op s : MyNat -> MyNat [ctor] .
     op f : -> MyBool [ctor] .
     op t : -> MyBool [ctor] .
 
@@ -828,7 +828,7 @@ fmod DEL-ODDS is
     eq Odd(0) = f .
     eq Odd(s(0)) = t .
     eq Odd(s(s(0))) = f .
-    eq Odd(s(s(s(0)))) = t .    
+    eq Odd(s(s(s(0)))) = t .
 endfm
 
 
@@ -841,7 +841,7 @@ fmod DEL-ODDS2 is
     op Odd : MyNat -> MyBool [ctor] .
 
     op DelOdds : MyList -> MyList [metadata "induce"] .
-    
+
     op in : MyList -> InVec [ctor] .
 
     vars X Y : MyNat .
@@ -865,7 +865,7 @@ fmod DEL-ZEROS is
 	op s : MyNat -> MyNat [ctor] .
 
 	op DelZeros : MyList -> MyList [metadata "induce"] .
-	
+
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 
@@ -888,16 +888,16 @@ fmod ADD is
 	op s : MyNat -> MyNat [ctor] .
 
 	op Add : MyNat MyNat -> MyNat [metadata "induce"] .
-	
+
 	*** input encapsulation
 	op in : MyNat MyNat -> InVec [ctor] .
 
 	vars X Y : MyNat .
-	
+
 	***eq Add(0,X) = X .
 	***eq Add(s(0),X) = s(X) .
 	***eq Add(s(s(0)),X) = s(s(X)) .
-	
+
 	eq Add(0,0) = 0 .
 	eq Add(s(0),0) = s(0) .
 	eq Add(s(s(0)),0) = s(s(0)) .
@@ -919,16 +919,16 @@ fmod FACTORIAL is
 	op Mult : MyNat MyNat -> MyNat [metadata ""] .
 	op Add : MyNat MyNat -> MyNat [metadata ""] .
 	op Fac : MyNat -> MyNat [metadata "induce"] .
-	
+
 	op in : MyNat -> InVec [ctor] .
-	op in : MyNat MyNat -> InVec [ctor] . 
-	
+	op in : MyNat MyNat -> InVec [ctor] .
+
 	vars X Y : MyNat .
-	
+
 	***eq Add(0,X) = X .
 	***eq Add(s(0),X) = s(X) .
 	***eq Add(s(s(0)),X) = s(s(X)) .
-	
+
 	***eq Add(0,0) = 0 .
 	***eq Add(s(0),0) = s(0) .
 	***eq Add(s(s(0)),0) = s(s(0)) .
@@ -938,7 +938,7 @@ fmod FACTORIAL is
 	eq Add(0,s(s(0))) = s(s(0)) .
 	eq Add(s(0),s(s(0))) = s(s(s(0))) .
 	eq Add(s(s(0)),s(s(0))) = s(s(s(s(0)))) .
-	
+
 	***eq Mult(0,s(0)) = 0 .
 	eq Mult(0,X) = 0 .
 	eq Mult(s(0),s(0)) = s(0) .
@@ -969,15 +969,15 @@ fmod TAILFACTORIAL is
 	op Mult : MyNat MyNat -> MyNat [metadata ""] .
 	op Add : MyNat MyNat -> MyNat [metadata ""] .
 	op Fac : MyNat MyNat -> MyNat [metadata "induce"] .
-	
+
 	op in : MyNat MyNat -> InVec [ctor] .
 
 	vars X Y : MyNat .
-	
+
 	***eq Add(0,X) = X .
 	***eq Add(s(0),X) = s(X) .
 	***eq Add(s(s(0)),X) = s(s(X)) .
-	
+
 	***eq Add(0,0) = 0 .
 	***eq Add(s(0),0) = s(0) .
 	***eq Add(s(s(0)),0) = s(s(0)) .
@@ -987,7 +987,7 @@ fmod TAILFACTORIAL is
 	eq Add(0,s(s(0))) = s(s(0)) .
 	eq Add(s(0),s(s(0))) = s(s(s(0))) .
 	eq Add(s(s(0)),s(s(0))) = s(s(s(s(0)))) .
-	
+
 	***eq Mult(0,s(0)) = 0 .
 	eq Mult(0,X) = 0 .
 	eq Mult(s(0),s(0)) = s(0) .
@@ -1021,16 +1021,16 @@ fmod MULT is
 
 	op Mult : MyNat MyNat -> MyNat [metadata "induce"] .
 	op Add : MyNat MyNat -> MyNat [metadata ""] .
-	
+
 	*** input encapsulation
 	op in : MyNat MyNat -> InVec [ctor] .
 
 	vars X Y : MyNat .
-	
+
 	***eq Add(0,X) = X .
 	***eq Add(s(0),X) = s(X) .
 	***eq Add(s(s(0)),X) = s(s(X)) .
-	
+
 	***eq Add(0,0) = 0 .
 	***eq Add(s(0),0) = s(0) .
 	***eq Add(s(s(0)),0) = s(s(0)) .
@@ -1040,7 +1040,7 @@ fmod MULT is
 	eq Add(0,s(s(0))) = s(s(0)) .
 	eq Add(s(0),s(s(0))) = s(s(s(0))) .
 	eq Add(s(s(0)),s(s(0))) = s(s(s(s(0)))) .
-	
+
 	***eq Mult(0,s(0)) = 0 .
 	eq Mult(0,X) = 0 .
 	eq Mult(s(0),s(0)) = s(0) .
@@ -1065,12 +1065,12 @@ fmod MULT2 is
 
 	op Mult : MyNat MyNat -> MyNat [metadata "induce"] .
 	op Add : MyNat MyNat -> MyNat [metadata ""] .
-	
+
 	*** input encapsulation
 	op in : MyNat MyNat -> InVec [ctor] .
 
 	vars X Y : MyNat .
-	
+
 	***eq Add(0,X) = X .
 	***eq Add(s(0),X) = s(X) .
 	***eq Add(s(s(0)),X) = s(s(X)) .
@@ -1078,7 +1078,7 @@ fmod MULT2 is
 	eq Add(s(0),0) = s(0) .
 	eq Add(0,s(0)) = s(0) .
 	eq Add(s(0),s(0)) = s(s(0)) .
-	
+
 	***eq Mult(0,X) = 0 .
 	eq Mult(0,0) = 0 .
 	eq Mult(0,s(0)) = 0 .
@@ -1101,12 +1101,12 @@ fmod MULT3 is
 
 	op Mult : MyNat MyNat -> MyNat [metadata "induce"] .
 	op Add : MyNat MyNat -> MyNat [metadata ""] .
-	
+
 	*** input encapsulation
 	op in : MyNat MyNat -> InVec [ctor] .
 
 	vars X Y : MyNat .
-	
+
 	***eq Add(0,X) = X .
 	***eq Add(s(0),X) = s(X) .
 	***eq Add(s(s(0)),X) = s(s(X)) .
@@ -1115,8 +1115,8 @@ fmod MULT3 is
 	eq Add(s(s(0)),0) = s(s(0)) .
 	eq Add(0,s(0)) = s(0) .
 	eq Add(s(0),s(0)) = s(s(0)) .
-	
-	
+
+
 	***eq Mult(0,X) = 0 .
 	eq Mult(0,0) = 0 .
 	eq Mult(0,s(0)) = 0 .
@@ -1144,7 +1144,7 @@ fmod P-SM is
 	op Sm : MyNat MyNat -> Bool [metadata "pred nomatch"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 
 
 	eq Sm(0,0) = false .
@@ -1163,7 +1163,7 @@ fmod P-SM is
 	eq Sm(s(s(s(0))),s(0)) = false .
 	eq Sm(s(s(s(0))),s(s(0))) = false .
 	eq Sm(s(s(s(0))),s(s(s(0)))) = false .
-	
+
 
 
 	eq P1(cons(0,[])) = [] .
@@ -1196,9 +1196,9 @@ fmod P-GR is
 	op Sm : MyNat MyNat -> Bool [metadata "pred nomatch"] .
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
-	
-	
+
+
+
 
 	eq Sm(0,0) = false .
 	eq Sm(0,s(0)) = true .
@@ -1216,7 +1216,7 @@ fmod P-GR is
 	eq Sm(s(s(s(0))),s(0)) = false .
 	eq Sm(s(s(s(0))),s(s(0))) = false .
 	eq Sm(s(s(s(0))),s(s(s(0)))) = false .
-	
+
 
 
 	eq P2(cons(0,[])) = [] .
@@ -1254,28 +1254,28 @@ fmod QSORT-BK is
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 	op in : MyList MyList -> InVec [ctor] .
-	
-	
+
+
 	eq Sort([]) = [] .
-	
+
 	eq Sort(cons(0,[])) = cons(0,[]) .
 	eq Sort(cons(s(0),[])) = cons(s(0),[]) .
 	***eq Sort(cons(s(s(0)),[])) = cons(s(s(0)),[]) .
-	
+
 	eq Sort(cons(0,cons(s(0),[]))) = cons(0,cons(s(0),[])) .
 	***eq Sort(cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(s(0)),[])) .
 	eq Sort(cons(s(0),cons(0,[]))) = cons(0,cons(s(0),[])) .
 	***eq Sort(cons(s(0),cons(s(s(0)),[]))) = cons(s(0),cons(s(s(0)),[])) .
 	***eq Sort(cons(s(s(0)),cons(0,[]))) = cons(0,cons(s(s(0)),[])) .
 	***eq Sort(cons(s(s(0)),cons(s(0),[]))) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	***eq Sort(cons(0,cons(s(0),cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(0,cons(s(s(0)),cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(0),cons(0,cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(0),cons(s(s(0)),cons(0,[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(s(0)),cons(0,cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(s(s(0)),cons(s(0),cons(0,[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
-	
+
 	eq P1(cons(0,[])) = [] .
 	eq P1(cons(s(0),[])) = [] .
 	eq P1(cons(0,cons(s(0),[]))) = [] .
@@ -1302,7 +1302,7 @@ fmod ACKERMANN is
 
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	op Ack : MyNat MyNat -> MyNat [metadata "induce"] .
 	op in : MyNat MyNat -> InVec [ctor] .
 
@@ -1310,13 +1310,13 @@ fmod ACKERMANN is
 	eq Ack(0,s(0)) = s(s(0)) .
 	eq Ack(0,s(s(0))) = s(s(s(0))) .
 	eq Ack(0,s(s(s(0)))) = s(s(s(s(0)))) .
-	eq Ack(0,s(s(s(s(0))))) = s(s(s(s(s(0))))) .	
+	eq Ack(0,s(s(s(s(0))))) = s(s(s(s(s(0))))) .
 
 	eq Ack(s(0),0) = s(s(0)) .
 	eq Ack(s(0),s(0)) = s(s(s(0))) .
 	eq Ack(s(0),s(s(0))) = s(s(s(s(0)))) .
 	eq Ack(s(0),s(s(s(0)))) = s(s(s(s(s(0))))) .
-	***eq Ack(s(0),s(s(s(s(0))))) = s(s(s(s(s(s(0)))))) .	
+	***eq Ack(s(0),s(s(s(s(0))))) = s(s(s(s(s(s(0)))))) .
 
 	eq Ack(s(s(0)),0) = s(s(s(0))) .
 	eq Ack(s(s(0)),s(0)) = s(s(s(s(s(0))))) .
@@ -1326,7 +1326,7 @@ fmod ACKERMANN is
 
 	***eq Ack(s(s(s(0))),0) = s(s(s(s(s(0))))) .
 	***eq Ack(s(s(s(0))),s(0)) = s(s(s(s(s(s(s(s(s(s(s(s(s(0))))))))))))) .
-		
+
 endfm
 
 
@@ -1345,8 +1345,8 @@ fmod QSORT is
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 	op in : MyList MyList -> InVec [ctor] .
-	
-	
+
+
 	eq Sm(0,0) = false .
 	eq Sm(0,s(0)) = true .
 	eq Sm(0,s(s(0))) = true .
@@ -1363,22 +1363,22 @@ fmod QSORT is
 	eq Sm(s(s(s(0))),s(0)) = false .
 	eq Sm(s(s(s(0))),s(s(0))) = false .
 	eq Sm(s(s(s(0))),s(s(s(0)))) = false .
-	
+
 
 
 	eq Sort([]) = [] .
-	
+
 	eq Sort(cons(0,[])) = cons(0,[]) .
 	eq Sort(cons(s(0),[])) = cons(s(0),[]) .
 	eq Sort(cons(s(s(0)),[])) = cons(s(s(0)),[]) .
-	
+
 	eq Sort(cons(0,cons(s(0),[]))) = cons(0,cons(s(0),[])) .
 	eq Sort(cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(s(0)),[])) .
 	eq Sort(cons(s(0),cons(0,[]))) = cons(0,cons(s(0),[])) .
 	eq Sort(cons(s(0),cons(s(s(0)),[]))) = cons(s(0),cons(s(s(0)),[])) .
 	eq Sort(cons(s(s(0)),cons(0,[]))) = cons(0,cons(s(s(0)),[])) .
 	eq Sort(cons(s(s(0)),cons(s(0),[]))) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	***eq Sort(cons(0,cons(s(0),cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Sort(cons(0,cons(s(s(0)),cons(s(0),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	***eq Sort(cons(s(0),cons(0,cons(s(s(0)),[])))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
@@ -1390,7 +1390,7 @@ fmod QSORT is
 	eq App([],cons(0,[])) = cons(0,[]) .
 	eq App([],cons(s(0),[])) = cons(s(0),[]) .
 	eq App([],cons(s(s(0)),[])) = cons(s(s(0)),[]) .
-	
+
 	eq App([],cons(0,cons(s(0),[]))) = cons(0,cons(s(0),[])) .
 	eq App([],cons(0,cons(s(s(0)),[]))) = cons(0,cons(s(s(0)),[])) .
 	eq App([],cons(s(0),cons(s(s(0)),[]))) = cons(s(0),cons(s(s(0)),[])) .
@@ -1407,16 +1407,16 @@ endfm
 
 fmod MIN is
 	sorts MyNat MyList InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons : MyNat MyList -> MyList [ctor] .
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	op Min : MyList -> MyNat [metadata "induce"] .
 	op SmEq : MyNat MyNat -> Bool [metadata "pred nomatch"] .
 	op in : MyList -> InVec [ctor] .
-	
+
 	eq SmEq(0,0) = true .
 	eq SmEq(0,s(0)) = true .
 	eq SmEq(0,s(s(0))) = true .
@@ -1433,11 +1433,11 @@ fmod MIN is
 	eq SmEq(s(s(s(0))),s(0)) = false .
 	eq SmEq(s(s(s(0))),s(s(0))) = false .
 	eq SmEq(s(s(s(0))),s(s(s(0)))) = true .
-	
-	
-	
-	
-	
+
+
+
+
+
 	***var X : MyNat .
 
 	eq Min(cons(0,[])) = 0 .
@@ -1458,20 +1458,20 @@ fmod MIN is
 	eq Min(cons(s(0),cons(s(s(s(0))),cons(0,[])))) = 0 .
 	eq Min(cons(s(s(s(0))),cons(s(0),cons(0,[])))) = 0 .
 endfm
-	
-	
+
+
 fmod BUT-MIN is
 	sorts MyNat MyList InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons : MyNat MyList -> MyList [ctor] .
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	op ButMin : MyList -> MyList [metadata "induce"] .
 	op SmEq : MyNat MyNat -> Bool [metadata "pred nomatch"] .
 	op in : MyList -> InVec [ctor] .
-	
+
 	eq SmEq(0,0) = true .
 	eq SmEq(0,s(0)) = true .
 	eq SmEq(0,s(s(0))) = true .
@@ -1488,7 +1488,7 @@ fmod BUT-MIN is
 	eq SmEq(s(s(s(0))),s(0)) = false .
 	eq SmEq(s(s(s(0))),s(s(0))) = false .
 	eq SmEq(s(s(s(0))),s(s(s(0)))) = true .
-	
+
 	eq ButMin(cons(0,[])) = [] .
 	eq ButMin(cons(s(0),[])) = [] .
 
@@ -1505,7 +1505,7 @@ fmod BUT-MIN is
 	eq ButMin(cons(s(0),cons(s(s(s(0))),cons(0,[])))) = cons(s(0),cons(s(s(s(0))),[])) .
 	eq ButMin(cons(s(s(s(0))),cons(s(0),cons(0,[])))) = cons(s(s(s(0))),cons(s(0),[])) .
 
-endfm	
+endfm
 
 
 
@@ -1513,16 +1513,16 @@ endfm
 
 fmod INSERT is
 	sorts MyNat MyList InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons : MyNat MyList -> MyList [ctor] .
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	op Insert : MyNat MyList -> MyList [metadata "induce"] .
 	op SmEq : MyNat MyNat -> Bool [metadata "pred nomatch"] .
 	op in : MyNat MyList -> InVec [ctor] .
-	
+
 	eq SmEq(0,s(0)) = true .
 	eq SmEq(s(0),0) = false .
 	eq SmEq(0,s(s(0))) = true .
@@ -1532,18 +1532,18 @@ fmod INSERT is
 	eq SmEq(0,0) = true .
 	eq SmEq(s(0),s(0)) = true .
 	eq SmEq(s(s(0)),s(s(0))) = true .
-	
+
 	eq Insert(0,[]) = cons(0,[]) .
 	eq Insert(s(0),[]) = cons(s(0),[]) .
 	eq Insert(s(s(0)),[]) = cons(s(s(0)),[]) .
-	
+
 	eq Insert(0,cons(s(0),[])) = cons(0,cons(s(0),[])) .
 	eq Insert(0,cons(s(s(0)),[])) = cons(0,cons(s(s(0)),[])) .
 	eq Insert(s(0),cons(0,[])) = cons(0,cons(s(0),[])) .
 	eq Insert(s(0),cons(s(s(0)),[])) = cons(s(0),cons(s(s(0)),[])) .
 	eq Insert(s(s(0)),cons(0,[])) = cons(0,cons(s(s(0)),[])) .
 	eq Insert(s(s(0)),cons(s(0),[])) = cons(s(0),cons(s(s(0)),[])) .
-	
+
 	***eq Insert(0,cons(s(0),cons(s(s(0)),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 	eq Insert(s(s(0)),cons(0,cons(s(0),[]))) = cons(0,cons(s(0),cons(s(s(0)),[]))) .
 endfm
@@ -1551,16 +1551,16 @@ endfm
 
 fmod DEL-SM is
 	sorts MyNat MyList InVec .
-	
+
 	op [] : -> MyList [ctor] .
 	op cons : MyNat MyList -> MyList [ctor] .
 	op 0 : -> MyNat [ctor] .
 	op s : MyNat -> MyNat [ctor] .
-	
+
 	op Del : MyNat MyList -> MyList [metadata "induce"] .
 	op Sm : MyNat MyNat -> Bool [metadata "pred nomatch"] .
 	op in : MyNat MyList -> InVec [ctor] .
-	
+
 	eq Sm(0,s(0)) = true .
 	eq Sm(s(0),0) = false .
 	eq Sm(0,s(s(0))) = true .
@@ -1570,7 +1570,7 @@ fmod DEL-SM is
 	eq Sm(0,0) = false .
 	eq Sm(s(0),s(0)) = false .
 	eq Sm(s(s(0)),s(s(0))) = false .
-	
+
 	eq Del(0,[]) = [] .
 	eq Del(s(0),[]) = [] .
 
@@ -1594,20 +1594,20 @@ endfm
 
 fmod MEMBER is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	ops a b c : -> MyItem [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Member : MyItem MyList -> MyList [metadata "induce"] .
-	
+
 	*** input encapsulation
 	op in : MyItem MyList -> InVec [ctor] .
-	
+
 	***vars X Y : MyList .
-	
+
 	eq Member(a,[]) = [] .
 	eq Member(b,[]) = [] .
 	eq Member(a,cons(a,[])) = cons(a,[]) .
@@ -1626,18 +1626,18 @@ endfm
 
 fmod DELETE is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	ops a b : -> MyItem [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Delete : MyItem MyList -> MyList [metadata "induce"] .
-	
+
 	*** input encapsulation
 	op in : MyItem MyList -> InVec [ctor] .
-	
+
 	eq Delete(a,[]) = [] .
 	eq Delete(b,[]) = [] .
 	eq Delete(a,cons(a,[])) = [] .
@@ -1649,23 +1649,23 @@ fmod DELETE is
 	eq Delete(a,cons(a,cons(b,[]))) = cons(b,[]) .
 	eq Delete(b,cons(a,cons(b,[]))) = cons(a,[]) .
 	eq Delete(a,cons(b,cons(b,[]))) = cons(b,cons(b,[])) .
-endfm 
+endfm
 
 
 fmod REPLACE is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
 	ops a b c : -> MyItem [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Repl : MyList -> MyList [metadata "induce"] .
-	
+
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	eq Repl([]) = [] .
 	eq Repl(cons(a,[])) = cons(c,[]) .
 	eq Repl(cons(b,[])) = cons(b,[]) .
@@ -1673,55 +1673,55 @@ fmod REPLACE is
 	eq Repl(cons(a,cons(b,[]))) = cons(c,cons(b,[])) .
 	eq Repl(cons(b,cons(a,[]))) = cons(b,cons(c,[])) .
 	eq Repl(cons(b,cons(b,[]))) = cons(b,cons(b,[])) .
-endfm 
+endfm
 
 
 fmod REV-BK is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Rev : MyList -> MyList [metadata "induce"] .
 	op Snoc : MyList MyItem -> MyList [metadata ""] .
-	
+
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 	op in : MyList MyItem -> InVec [ctor] .
-	
+
 	vars X Y Z : MyItem .
-	
+
 	*** examples
 	eq Snoc([],Z) = cons(Z,[]) .
 	eq Snoc(cons(X,[]),Z) = cons(X,cons(Z,[])) .
 	eq Snoc(cons(X,cons(Y,[])),Z) = cons(X,cons(Y,cons(Z,[]))) .
-	
+
 	eq Rev([]) = [] .
 	eq Rev(cons(X,[])) =  cons(X,[]) .
 	eq Rev(cons(X,cons(Y,[]))) = cons(Y,cons(X,[])) .
 	eq Rev(cons(X,cons(Y,cons(Z,[])))) = cons(Z,cons(Y,cons(X,[]))) .
-endfm 
+endfm
 
 
 fmod REV-BK2 is
 	sorts MyItem MyList InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	*** defined function names (to be induced, preds, bk)
 	op Rev : MyList -> MyList [metadata "induce"] .
 	***op LastBK : MyList -> MyItem [metadata ""] .
 	***op InitBK : MyList -> MyList [metadata ""] .
-	
+
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y Z V W Q : MyItem .
-	
+
 	*** examples
 	eq Rev([]) = [] .
 	eq Rev(cons(X,[])) = cons(X,[]) .
@@ -1730,15 +1730,15 @@ fmod REV-BK2 is
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,[]))))) = cons(V,cons(Z,cons(Y,cons(X,[])))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,[])))))) = cons(W,cons(V,cons(Z,cons(Y,cons(X,[]))))) .
 	***eq Rev(cons(X,cons(Y,cons(Z,cons(V,cons(W,cons(Q,[]))))))) = cons(Q,cons(W,cons(V,cons(Z,cons(Y,cons(X,[])))))) .
-	
+
 	***eq LastBK(cons(X,[])) = X .
 	***eq LastBK(cons(X,cons(Y,[]))) = Y .
 	***eq LastBK(cons(X,cons(Y,cons(Z,[])))) = Z .
-	
+
 	***eq InitBK(cons(X,[])) = [] .
 	***eq InitBK(cons(X,cons(Y,[]))) = cons(X,[]) .
 	***eq InitBK(cons(X,cons(Y,cons(Z,[])))) =  cons(X,cons(Y,[])) .
-endfm 
+endfm
 
 
 
@@ -1747,13 +1747,13 @@ fmod MATCHTEST is
 	sorts MyItem MyList InVec .
 	op [] : -> MyList [ctor] .
 	op cons : MyItem MyList -> MyList [ctor] .
-	
+
 	op Ind : MyList -> MyList [metadata "induce"] .
 	op BK : MyList -> MyList [metadata ""] .
 	op in : MyList -> InVec [ctor] .
-	
+
 	vars X Y : MyItem .
-	
+
 	eq Ind(cons(X,[])) = [] .
 	eq BK(cons(X,[])) = [] .
 	eq Ind(cons(X,cons(Y,[]))) = cons(X,[]) .
@@ -1772,7 +1772,7 @@ fmod MITCHELL-1 is
 		strong cool same change : -> MyVal [ctor] .
 
 	op EnjoySport : MyList -> MyBool [metadata "induce"] .
-        
+
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 
@@ -1788,18 +1788,18 @@ endfm
 
 fmod MITCHELL-2 is
 	sorts MyVal MyList MyBool InVec .
-	
+
 	*** DT definitions (constructors)
 	op [] : -> MyList [ctor] .
 	op cons : MyVal MyList -> MyList [ctor] .
-	
+
 	ops true false : -> MyBool [ctor] .
 
 	ops sunny overcast rain hot mild cool
 		high normal weak strong : -> MyVal [ctor] .
 
 	op PlayTennis : MyList -> MyBool [metadata "induce"] .
-	
+
 	*** input encapsulation
 	op in : MyList -> InVec [ctor] .
 
@@ -1818,4 +1818,3 @@ fmod MITCHELL-2 is
 	eq PlayTennis(cons(overcast,cons(hot,cons(normal,cons(weak,[]))))) = true .
 	eq PlayTennis(cons(rain,cons(mild,cons(high,cons(strong,[]))))) = false .
 endfm
-
