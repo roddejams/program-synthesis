@@ -18,7 +18,7 @@ rule(R, F, Args, Expr) :- input(call(f, Args)), choose(R, N, C1, ..., CN).
 \begin{lstlisting}
 where(Var, Args, Expr) :- input(call(f, Args)), choose_where(N, C1, ..., CN).
 \end{lstlisting}
-\mbox{} \\ \\
+\mbox{} \\
 Where \lstinline!R! is the line number of the rule to be learned, \lstinline!N! is a unique identifier for the skeleton rule, and \lstinline!Expr! is one of the possible rule bodies, with any constants replaced with variables \lstinline!C1, ..., CN!. Each skeleton rule contains a corresponding \lstinline!choose! term, which represents the skeleton rule. \\ \\
 For example, one such skeleton rule is \\
 
@@ -124,7 +124,7 @@ Similarly, the number of arguments of the target function increases as I have to
 %\end{lstlisting}
 \end{itemize}
 \end{multicols}
-
+\mbox{}\\
 Even in this simple example, there are 12 possible rules. As addition is commutative, any rules where the ordering is reversed are omitted. More optimisations like this can be seen in the next section.
 A full list of the skeleton rules generated for both one and two argument functions can be seen in the appendix.
 
@@ -305,10 +305,12 @@ gcd x y
 	| x < y  = gcd x1 x
 	
 	where x0 = x - y
-	where x1 = y - x
+		where x1 = y - x
 \end{lstlisting}
 \mbox{}\\
 As required.
+
+\pagebreak
 
 \section{Performance Issues}
 Unfortunately, this learning task suffers from extreme difficulty scaling. While the number of skeleton rules is relatively small, the problem comes when considering combinations of \lstinline{rule} and \lstinline{where} terms.\\ \\ %Add specific maths here?

@@ -16,7 +16,7 @@ Initially, I chose to target a simple subset of the Haskell syntax, emulating th
 %\item Lists
 \end{itemize}
 \mbox{}\\
-To avoid overcomplication, I decided to not include lists in this first attempt, instead focusing on implementing recursion efficiently, making this is a sufficient feature set. 
+To avoid overcomplication, I did not include lists in this first attempt, instead focusing on implementing recursion efficiently, making this is a sufficient feature set. 
 
 \subsection{Program Representation}
 To represent a generic Haskell program in ASP, first I had to choose various predicates to represent different parts of the program. By representing Haskell operations with logic predicates it becomes possible to evaluate operations on arbitrary expressions. Binary arithmetic operations are represented by corresponding binary predicates, and function calls by a binary predicate with arguments for function name and function arguments.  \\ \\
@@ -61,10 +61,12 @@ Each line (or recursive case) of the target Haskell program is represented by wi
 \subsubsection{Internal Predicates}
 As part of the interpreter, I have declared a number of predicates used to represent various states of expression value throughout execution. 
  
-\begin{center}
-\begin{tabular}{| c | m{0.6\linewidth} |}
+\begin{longtable}[c]{| c | m{0.6\linewidth} |}
 \hline
 \textbf{ASP Term} & \textbf{Semantics} \\
+
+\endhead
+
 \hline
 \lstinline!rule(Index, F, Args, Expr).! 
 &
@@ -119,11 +121,10 @@ An expression to be evaluated. To avoid evaluating every possible expression, th
 The value of an expression. After an expression is selected to be evaluated, its value is represented with this predicate.\newline 
 \\
 \hline
-\end{tabular}
-\end{center}
+\end{longtable}
  
 \subsubsection{Computation Rules}
-To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. A full listing is available in Section 3.4 and in the Appendix.\\ \\
+To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. A full listing is available in Section 3.4 and in Appendix B.\\ \\
 To start, a rule is needed to calculate the output, given inputs and a rule to follow. \\
 
 \begin{lstlisting}[caption={Output generation}, label={lst:simple_out}, firstnumber=55]
@@ -135,7 +136,7 @@ output(call(F, Args), Out) :-
 \mbox{} \\
 \ref{lst:simple_out} generates output predicates if there is a rule that best matches the given arguments, and the output of that rule has a known value. \\
 
-\begin{lstlisting}[caption={Match rules}, label={lst:simple_match}, firstnumber=123]
+\begin{lstlisting}[caption={Match rules}, label={lst:simple_match}, firstnumber=197]
 match(F, Index, Inputs) :- 
 		not smaller_match(F, Index, Inputs), 
 		rule(Index, F, Inputs, _), 
@@ -146,7 +147,7 @@ smaller_match(F, Index, Args) :- match(F, O, Args), O < Index, const(Index).
 \mbox{} \\
 \ref{lst:simple_match} handles choosing which rule to use. A rule matches some inputs if there exists a rule with those inputs which does not match a a rule before it. \\
 
-\begin{lstlisting}[caption={Eval introduction}, label={lst:simple_eval_init}, firstnumber=75]
+\begin{lstlisting}[caption={Eval introduction}, label={lst:simple_eval_init}, firstnumber=128]
 eval(Expr) :- 
 	input(call(F, Input)), 
 	rule(Index, F, Input, Expr), 
@@ -155,7 +156,7 @@ eval(Expr) :-
 \mbox{}\\
 \ref{lst:simple_eval_init} introduces \lstinline!eval! terms. If there is a call to a function as input, then evaluate the rule body which matches the arguments to the call. \\
 
-\begin{lstlisting}[caption={Eval propagation}, label={lst:simple_eval}, firstnumber=77]
+\begin{lstlisting}[caption={Eval propagation}, label={lst:simple_eval}, firstnumber=139]
 eval(Expr) :- eval(call(F, Expr)).
 eval(A) :- eval(mul(A, B)).
 eval(B) :- eval(mul(A, B)).
@@ -167,7 +168,7 @@ eval(B) :- eval(add(A, B)).
 \mbox{}\\
 In \ref{lst:simple_eval}, more \lstinline!eval! terms are generated. If a function call is to be evaluated, then its arguments should also be evaluated, and if an arithmetic expression is to be evaluated then both of its sub-expressions should be evaluated. \\ 
 
-\begin{lstlisting}[caption={Value generation for arithmetic}, label={lst:simple_value_math}, firstnumber=69]
+\begin{lstlisting}[caption={Value generation for arithmetic}, label={lst:simple_value_math}, firstnumber=61]
 value(mul(A, B), V1 * V2) :- eval(mul(A, B)), value(A, V1), value(B, V2).
 value(sub(A, B), V1 - V2) :- eval(sub(A, B)), value(A, V1), value(B, V2).
 value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2).
@@ -175,12 +176,12 @@ value(add(A, B), V1 + V2) :- eval(add(A, B)), value(A, V1), value(B, V2).
 \mbox{}\\
 \ref{lst:simple_value_math} details generating the values of arithmetic expressions. If both sub expressions have values \lstinline!V1! and \lstinline!V2! respectively, then the value of the overall expression is these values applied to the arithmetic expression. \\
 
-\begin{lstlisting}[caption={Value generation for function calls}, label={lst:simple_value_fn}, firstnumber=72]
+\begin{lstlisting}[caption={Value generation for function calls}, label={lst:simple_value_fn}, firstnumber=79]
 value(call(F, Expr), Out) :- 
 		eval(call(F, Expr)), 
 		output(call(F, Input), Out), 
 		value(Expr, Input).	
-value(N, N) :- eval(N).
+value(N, N) :- const(N), eval(N).
 \end{lstlisting}
 \mbox{}\\
 \ref{lst:simple_value_fn} describes value generation for function calls. If a function call has some output, then the value of that function call is that output. This rule works together with \ref{lst:simple_input}, which generates new \lstinline!input! terms, which then in turn generate new \lstinline!output! terms\\
@@ -207,10 +208,12 @@ The overall solution is the atom corresponding to the \lstinline!input!, \lstinl
 The interpreter detailed until now only handles single argument functions. Because of the need to evaluate function arguments before evaluating the function call, the interpreter needs some way to evaluate all arguments within the same step. \\ \\
 This is solved through the introduction of tuples. More than one program argument is represented as a nested tuple. For example, a function \lstinline!f! with four arguments has form \lstinline!call(f, (A, (B, (C, D))))!. Then, rules to handle evaluation and values of tuples are added. 
 
-\begin{lstlisting}[caption={Tuple rules}, label={lst:tuple_rule}, firstnumber=78]
+\begin{lstlisting}[caption={Tuple rules}, label={lst:tuple_rule}, firstnumber=139]
 eval(A) :- eval((A, B)).
 eval(B) :- eval((A, B)).
+\end{lstlisting}
 
+\begin{lstlisting}[firstnumber=124]
 value((A, B), (V1, V2)) :- eval((A, B)), value(A, V1), value(B, V2).
 \end{lstlisting}
 \mbox{}\\
@@ -237,7 +240,9 @@ factorial x
 		where x2 = x - 1
 \end{lstlisting}
 \mbox{}\\
-Similarly, these where rules can be encoded as ASP terms in the following way, while \lstinline!match_guard! rules stay the same.\\
+Similarly, these where rules can be encoded as ASP terms in the following way, while \lstinline!match_guard! rules stay the same.\\ \\
+\mbox{}\\
+\mbox{}\\
 
 \begin{lstlisting}
 rule(1, f, 0, 1).
@@ -289,7 +294,7 @@ Selects \lstinline!Expr! to be evaluated with respect to some \lstinline!Args!. 
 \mbox{}\\
 These new predicates are then used to replace the existing \lstinline!value! and \lstinline!eval! predicates and their corresponding rules. For example, to calculate the value of a multiplication statement, the following rule is added.
 
-\begin{lstlisting}[caption={Second attempt at multiplication}, label={lst:comp_mult}, firstnumber=57]
+\begin{lstlisting}[caption={Second attempt at multiplication}, label={lst:comp_mult}, firstnumber=61]
 value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :- 
 		eval_with(mul(A, B), Args), 
 		value_with(A, V1, Args), 
@@ -297,23 +302,24 @@ value_with(mul(A, B), @to_num(V1) * @to_num(V2), Args) :-
 		const_number(@to_num(V1)*@to_num(V2)).
 \end{lstlisting}
 \mbox{} \\
+\mbox{} \\
 Similar rules exist for addition and subtraction. Note the use of a lua function \lstinline!@to_num()!, as a bug workaround. This bug throws an error if any in-built arithmetic operations are called without integer operations, and although all values should be integers at this point, an error still occurs. \\ \\
 Now I can re-define how to evaluate and calculate the value of a \lstinline!where! variable. \\
 
-\begin{lstlisting}[caption={Handling where evaluation}, label={lst:comp_where_eval}, firstnumber=76]
+\begin{lstlisting}[caption={Handling where evaluation}, label={lst:comp_where_eval}, firstnumber=133]
 eval_with(Expr, Args) :- eval_with(X, Args), where(X, Args, Expr).
 \end{lstlisting}
 \mbox{} \\
 \ref{lst:comp_where_eval} states that if you have to evaluate a \lstinline!where! variable then you evaluate the corresponding \lstinline!Expr!. \\
  
-\begin{lstlisting}[caption={Handling where values}, label={lst:comp_where_val}, firstnumber=64]
+\begin{lstlisting}[caption={Handling where values}, label={lst:comp_where_val}, firstnumber=90]
 value_with(X, V, Args) :- 
 		eval_with(X, Args), 
 		where(X, Args, Expr), 
 		value_with(Expr, V, Args).
 \end{lstlisting}
 \mbox{} \\
-\ref{lst:comp_where_val} handles values. A \lstinline!where! variable has the value \lstinline!Val! if a corresponding \lstinline!where! rule exists with respect to arguments called. \\
+\ref{lst:comp_where_val} handles values. A \lstinline!where! variable has the value \lstinline!Val! if a corresponding \lstinline!where! rule exists with respect to arguments called.
 
 \subsection{Complex and Non-Complex Expressions}
 
@@ -321,13 +327,14 @@ The need to pass around arguments with terms unfortunately had the effect of gre
 To handle this, I introduce the idea of ``complex'' and ``non-complex'' expressions. An expression is complex if it contains a where variable, requiring arguments to be passed in. For example, \lstinline!mul(4, x1)! is complex, but \lstinline!mul(4, 2)! is not. \\ \\
 This concept of complexity is represented in ASP by the predicates \lstinline!complex! and \lstinline!n_complex!. I will now describe the rules which create these predicates.\\
 
-\begin{lstlisting}[caption={Check for complexity}, label={lst:comp_check}, firstnumber=88]
+\begin{lstlisting}[caption={Check for complexity}, label={lst:comp_check}, firstnumber=149]
 check_if_complex(Expr) :- eval_with(Expr, _).
 \end{lstlisting}
 \mbox{} \\
-\ref{lst:comp_check} initialises \lstinline!check_if_complex! predicates. If you have to evaluate an expression, you also have to check if it is complex \\
+\ref{lst:comp_check} initialises \lstinline!check_if_complex! predicates. If you have to evaluate an expression, you also have to check if it is complex \\ \\
+\mbox{}\\
 
-\begin{lstlisting}[caption={Checking propagation}, label={lst:comp_check_prop}, firstnumber=90]
+\begin{lstlisting}[caption={Checking propagation}, label={lst:comp_check_prop}, firstnumber=151]
 check_if_complex(Args) :- check_if_complex(call(F, Args)).
 check_if_complex(A) :- check_if_complex((A, B)).
 check_if_complex(B) :- check_if_complex((A, B)).
@@ -341,7 +348,7 @@ check_if_complex(B) :- check_if_complex(add(A, B)).
 \mbox{} \\
 \ref{lst:comp_check_prop} defines propagation of \lstinline!check_if_complex! predicates, similarly to \lstinline!eval_with! propagation. If you have to check that an expression is complex, then you also have to check both sub-expressions\\
 
-\begin{lstlisting}[caption={Complex generation}, label={lst:comp_gen}, firstnumber=100]
+\begin{lstlisting}[caption={Complex generation}, label={lst:comp_gen}, firstnumber=161]
 complex(x0;x1;x2;x3).
 
 complex((A, B))        :- complex(A), check_if_complex((A, B)).
@@ -357,28 +364,33 @@ complex(add(A, B))     :- complex(B), check_if_complex(add(A, B)).
 \ref{lst:comp_gen} defines propagation of \lstinline!complex! predicates. \\
 The base case for a complex term is \lstinline!complex(x0;x1;..;xN)!, where \lstinline!x0, x1, ..., xN! are the possible where variables. Then, if either sub-expression of an expression is complex, then the entire expression is complex. \\
 
-\begin{lstlisting}[caption={Non complex introduction}, label={lst:ncomp_intro}, firstnumber=111]
+\begin{lstlisting}[caption={Non complex introduction}, label={lst:ncomp_intro}, firstnumber=172]
 n_complex(A) :- const(A), check_if_complex(A).
 \end{lstlisting}
 \mbox{} \\
 \ref{lst:ncomp_intro} introduces \lstinline!n_complex! predicates. If a term is a constant, then it is not complex. \\
 
-\begin{lstlisting}[caption={Non complex propagation}, label={lst:ncomp_prop}, firstnumber=113]
+\begin{lstlisting}[caption={Non complex propagation}, label={lst:ncomp_prop}, firstnumber=174]
 n_complex(call(F, Args)) :- n_complex(Args), check_if_complex(call(F, Args)).
 n_complex((A, B))        :- n_complex(A), n_complex(B), check_if_complex((A, B)).
-
 n_complex(mul(A, B))     :- 
-		n_complex(A), n_complex(B), check_if_complex(mul(A, B)).
+		n_complex(A), 
+		n_complex(B), 
+		check_if_complex(mul(A, B)).
 n_complex(sub(A, B))     :- 
-		n_complex(A), n_complex(B), check_if_complex(sub(A, B)).
+		n_complex(A), 
+		n_complex(B), 
+		check_if_complex(sub(A, B)).
 n_complex(add(A, B))     :- 
-		n_complex(A), n_complex(B), check_if_complex(add(A, B)).
+		n_complex(A), 
+		n_complex(B), 
+		check_if_complex(add(A, B)).
 \end{lstlisting}
 \mbox{} \\
 \ref{lst:ncomp_prop} represents propagation of \lstinline!n_complex! terms. If both sub-expressions of an expression are not complex, that that expression is also not complex. \\ \\
 These \lstinline!complex! and \lstinline!n_complex! terms are now used to modify the existing rules. First, \lstinline!eval_with! rules are modified to only propagate when the sub-expression is complex. \\
 
-\begin{lstlisting}[caption={Eval with modification}, label={lst:eval_mod}, firstnumber=78]
+\begin{lstlisting}[caption={Eval with modification}, label={lst:eval_mod}, firstnumber=139]
 eval_with(A, Args) :- complex(A), eval_with((A, B), Args).
 eval_with(B, Args) :- complex(B), eval_with((A, B), Args).
 eval_with(A, Args) :- complex(A), eval_with(mul(A, B), Args).
@@ -391,7 +403,7 @@ eval_with(B, Args) :- complex(B), eval_with(add(A, B), Args).
 \mbox{}\\
 Next, I re-introduce the \lstinline!value! predicate. This predicate is only generated when the expression to be evaluated is non complex. For example, to calculate the value of a simple multiplication, the following rule is used : 
 
-\begin{lstlisting}[caption={Value with modification}, label={lst:value_mod}, firstnumber=69]
+\begin{lstlisting}[caption={Value with modification}, label={lst:value_mod}, firstnumber=100]
 value(mul(A, B), @to_num(V1) * @to_num(V2)) :- 
 		const_number(V1), 
 		const_number(V2), 

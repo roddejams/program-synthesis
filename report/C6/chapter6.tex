@@ -174,9 +174,7 @@ The results from these experiments tend to show the result that apart from in th
 The one case where the constraint based approach performs worse to the interpreted approach is the GCD example. While it is not clear why this is the case, it is most likely due to the way skeleton rules are generated. Due to the need to enumerate over all possible skeleton rules in the constraint based approach, this means that many rules could be semantically equal to each other, reducing performance in this case. This effect only appears here as the number of skeleton rules needed to correctly learn gcd is much higher than the other functions. \\ \\
 However, the constraint based approach is less expressive, as highlighted by the fibonacci example. The fibonacci program consists of two recursive calls, which cannot be learned by this approach as it becomes difficult to maintain the equality constraints. For example, consider the equality constraint \lstinline{eq(add(call(f, (x - 1)), call(f, (x - 2))), 4).} The tool cannot continue evaluating this constraint as it does not know the value of either \lstinline{call} expressions.%{
 
-\pagebreak
-
-\begin{table}[h!]
+\begin{table}[p!]
 \centering
 \begin{tabular}{|c|m{10em}|m{10em}|}
 \hline
@@ -281,7 +279,7 @@ What is notable from these results is that MagicHaskeller fails to learn direct 
 
 \Suppressnumber
 
-\begin{table}[h!]
+\begin{table}[p!]
 \centering
 \begin{tabular}{| m{4em} | c | c |}
 \hline
@@ -374,7 +372,7 @@ No Result!
 \end{table}
 \Reactivatenumber
 
-\begin{table}[h!]
+\begin{table}[p!]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -394,6 +392,8 @@ Fibonacci & & \\
 \caption{MagicHaskeller Performance Comparison }
 \label{table:2}
 \end{table}
+
+\pagebreak
 
 \subsection{Igor II}
 Igor II \cite{Kitzelmann2006} is an IFP system that is designed to learn purely recursive programs, and is different to the tool described in this report in important ways.

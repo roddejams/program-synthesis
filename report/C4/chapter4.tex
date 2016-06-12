@@ -35,9 +35,9 @@ I then define termination as :
 \item If an expression is simple, containing only constants, then it terminates.
 \item If the next step of an expression terminates, then that expression also terminates.
 \end{itemize}
-
+\mbox{}\\
 This approach is fairly efficient as it as another top down approach, and generates a similar number of rules in the ground program as the constraint checking rules.
-
+\mbox{}\\
 \section{ASP Representation}
 I represent this approach using the following ASP predicates.
 
@@ -89,7 +89,7 @@ Now, these predicates are used in the following rules. \\
 
 \lstinputlisting[language=Prolog, firstline=38, lastline=38, firstnumber=38, label=lst:term_constraint, caption=Termination contradiction]{../ASP/eq/eq_rules.lp} 
 \mbox{} \\
-This constraint handles termination. The tool fails if an input example does not terminate.\\
+\ref{lst:term_constraint} handles termination. The tool fails if an input example does not terminate.\\
 
 \lstinputlisting[language=Prolog, firstline=40, lastline=40, firstnumber=40, label=lst:is_call, caption=Is\_call generation]{../ASP/eq/eq_rules.lp} 
 \mbox{} \\
@@ -117,15 +117,15 @@ This constraint handles termination. The tool fails if an input example does not
 
 \lstinputlisting[language=Prolog, firstline=82, lastline=82, firstnumber=82, label=lst:next_is, caption=Next step grounding improvement]{../ASP/eq/eq_rules.lp} 
 \mbox{} \\
-This rule exists to reduce the grounding. If any expression is a next step, we generate an \lstinline{is_next_step} predicate, used in the remaining \lstinline{next_step} rules.\\
+\ref{lst:next_is} exists to reduce the grounding. If any expression is a next step, we generate an \lstinline{is_next_step} predicate, used in the remaining \lstinline{next_step} rules.\\
 
 \lstinputlisting[language=Prolog, firstline=70, lastline=73, firstnumber=70, label=lst:next_func, caption=Next step propagation through function calls]{../ASP/eq/eq_rules.lp} 
 \mbox{} \\
-This rule handles the next step of function calls. The next step of a function call is the body of that function. \\
+\ref{lst:next_func} handles the next step of function calls. The next step of a function call is the body of that function. \\
 
 \lstinputlisting[language=Prolog, firstline=65, lastline=81, firstnumber=65, label=lst:next_match, caption=Next step propagation through arithmetic operations]{../ASP/eq/eq_rules.lp} 
 \mbox{} \\
-These rules generate \lstinline{next_step} predicates for arithmetic and tuples. The next step of an arithmetic expression is the argument that is not constant. %{
+\ref{lst:next_match} generates \lstinline{next_step} predicates for arithmetic and tuples. The next step of an arithmetic expression is the argument that is not constant. %{
 
 \section{Learning}
 The actual learning task operates in a similar way to my initial approach. By enumerating all possible rule bodies in the skeleton rules, a choice rule can be used to generate answer sets with each combination of skeleton rule, keeping the answer sets which do not fail the equality constraints. However, because \lstinline!where! rules are no longer being used, the skeleton rules now contain full bodies. This means that unfortunately the number of skeleton rules becomes large, numbering in the thousands for even simple tasks. To avoid this scaling poorly once again, I decided to implement a number of simple optimisations.%{

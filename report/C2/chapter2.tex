@@ -3,7 +3,7 @@
 \section{Common Terminology}
 Before detailing the background relating to ASP \cite{Lifschitz1999}, a list of common terms that will be used throughout can be found in Table \ref{table:4}.
 
-\begin{table}[h!]
+\begin{table}[p!]
 \centering
 \makeatletter
 \@fpsep\textheight
@@ -48,7 +48,7 @@ A line of the form \lstinline!head :- body! where \lstinline!head! is an atom an
 \hline
 Program &
 \mbox{}\newline
-A collection of rules \newline
+A conjunction of rules \newline
 \\
 \hline
 \end{tabular}
@@ -85,7 +85,6 @@ q :- not p.
 \mbox{}\\
 The value of p depends on the value of q, so when you query Prolog for p? this program results in an infinite search, alternately searching for p and q until cancelled. However, using the Stable Model Semantics, this particular program has an answer set for each solution : \lstinline!{p}! and \lstinline!{q}!.
 
-\pagebreak
 \subsubsection{Grounding}
 
 Before you can solve a logic program using Answer Sets you must first ground it \cite{KRnotes}. A rule is said to be ``ground'' if all of its variables are replaced by every combination of possible constants. Then, to calculate the grounding of a program P you replace each rule in P by every ground instance of that rule. For example, the program \\
@@ -123,6 +122,8 @@ Because of the need for ASP solvers to ground the entire program, they are restr
 \item \lstinline!p(Z) :- not q(X, Y), r(X, Y).! Unsafe because the variable \lstinline!Z! does not appear the body of the rule.
 \item \lstinline!p(X) :- q(X), not r(Y).! Unsafe because the variable \lstinline!Y! does not appear positively in the body.
 \end{itemize}
+
+\pagebreak
 
 \subsubsection{Least Herbrand Models}
 For a normal logic program P, the following features are defined as follows \cite{KRnotes} :

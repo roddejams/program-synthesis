@@ -10,15 +10,15 @@
 \contentsline {section}{\numberline {2.2}Answer Set Programming}{12}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Negation As Failure}{12}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}The Stable Model Semantics}{12}{subsection.2.2.2}
-\contentsline {subsubsection}{Grounding}{13}{section*.7}
+\contentsline {subsubsection}{Grounding}{14}{section*.7}
 \contentsline {subsubsection}{Safety}{14}{section*.8}
-\contentsline {subsubsection}{Least Herbrand Models}{14}{section*.9}
+\contentsline {subsubsection}{Least Herbrand Models}{15}{section*.9}
 \contentsline {subsection}{\numberline {2.2.3}Calculating Answer Sets}{15}{subsection.2.2.3}
 \contentsline {subsubsection}{Reduct}{15}{section*.10}
 \contentsline {subsubsection}{Constraints}{16}{section*.11}
-\contentsline {subsubsection}{Aggregates and Choice Rules}{16}{section*.12}
+\contentsline {subsubsection}{Aggregates and Choice Rules}{17}{section*.12}
 \contentsline {subsubsection}{Optimisation Statements}{17}{section*.13}
-\contentsline {subsection}{\numberline {2.2.4}ASPAL}{17}{subsection.2.2.4}
+\contentsline {subsection}{\numberline {2.2.4}ASPAL}{18}{subsection.2.2.4}
 \contentsline {subsection}{\numberline {2.2.5}ASP Solvers}{19}{subsection.2.2.5}
 \contentsline {section}{\numberline {2.3}The Target Language, Haskell}{20}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}The Haskell Syntax}{20}{subsection.2.3.1}
@@ -34,7 +34,7 @@
 \contentsline {subsection}{\numberline {3.1.1}Program Representation}{24}{subsection.3.1.1}
 \contentsline {section}{\numberline {3.2}Evaluating Rules}{25}{section.3.2}
 \contentsline {subsubsection}{Internal Predicates}{25}{section*.19}
-\contentsline {subsubsection}{Computation Rules}{27}{section*.20}
+\contentsline {subsubsection}{Computation Rules}{26}{section*.20}
 \contentsline {subsection}{\numberline {3.2.1}Solutions}{28}{subsection.3.2.1}
 \contentsline {subsection}{\numberline {3.2.2}Handling Multiple Arguments}{29}{subsection.3.2.2}
 \contentsline {subsection}{\numberline {3.2.3}Where Rules}{29}{subsection.3.2.3}
@@ -54,12 +54,12 @@
 \contentsline {section}{\numberline {4.4}Solutions}{48}{section.4.4}
 \contentsline {subsection}{\numberline {4.4.1}Multiple Solutions and Optimisation}{48}{subsection.4.4.1}
 \contentsline {section}{\numberline {4.5}A Worked Example : Learning GCD}{49}{section.4.5}
-\contentsline {section}{\numberline {4.6}Performance Issues}{51}{section.4.6}
+\contentsline {section}{\numberline {4.6}Performance Issues}{52}{section.4.6}
 \contentsline {subsection}{\numberline {4.6.1}Potential Optimisations}{52}{subsection.4.6.1}
 \contentsline {chapter}{\numberline {5}A Second Approach : Constraint Based Learning}{53}{chapter.5}
 \contentsline {section}{\numberline {5.1}Top Down Vs. Bottom Up}{53}{section.5.1}
 \contentsline {subsection}{\numberline {5.1.1}Dealing with termination}{54}{subsection.5.1.1}
-\contentsline {section}{\numberline {5.2}ASP Representation}{54}{section.5.2}
+\contentsline {section}{\numberline {5.2}ASP Representation}{55}{section.5.2}
 \contentsline {section}{\numberline {5.3}Learning}{58}{section.5.3}
 \contentsline {subsection}{\numberline {5.3.1}Using inbuilt arithmetic}{58}{subsection.5.3.1}
 \contentsline {section}{\numberline {5.4}A Worked Example : Greatest common divisor}{58}{section.5.4}
@@ -70,55 +70,55 @@
 \contentsline {section}{\numberline {6.1}User's Manual}{63}{section.6.1}
 \contentsline {subsection}{\numberline {6.1.1}Entering examples}{64}{subsection.6.1.1}
 \contentsline {subsection}{\numberline {6.1.2}The Learning Step}{64}{subsection.6.1.2}
-\contentsline {subsection}{\numberline {6.1.3}Example autocompletion}{64}{subsection.6.1.3}
-\contentsline {subsection}{\numberline {6.1.4}Combining functions}{64}{subsection.6.1.4}
+\contentsline {subsection}{\numberline {6.1.3}Example autocompletion}{65}{subsection.6.1.3}
+\contentsline {subsection}{\numberline {6.1.4}Combining functions}{65}{subsection.6.1.4}
 \contentsline {subsection}{\numberline {6.1.5}Restricting the Language Bias}{65}{subsection.6.1.5}
-\contentsline {subsection}{\numberline {6.1.6}Handling errors}{65}{subsection.6.1.6}
-\contentsline {section}{\numberline {6.2}The Design Process}{66}{section.6.2}
-\contentsline {section}{\numberline {6.3}Writing the Backend}{66}{section.6.3}
-\contentsline {section}{\numberline {6.4}Technologies Used}{67}{section.6.4}
-\contentsline {subsection}{\numberline {6.4.1}Play Framework and Akka}{67}{subsection.6.4.1}
-\contentsline {subsection}{\numberline {6.4.2}Bootstrap}{67}{subsection.6.4.2}
-\contentsline {section}{\numberline {6.5}User Feedback and Evaluation}{67}{section.6.5}
-\contentsline {chapter}{\numberline {7}Critical Evaluation}{68}{chapter.7}
-\contentsline {section}{\numberline {7.1}Generated Code}{69}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}Factorial}{69}{subsection.7.1.1}
-\contentsline {subsection}{\numberline {7.1.2}Fibonacci}{69}{subsection.7.1.2}
-\contentsline {subsection}{\numberline {7.1.3}Powers of 2}{70}{subsection.7.1.3}
-\contentsline {subsection}{\numberline {7.1.4}Tail Recursive Factorial}{70}{subsection.7.1.4}
-\contentsline {subsection}{\numberline {7.1.5}Greatest Common Divisor}{71}{subsection.7.1.5}
-\contentsline {section}{\numberline {7.2}Performance Statistics}{71}{section.7.2}
-\contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{73}{section.7.3}
-\contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{73}{subsection.7.3.1}
-\contentsline {subsection}{\numberline {7.3.2}Igor II}{73}{subsection.7.3.2}
-\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{75}{chapter.8}
-\contentsline {section}{\numberline {8.1}Conclusions}{75}{section.8.1}
-\contentsline {subsection}{\numberline {8.1.1}Learning}{75}{subsection.8.1.1}
-\contentsline {subsection}{\numberline {8.1.2}UI}{75}{subsection.8.1.2}
-\contentsline {section}{\numberline {8.2}Future Work}{76}{section.8.2}
-\contentsline {subsection}{\numberline {8.2.1}Type Usage}{76}{subsection.8.2.1}
-\contentsline {subsection}{\numberline {8.2.2}Lists and Strings}{76}{subsection.8.2.2}
-\contentsline {subsection}{\numberline {8.2.3}Expanding the Background Knowledge}{77}{subsection.8.2.3}
-\contentsline {subsection}{\numberline {8.2.4}Advanced Skeleton Rule Generation}{78}{subsection.8.2.4}
-\contentsline {subsection}{\numberline {8.2.5}Supporting Multiple Function Calls}{79}{subsection.8.2.5}
-\contentsline {subsection}{\numberline {8.2.6}Advanced Optimisation}{79}{subsection.8.2.6}
-\contentsline {subsection}{\numberline {8.2.7}Parallel Learning}{80}{subsection.8.2.7}
-\contentsline {chapter}{\numberline {A}Full Experimental Results}{81}{appendix.A}
-\contentsline {section}{\numberline {A.1}One Argument Programs}{81}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Factorial}{81}{subsection.A.1.1}
-\contentsline {subsection}{\numberline {A.1.2}Fibonacci}{82}{subsection.A.1.2}
-\contentsline {subsection}{\numberline {A.1.3}Powers of 2}{83}{subsection.A.1.3}
-\contentsline {section}{\numberline {A.2}Two Argument Programs}{84}{section.A.2}
-\contentsline {subsection}{\numberline {A.2.1}Tail Recursive Factorial}{84}{subsection.A.2.1}
-\contentsline {subsection}{\numberline {A.2.2}Greatest Common Divisor}{85}{subsection.A.2.2}
-\contentsline {chapter}{\numberline {B}Code Listings}{86}{appendix.B}
-\contentsline {section}{\numberline {B.1}The Interpreted Approach}{86}{section.B.1}
-\contentsline {subsection}{\numberline {B.1.1}The Interpreter}{86}{subsection.B.1.1}
-\contentsline {subsection}{\numberline {B.1.2}Skeleton Rules}{90}{subsection.B.1.2}
-\contentsline {subsubsection}{One Argument Rules}{90}{section*.24}
-\contentsline {subsubsection}{Two Argument Rules}{93}{section*.25}
-\contentsline {section}{\numberline {B.2}Constraint Based Approach}{98}{section.B.2}
-\contentsline {subsection}{\numberline {B.2.1}Constraint Handling}{98}{subsection.B.2.1}
-\contentsline {subsection}{\numberline {B.2.2}Skeleton Rules}{100}{subsection.B.2.2}
-\contentsline {subsubsection}{One Argument Rules}{100}{section*.26}
-\contentsline {subsubsection}{Two Argument Rules}{103}{section*.27}
+\contentsline {subsection}{\numberline {6.1.6}Handling errors}{66}{subsection.6.1.6}
+\contentsline {section}{\numberline {6.2}The Design Process}{67}{section.6.2}
+\contentsline {section}{\numberline {6.3}Writing the Backend}{67}{section.6.3}
+\contentsline {section}{\numberline {6.4}Technologies Used}{68}{section.6.4}
+\contentsline {subsection}{\numberline {6.4.1}Play Framework and Akka}{68}{subsection.6.4.1}
+\contentsline {subsection}{\numberline {6.4.2}Bootstrap}{68}{subsection.6.4.2}
+\contentsline {section}{\numberline {6.5}User Feedback and Evaluation}{68}{section.6.5}
+\contentsline {chapter}{\numberline {7}Critical Evaluation}{69}{chapter.7}
+\contentsline {section}{\numberline {7.1}Generated Code}{70}{section.7.1}
+\contentsline {subsection}{\numberline {7.1.1}Factorial}{70}{subsection.7.1.1}
+\contentsline {subsection}{\numberline {7.1.2}Fibonacci}{70}{subsection.7.1.2}
+\contentsline {subsection}{\numberline {7.1.3}Powers of 2}{71}{subsection.7.1.3}
+\contentsline {subsection}{\numberline {7.1.4}Tail Recursive Factorial}{71}{subsection.7.1.4}
+\contentsline {subsection}{\numberline {7.1.5}Greatest Common Divisor}{72}{subsection.7.1.5}
+\contentsline {section}{\numberline {7.2}Performance Statistics}{72}{section.7.2}
+\contentsline {section}{\numberline {7.3}Comparison to Existing Tools}{74}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}MagicHaskeller}{74}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}Igor II}{76}{subsection.7.3.2}
+\contentsline {chapter}{\numberline {8}Conclusions and Future Work}{77}{chapter.8}
+\contentsline {section}{\numberline {8.1}Conclusions}{77}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Learning}{77}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}UI}{77}{subsection.8.1.2}
+\contentsline {section}{\numberline {8.2}Future Work}{78}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Type Usage}{78}{subsection.8.2.1}
+\contentsline {subsection}{\numberline {8.2.2}Lists and Strings}{78}{subsection.8.2.2}
+\contentsline {subsection}{\numberline {8.2.3}Expanding the Background Knowledge}{79}{subsection.8.2.3}
+\contentsline {subsection}{\numberline {8.2.4}Advanced Skeleton Rule Generation}{80}{subsection.8.2.4}
+\contentsline {subsection}{\numberline {8.2.5}Supporting Multiple Function Calls}{81}{subsection.8.2.5}
+\contentsline {subsection}{\numberline {8.2.6}Advanced Optimisation}{81}{subsection.8.2.6}
+\contentsline {subsection}{\numberline {8.2.7}Parallel Learning}{82}{subsection.8.2.7}
+\contentsline {chapter}{\numberline {A}Full Experimental Results}{83}{appendix.A}
+\contentsline {section}{\numberline {A.1}One Argument Programs}{83}{section.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Factorial}{83}{subsection.A.1.1}
+\contentsline {subsection}{\numberline {A.1.2}Fibonacci}{84}{subsection.A.1.2}
+\contentsline {subsection}{\numberline {A.1.3}Powers of 2}{85}{subsection.A.1.3}
+\contentsline {section}{\numberline {A.2}Two Argument Programs}{86}{section.A.2}
+\contentsline {subsection}{\numberline {A.2.1}Tail Recursive Factorial}{86}{subsection.A.2.1}
+\contentsline {subsection}{\numberline {A.2.2}Greatest Common Divisor}{87}{subsection.A.2.2}
+\contentsline {chapter}{\numberline {B}Code Listings}{88}{appendix.B}
+\contentsline {section}{\numberline {B.1}The Interpreted Approach}{88}{section.B.1}
+\contentsline {subsection}{\numberline {B.1.1}The Interpreter}{88}{subsection.B.1.1}
+\contentsline {subsection}{\numberline {B.1.2}Skeleton Rules}{92}{subsection.B.1.2}
+\contentsline {subsubsection}{One Argument Rules}{92}{section*.27}
+\contentsline {subsubsection}{Two Argument Rules}{95}{section*.28}
+\contentsline {section}{\numberline {B.2}Constraint Based Approach}{100}{section.B.2}
+\contentsline {subsection}{\numberline {B.2.1}Constraint Handling}{100}{subsection.B.2.1}
+\contentsline {subsection}{\numberline {B.2.2}Skeleton Rules}{102}{subsection.B.2.2}
+\contentsline {subsubsection}{One Argument Rules}{102}{section*.29}
+\contentsline {subsubsection}{Two Argument Rules}{105}{section*.30}
