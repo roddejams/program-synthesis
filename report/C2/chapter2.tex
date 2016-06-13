@@ -145,7 +145,7 @@ A rule is satisfied by an interpretation if, when all atoms of the body are spec
 Herbrand Model & 
 \mbox{}\newline
 A Herbrand Interpretation where every rule in the program is satisfied by that interpretation.\newline \newline
-A Herbrand Model M is minimal if no subset of M is also a model. For definite logic programs this model is unique and called the least Herbrand Model, however this does not always hold for normal or extended logic programs.\newline
+A Herbrand Model M is minimal if no subset of M is also a model. For definite logic programs this model is unique and called the Least Herbrand Model, however this does not always hold for normal or extended logic programs.\newline
 \\
 \hline
 \end{tabular}
@@ -159,7 +159,7 @@ q :- not p.
 \end{lstlisting}
 \mbox{}\\
 P has the Herbrand Base \lstinline!{p, q}!. \\ \\ 
-Because listing if each atom is true or false is overly verbose, instead we write the Herbrand Interpretation as a set of atoms, including the ones specified as true. One Herbrand Interpretation of P is \lstinline!{p, q}!, but this interpretation is not a model because neither rules are satisfied by it. \\ \\
+Because listing if each atom is true or false is overly verbose, instead we write the Herbrand Interpretation as a set of atoms, only including the ones specified as true. One Herbrand Interpretation of P is \lstinline!{p, q}!, but this interpretation is not a model because neither rules are satisfied by it. \\ \\
 The Herbrand Interpretations \lstinline!{p}! and \lstinline!{q}! are both Herbrand Models. \lstinline!{p}! is a model because it satisfies the both rules - the first as \lstinline!not q! holds by NBF and \lstinline!p! is in the model, and the second as \lstinline!(not p)! does not hold so \lstinline!q! is not needed. \lstinline!{q}! is a Herbrand Model for the same reasons, reversed. The first line is satisfied because the body \lstinline!not q! does not hold, and the second line is satisfied as \lstinline!not p! holds, and \lstinline!q! is in the interpretation.
 
 \subsection{Calculating Answer Sets}
@@ -216,7 +216,7 @@ Has only one Answer Set, \lstinline!{q}!. This is because the Answer Set \lstinl
 
 \subsubsection{Aggregates and Choice Rules}
 
-An aggregate \cite{Eiter2008} is a ASP atom with the format $a \: \textsf{op} \: [h_1=w_1, h_2=w_2, \dots, h_n=w_n 	] \: b$. An aggregate is satisfied by an interpretation X if operation op applied to the multiset of weights of true literals is between the upper and lower bounds $a$ and $b$. \\ \\
+An aggregate \cite{Eiter2008} is a ASP atom with the format $a \: \textsf{op} \: [h_1=w_1, h_2=w_2, \dots, h_n=w_n 	] \: b$, where $a$ and $b$ are bounds on the aggregate, $h_1, h_2, \dots, h_n$ are literals and $w_1, w_2, \dots, w_n$ are weights assigned to those literals. An aggregate is satisfied by an interpretation X if operation \lstinline!op! applied to the multiset of weights of true literals is between the upper and lower bounds $a$ and $b$. \\ \\
 This project will be using one application of aggregates, the choice rule. A choice rule has an aggregate using the count operation as the head of the rule, and semantically represents a choice of a number of head atoms, between the upper and lower bound. For example, the choice rule \lstinline!1 { on(A, B), on(B, A) } 1.! represents \lstinline!A! can be on \lstinline!B!, or \lstinline!B! can be on \lstinline!A!, but not both. \\ \\
 To calculate the Answer Sets of a program P which contains aggregates by adding an additional step to the construction of the reduct. For each rule with an aggregate:
 
@@ -255,7 +255,7 @@ Has one optimal answer set, \lstinline!{p}!, with optimisation 1.
 \subsection{ASPAL}
 
 ASPAL \cite{Corapi2012} is an ASP algorithm which computes the solution of an inductive task by encoding it as an ASP program which has the solutions as the Answer Sets of the program.\\ \\
-First, we encode the Hypothesis space by generating a number of Skeleton Rules. Each skeleton rule represents a possible rule in the Hypothesis (with constant terms replaced with variables), together with an identifier. The atom rule(ID, $c_1, \dots, c_n$) represents the choice of skeleton rule with ID and the constant variables replaced by various $c_n$. The goal of the task is to find these rule atoms.\\ \\
+First, we encode the Hypothesis Space by generating a number of Skeleton Rules. Each skeleton rule represents a possible rule in the Hypothesis (with constant terms replaced with variables), together with an identifier. The atom rule(ID, $c_1, \dots, c_n$) represents the choice of skeleton rule with ID and the constant variables replaced by various $c_n$. The goal of the task is to find these rule atoms.\\ \\
 These skeleton rules are defined by ``mode declarations'', terms which specify which rules are allowed to appear in the heads of rules, and which are allowed to appear in the bodies. The predicate \lstinline!modeh! specifies the head declaration, while \lstinline!modeb! specifies the body. \\ \\
 We next rule out Answer Sets which do not fit the examples by adding a goal rule and a constraint, of the format (where $e_1^+, \dots, e_n^+$ are the positive examples and $e_1^-, \dots, e_n^+-$ are the negative examples) : \\
 
@@ -326,14 +326,14 @@ on_floor(A) :- box(A), not has_colour(A, C1), rule(3, C1).
 #minimise[rule(1) = 1, rule(2, red) = 2, rule(2, blue) = 2, rule(3, red) = 2, rule(3, blue) = 2].
 \end{lstlisting}
 \mbox{}\\
-When ran (using an ASP solver), the Answer Set of this program contains the atom \lstinline!rule(2, red)!. This rule corresponds to the learned skeleton rule \lstinline!on_floor(A) :- box(A), has_colour(A, red)!, which is stating that a box is on the floor if it is red, which is consistent with the examples.
+When ran (using the ASP solver clingo \cite{Gebser2007}), the Answer Set of this program contains the atom \lstinline!rule(2, red)!. This rule corresponds to the learned skeleton rule \lstinline!on_floor(A) :- box(A), has_colour(A, red)!, which is stating that a box is on the floor if it is red, which is consistent with the examples.
 
 \subsection{ASP Solvers}
 
 Typically, ASP solvers work in two parts.
 
 \begin{itemize}
-\item First the input program must be converted into the ground finite logic program by a grounder. Typically this step also includes optimisations to help the solver.
+\item First, the input program must be converted into the ground finite logic program by a grounder. Typically this step also includes optimisations to help the solver.
 \item The ground program is then passed into the solver which calculates the Answer Sets of the program.
 \end{itemize}
 \mbox{}\\
@@ -341,8 +341,8 @@ The main popular ASP solvers are Smodels, DLV and Clasp. Clasp \cite{Gebser2007}
 Gringo calculates the ground logic program by replacing the variables in the program by ground terms. The resulting program needs only be an equivalent program (meaning it has the same Answer Sets), to be able to deal with programs with infinite number of Answer Sets.
 
 \section{The Target Language, Haskell}
-Haskell \cite{Hudak2007} is a purely functional programming language, featuring a strongly typed static type system and supporting language features such as pattern matching, list comprehension, higher order functions and monads. This this sections I will detail the Haskell language features relevant to this project. \\ \\
-Functional programming is a programming paradigm that considers the evaluation of a computational function in the same way as a mathematical one. Functional programs are stateless, depending purely on the arguments to the function. By removing side-effects, it can be proven that a call to some function \lstinline!f! will always return the same result as long as the input arguments are the same. Functional programming is also very similar semantically to logic programming, which makes using a form of programming like ASP to learn it more appealing over other paradigms.
+Haskell \cite{Hudak2007} is a purely functional programming language, featuring a strongly typed static type system and supporting language features such as pattern matching, list comprehension, higher order functions and monads. In this section I will detail the Haskell language features relevant to this project. \\ \\
+Functional programming is a programming paradigm that considers the evaluation of a computational function in the same way as a mathematical one. Functional programs are stateless, depending purely on the arguments to the function. By removing side-effects, it can be proven that a call to some function \lstinline!f! will always return the same result as long as the input arguments are the same \cite{Company2008}. Functional programming is also very similar semantically to logic programming, which makes using a form of programming like ASP to learn it more appealing over other paradigms.
 
 \subsection{The Haskell Syntax}
 To illustrate the syntax of Haskell programs, I will give an example of a function written in Haskell.
@@ -368,7 +368,7 @@ This program simply multiplies by 5, as the variable \lstinline!y! has value 5 a
 
 \subsection{Inductive Functional Programming}
 
-Inductive Functional Programming (IFP) \cite{IFPnotes} is a specific field of program synthesis, focusing on the generation of Functional programs. Traditionally, there have been two approaches to IFP \cite{Katayama2012}. The analytical approach performs pattern matching on the given examples, usually performing a two-step process of first generalising the examples and then folding this generalisation into a recursive program. The "generate and test" search approach works by generating an infinite stream of candidate programs and then test these candidates to see if they correctly model the examples. \\ \\
+Inductive Functional Programming (IFP) \cite{IFPnotes} is a specific field of program synthesis, focusing on the generation of Functional programs. Traditionally, there have been two approaches to IFP \cite{Katayama2012}. The analytical approach performs pattern matching on the given examples, usually performing a two-step process of first generalising the examples and then folding this generalisation into a recursive program. The "generate and test" search approach works by generating an infinite stream of candidate programs and then testing these candidates to see if they correctly model the examples. \\ \\
 Each approach has its own advantages and disadvantages. The analytical approach, while fast, can be very limited in its target language and the types of programs it can generate, typically being limited to reasoning about data structures such as lists or trees. On the other hand, the search based approach is a lot less restricted but has worse performance due to the potentially huge search space. This issue is minimised by various optimisations performed on the generated programs, typically using a subset of the examples as an initial starting point.
 
 \subsection{Conditional Constructor Systems}
@@ -391,14 +391,14 @@ Preference Bias introduces an idea of optimisation to the task such that the lea
 Here I will discuss some modern program synthesis systems, giving some context to the field.
 
 \subsubsection{MagicHaskeller}
-MagicHaskeller \cite{Katayama2012} is based on the generate and test approach to IFP, and works by generating a stream of progressively more complicated programs and then testing them against the given specification. This search is exhaustive and performed in a breadth-first manner, and is made more efficient through smart restrictions of target programs based on the type of the input examples, and through heavy use of in built functions, both linear and higher order. \\ \\
+MagicHaskeller \cite{Katayama2012} is based on the generate and test approach to IFP, and works by generating a stream of progressively more complicated programs and then testing them against the given specification. This search is exhaustive and performed in a breadth-first manner. It is made more efficient through smart restrictions of target programs based on the type of the input examples, and through heavy use of in built functions, both linear and higher order. \\ \\
 MagicHaskeller has the advantage of being easy to use as you only have to give the specification of the desired function as an argument, which is typically no more than a few lines of code in the target language. The tool also has a particularly large component library of built-in Haskell primitives which the tool uses where possible.\\ \\
 However, MagicHaskeller does not have the ability to compute large programs, due to the performance cost of exhaustive breadth-first search. This problem, however, is typical of the generate and test approach.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{C7/magichaskeller.png}
-\caption{MagicHaskeller UI}
+\caption{The MagicHaskeller UI}
 \label{fig:magichaskeller}
 \end{figure}
 
@@ -413,7 +413,7 @@ Igor II \cite{Kitzelmann2006} is based on the analytical approach to IFP and is 
 Igor II has a number of limitations. If there are a large number of examples then performance can be impacted because of the large number of combinations when matching to a defined function. Synthesis can fail or perform incorrectly if some examples from the middle of the set are removed, meaning if we want to specify a particularly large or complex example we also have to specify all of the smaller examples, reducing performance.
 
 \subsubsection{FlashFill}
-FlashFill \cite{Gulwani2012} is an Inductive Program Synthesis system which generates string and table operations over spreadsheets columns. By defining a domain specific language that is expressive enough to efficiently describe the potential string operations, this language is used to define a data structure which represents the set of possible functions in a succinct manner. \\ \\
+FlashFill \cite{Gulwani2012} is an Inductive Program Synthesis system which generates string and table operations over spreadsheets columns. By defining a domain specific language that is expressive enough to efficiently describe the potential string operations, it is possible to define a data structure which represents the set of possible functions in a succinct manner. \\ \\
 These functions are then learned in a two-step procedure. First, for each example, the set of all potential functions that transform the given input to the given output is generated. While this set could be very large, it is optimised by reducing the number of potential substrings of a string be quadratic, not exponential in the size of the string. After this set is generated for each example, the sets are examined to find matching cases and learn conditionals to determine between them. These solutions are then optimised, with shorter expressions being preferred in general.\\ \\
 FlashFill is fairly unique in the field of program synthesis due to the fact it has been implemented as a consumer tool. Included in Microsoft Excel 2013, it allows users to quickly generalise an operation over multiple spreadsheet rows.
 

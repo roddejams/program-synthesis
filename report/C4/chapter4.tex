@@ -1,6 +1,6 @@
 \chapter{A Second Approach : Constraint Based Learning}
 
-As seen in the previous chapter, my initial approach suffered from significant difficulty scaling. Even simple two argument functions took upwards of 400 seconds to complete. This was mainly due to the sheer size of the ground learning task, and the complexity from combinations of rule and where predicates.
+As seen in the previous chapter, the initial approach suffered from significant difficulty scaling. Even simple two argument functions took upwards of 400 seconds to complete. This was mainly due to the sheer size of the ground learning task, and the complexity from combinations of rule and where predicates.
 
 \section{Top Down Vs. Bottom Up}
 The main issue with the interpreted approach is that it is bottom-up. To learn the output of a rule, it must first iterate down the expression tree (shown in Figure \ref{fig:expr_tree_2}), calculate the value of each simple sub-expression, then iterate back up the tree combining values until a value is known for the entire rule body. My second approach overcomes this issue by implementing a top down approach. \\ \\
@@ -29,7 +29,7 @@ Which fails because 5 is not a multiple of 2.
 
 \subsection{Dealing with termination}
 One issue with this new approach is that it does not automatically handle programs which do not terminate. Whilst these programs do not stop clingo from finding a solution, they are incorrect as the generated constraints never become simple enough to have a contradiction be proved. \\ \\
-To deal with this, the tool has to check input examples for termination. While this is typically an undecidable problem, for my small target language it is decidable and computable. To represent this in ASP, there needed to be a way to represent the next step of execution of an expression. For example, we can say that \lstinline{next_step(add(1, mul(2, 3)), mul(2, 3))}, meaning that I next evaluate mul(2, 3). \\ \\%{
+To deal with this, the tool has to check input examples for termination. While this is typically an undecidable problem, for my small target language it is decidable and computable. To represent this in ASP, there needed to be a way to represent the next step of execution of an expression. For example, we can say that \lstinline!next_step(add(1, mul(2, 3)), mul(2, 3))!, meaning that it next evaluates \lstinline!mul(2, 3)!. \\ \\
 I then define termination as :
 \begin{itemize}
 \item If an expression is simple, containing only constants, then it terminates.
@@ -103,7 +103,7 @@ Now, these predicates are used in the following rules. \\
 \mbox{} \\
 \ref{lst:eq_math} specifies generation of equality predicates with arithmetic, through use of the opposite operations. Addition terms in the head of the rule are necessary to handle edge cases such as division by zero. \\
 
-\lstinputlisting[language=Prolog, firstline=62, lastline=63, firstnumber=62, label=lst:eq_pair, caption=Constrain propagation through tuples]{../ASP/eq/eq_rules.lp}
+\lstinputlisting[language=Prolog, firstline=62, lastline=63, firstnumber=62, label=lst:eq_pair, caption=Constraint propagation through tuples]{../ASP/eq/eq_rules.lp}
 \mbox{}\\
 \ref{lst:eq_pair} describes the propagation of equality constraints through tuple pairs. If a tuple of expressions is equal to a tuple of values, then the respective halves of the tuple are equal to each other. \\
 
@@ -128,11 +128,12 @@ Now, these predicates are used in the following rules. \\
 \ref{lst:next_match} generates \lstinline{next_step} predicates for arithmetic and tuples. The next step of an arithmetic expression is the argument that is not constant. %{
 
 \section{Learning}
-The actual learning task operates in a similar way to my initial approach. By enumerating all possible rule bodies in the skeleton rules, a choice rule can be used to generate answer sets with each combination of skeleton rule, keeping the answer sets which do not fail the equality constraints. However, because \lstinline!where! rules are no longer being used, the skeleton rules now contain full bodies. This means that unfortunately the number of skeleton rules becomes large, numbering in the thousands for even simple tasks. To avoid this scaling poorly once again, I decided to implement a number of simple optimisations.%{
+The actual learning task operates in a similar way to my initial approach. The task is again encoded as an ASP program, where the solution is a subset of the Answer Set of this program. \\ \\
+By enumerating all possible rule bodies in the skeleton rules, a choice rule can be used to generate answer sets with each combination of skeleton rule, keeping the answer sets which do not fail the equality constraints. However, because \lstinline!where! rules are no longer being used, the skeleton rules now contain full bodies. This means that unfortunately the number of skeleton rules becomes large, numbering in the thousands for even simple tasks. To avoid this scaling poorly once again, I decided to implement a number of simple optimisations.%{
 
 \subsection{Using inbuilt arithmetic}
-As part of my first approach, arithmetic was represented with my own predicates \lstinline{add(A, B)}, \lstinline{sub(A, B)} and \lstinline{mul(A, B)} because the tool needed to evaluate expressions that the grounder would not be able to compute (i.e the value of function calls or where variables). \\ \\ %{
-However, in my new approach I decided to make partial use of the clingo inbuilt arithmetic. If inside function arguments, or the rule body has no function calls at all, then the tool knows that all sub expressions will be arithmetic and it can make use of the simple \lstinline{+, -} and \lstinline{*}. \\ \\
+As part of the first approach, arithmetic was represented with my own predicates \lstinline{add(A, B)}, \lstinline{sub(A, B)} and \lstinline{mul(A, B)} because the tool needed to evaluate expressions that the grounder would not be able to compute (i.e the value of function calls or where variables). \\ \\ %{
+However, in my new approach I have made partial use of the clingo inbuilt arithmetic. If inside function arguments, or the rule body has no function calls at all, then the tool knows that all sub expressions will be arithmetic and it can make use of the simple \lstinline{+, -} and \lstinline{*}. \\ \\
 The main advantage of this approach is that it vastly reduces the ground output. As the inbuilt operations are computed by the grounder, if two different expressions compute the same output number, then they are not repeated in the ground output. For example, \lstinline{X + X} and \lstinline{2 * X} are semantically equivalent, so when ground with \lstinline!X = 3! both produce the term \lstinline!6!, corresponding to one output rule.
 
 \section{A Worked Example : Greatest common divisor}

@@ -3,8 +3,8 @@
 This chapter details how we extend the interpreter discussed in chapter 3 to perform learning. The tool enumerates all possible rules, then chooses a subset which correctly evaluates all of the examples.
 
 \section{The Learning Task}
-Formally, the learning task described in this section is defined as : \\ \\
-Given a set of skeleton rules which describe all potential learned programs \lstinline!SK!, and a set of examples in the form of Input / Output pairs \lstinline!E!, the Learning Task returns a subset of the skeleton rules which covers all examples. This subset corresponds to the a subset of the Answer Set of \lstinline!SK! $\cup$ \lstinline!E! $\cup$ \lstinline!I!, where \lstinline!I! is the interpreter described in Chapter 3.\\ \\
+The learning task described in this section generates functions by encoding the task as an ASP program which has a solution as the Answer Sets of the program.  \\ \\
+This encoding consists of a set of skeleton rules which describe all potential learned programs \lstinline!SK!, a set of examples in the form of Input / Output pairs \lstinline!E!, and the Interpreter described in Chapter 3, \lstinline!I!. The solution is then a subset of the Answer Set of \lstinline!SK! $\cup$ \lstinline!E! $\cup$ \lstinline!I!. This subset corresponds to a subset of the skeleton rules which covers all input examples. \\ \\
 An example is covered by some rules if, when the inputs of that example are ran by the interpreter, it returns the same result specified by the example.
 
 \section{Skeleton Rules}
@@ -163,7 +163,7 @@ choose_match(R, 1;2, C0) : expr_const(C0)
 \end{lstlisting}
 
 \section{Solutions}
-The solution of the learning task is a subset of the skeleton rules, corresponding to a subset of the Answer Set of \lstinline!SK! $\cup$ \lstinline!E! $cup$ \lstinline!I!, where \lstinline!SK! is the set of skeleton rules, \lstinline!E! is the set of input examples and \lstinline!I! is the interpreter. This Answer Set contains \lstinline!choose! and \lstinline!choose_where! atoms, specifying which of the skeleton rules are a valid solution. The solution is then the specified skeleton rules. \\ \\
+The solution of the learning task is a subset of the skeleton rules, corresponding to a subset of the Answer Set of \lstinline!SK! $\cup$ \lstinline!E! $\cup$ \lstinline!I!, where \lstinline!SK! is the set of skeleton rules, \lstinline!E! is the set of input examples and \lstinline!I! is the interpreter. This Answer Set contains \lstinline!choose! and \lstinline!choose_where! atoms, specifying which of the skeleton rules are a valid solution. The solution is then the specified skeleton rules. \\ \\
 For example, if the returned answer set contains the atoms \\
 
 \begin{lstlisting}
@@ -184,7 +184,7 @@ where(x2, X, sub(X, 1)) :- input(call(f, X)), choose_where(45, 1).
 
 \subsection{Multiple Solutions and Optimisation}
 While learning, it is not uncommon to have multiple solutions, usually due to multiple semantically equivalent base cases. There may be two answer sets as output, one having learned \lstinline{rule(1, F, 0, 1)}, and the other with \lstinline{rule(1, F, 0, 0+1)}. \\ \\
-To deal with this, a basic optimisation system was needed, by prioritising rules with shorter bodies. Rules with shorter bodies are more optimal because they are simpler, requiring fewer steps to execute. Due to the way I have ordered my skeleton rules,  rules with lower rule number are shorter, so I used the minimisation rule :
+To deal with this, a basic optimisation system was needed, by prioritising rules with shorter bodies. Rules with shorter bodies are more optimal because they are simpler, requiring fewer steps to execute. Due to the way skeleton rules are ordered, rules with lower rule numbers are shorter, so I used the minimisation rule :
 
 \begin{lstlisting}
 #minimise [choose(1, N)=N, choose(1, N, _)=N ].
@@ -252,7 +252,7 @@ match_guard(gcd, R, (N0, N1)) :- N0 < N1, input(call(gcd, (N0, N1))), choose_mat
 match_guard(gcd, R, (N0, N1)) :- N1 < N0, input(call(gcd, (N0, N1))), choose_match(R, 6).
 \end{lstlisting}
 \mbox{}\\
-After running the learning task with these inputs, the following Answer Set is returned as output. \\
+After running the learning task with these inputs, the following subset of its Answer Set is returned as output. \\
 
 \begin{multicols}{2}
 \begin{lstlisting}
@@ -264,8 +264,19 @@ choose_match(2, 6).
 choose_match(3, 3).
 \end{lstlisting}
 \end{multicols}
+These atoms represent the following skeleton rules : \\
+
+\begin{lstlisting}
+rule(1, gcd, (N0, N1), N0) :- input(call(gcd, (N0, N1))), choose(1, 1).
+rule(2, gcd, (N0, N1), sub(N0, N1)) :- input(call(gcd, (N0, N1))), choose(2, 23).
+rule(3, gcd, (N0, N1), N1) :- input(call(gcd, (N0, N1))), choose(3, 2).
+
+match_guard(gcd, 1, (N0, N1)) :- N0 < N1, input(call(gcd, (N0, N1))), choose_match(1, 4).
+match_guard(gcd, 2, (N0, N1)) :- N1 < N0, input(call(gcd, (N0, N1))), choose_match(2, 6).
+match_guard(gcd, 3, (N0, N1)) :- N0 == N1, input(call(gcd, (N0, N1))), choose_match(3, 3).
+\end{lstlisting}
 \mbox{}\\
-These rules represent the learned Haskell program: \\
+These rules then represent the learned Haskell program: \\
 
 \begin{lstlisting}
 gcd x y
@@ -295,7 +306,9 @@ choose_match(1, 3).
 choose_match(2, 4).
 choose_match(3, 6).
 \end{lstlisting}
-\mbox{} \\
+
+
+\pagebreak
 These terms translate to the haskell program :
 
 \begin{lstlisting}
@@ -309,8 +322,6 @@ gcd x y
 \end{lstlisting}
 \mbox{}\\
 As required.
-
-\pagebreak
 
 \section{Performance Issues}
 Unfortunately, this learning task suffers from extreme difficulty scaling. While the number of skeleton rules is relatively small, the problem comes when considering combinations of \lstinline{rule} and \lstinline{where} terms.\\ \\ %Add specific maths here?

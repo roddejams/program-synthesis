@@ -1,6 +1,6 @@
 \chapter{The Initial Approach : A Haskell Interpreter in ASP}
 
-In this chapter, I describe the Haskell Interpreter that is used heavily in my first learning attempt. Given a set of ASP rules representing some Haskell function and a valid input to this function, this interpreter returns the output from running that function with those examples.
+In this chapter, I describe the Haskell Interpreter that is used heavily in the first learning attempt. Given a set of ASP rules representing some Haskell function and a valid input to this function, this interpreter returns the output from running that function with those examples.
 
 \section{Target Language}
 
@@ -124,7 +124,7 @@ The value of an expression. After an expression is selected to be evaluated, its
 \end{longtable}
  
 \subsubsection{Computation Rules}
-To generate the above predicates, I needed to specify the relations between them. These generation (or computation) rules are detailed below. A full listing is available in Section 3.4 and in Appendix B.\\ \\
+To generate the above predicates, I need to specify the relations between them. These generation (or computation) rules are detailed below. A full listing is available in Section 3.4 and in Appendix B.\\ \\
 To start, a rule is needed to calculate the output, given inputs and a rule to follow. \\
 
 \begin{lstlisting}[caption={Output generation}, label={lst:simple_out}, firstnumber=55]
@@ -346,7 +346,7 @@ check_if_complex(A) :- check_if_complex(add(A, B)).
 check_if_complex(B) :- check_if_complex(add(A, B)).
 \end{lstlisting}
 \mbox{} \\
-\ref{lst:comp_check_prop} defines propagation of \lstinline!check_if_complex! predicates, similarly to \lstinline!eval_with! propagation. If you have to check that an expression is complex, then you also have to check both sub-expressions\\
+\ref{lst:comp_check_prop} defines propagation of \lstinline!check_if_complex! predicates, similarly to \lstinline!eval_with! propagation. If you have to check that an expression is complex, then you also have to check all sub-expressions\\
 
 \begin{lstlisting}[caption={Complex generation}, label={lst:comp_gen}, firstnumber=161]
 complex(x0;x1;x2;x3).
@@ -425,7 +425,7 @@ gcd x y
 	| x < y  = gcd(x, y - x)
 \end{lstlisting}
 \mbox{} \\
-You may notice this is not the typical definition of Euclid's algorithm, as it does not make use of modulo. This is because my current language bias does not support the modulo operator. \\ \\
+You may notice this is not the typical definition of Euclid's algorithm, as it does not make use of modulo. This is because the current language bias does not support the modulo operator. \\ \\
 This Haskell function is represented in ASP as :\\
 
 \begin{lstlisting}
@@ -458,7 +458,7 @@ match(F, Index, Inputs) :-
 		match_guard(F, Index, Inputs).
 \end{lstlisting}
 \mbox{} \\
-As the relevant ground \lstinline{rule} and \lstinline{match_guard} terms exist, and there are no smaller matches, (as 1 is the smallest Index), I generate a \lstinline{match(gcd, 1, (3, 3))} term for the output. \\ \\ %{
+As the relevant ground \lstinline{rule} and \lstinline{match_guard} terms exist, and there are no smaller matches, (as 1 is the smallest Index), the tool generates a \lstinline{match(gcd, 1, (3, 3))} term for the output. \\ \\ %{
 Next, the tool has to decide what to evaluate, by generating \lstinline{eval_with} terms. The rule applied is :\\ %{
 
 \begin{lstlisting}[firstnumber=128]
@@ -488,8 +488,8 @@ output(call(F, Args), Out) :-
 In the same way to earlier rule applications, the tool knows the relevant ground \lstinline{rule(1, gcd, (3, 3), 3)} and \lstinline{match(gcd, 1, (3, 3))} terms, and we just generated the \lstinline{value_with(3, 3, (3, 3))} term. Therefore, the tool can return \lstinline{output(call(gcd, (3, 3)), 3)}, as expected.
 
 \subsection{A More Complex Example}
-Now I will detail a more complicated example, where the tool visits where rules and more complicated expressions. As input, I will use \lstinline{gcd(9, 6)}, which is represented in ASP as the term \lstinline{input(call(gcd, (9, 6)))}. \\ \\
-Once again, initially the tool generates \lstinline{match} terms using the rule : \\ %{
+Now I will detail a more complicated example, in which the tool visits where rules and more complicated expressions. As input, I will use \lstinline{gcd(9, 6)}, which is represented in ASP as the term \lstinline{input(call(gcd, (9, 6)))}. \\ \\
+Once again, initially the tool generates \lstinline{match} terms using the rule : %{
 
 \begin{lstlisting}[firstnumber=197]
 match(F, Index, Inputs) :-
