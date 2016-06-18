@@ -5,6 +5,7 @@
 # An example controller showing a sample home page
 GET     /                    controllers.HomeController.index()
 GET     /status/:uuid        controllers.HomeController.getStatus(uuid: String)
+GET     /download/:uuid      controllers.HomeController.downloadHaskell(uuid: String)
 POST    /:uuid               controllers.HomeController.runLearningTask(uuid: String)
 POST    /add/:name           controllers.HomeController.addRuleToBackground(name: String)
 DELETE  /:uuid               controllers.HomeController.removeActor(uuid: String)

@@ -1,6 +1,4 @@
-import controllers.ConstraintLearningProcessor;
 import controllers.HaskellGenerator;
-import models.rules.ChoiceRule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,11 +15,11 @@ public class ApplicationTest {
 
     @Test
     public void testSkeletonRules() throws IOException, InterruptedException {
-        ConstraintLearningProcessor proc = new ConstraintLearningProcessor();
+        //ConstraintLearningProcessor proc = new ConstraintLearningProcessor();
 
-        List<ChoiceRule> rules = proc.generateSkeletonRules(3, 2);
+        //List<ChoiceRule> rules = proc.generateSkeletonRules(3, 2);
         //Path file = InterpretedLearningProcessor.writeSkeletonRules(rules, 3, 1);
-        System.out.println(rules);
+        //System.out.println(rules);
     }
 
     @Test
@@ -32,7 +30,7 @@ public class ApplicationTest {
 
     @Test
     public void testHaskellConversion() {
-        String out = HaskellGenerator.ruleToHaskell("mul(call(f, (N0 - C1)), N0)");
+        String out = HaskellGenerator.ruleToHaskell("call(f, ((N0 - C1), (N0 * N1)))");
         System.out.println(out);
     }
     /*@Test

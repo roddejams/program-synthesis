@@ -65,6 +65,14 @@ $(document).on("click", "#save-btn", function (event) {
     }
 });
 
+$(document).on("click", "#download-btn", function () {
+    var $CURR_TAB = $('.nav-tabs .active a').attr('href');
+    var uuid = $($CURR_TAB).data('actor-uuid');
+
+    window.location = "/download/" + uuid;
+});
+
+
 $(document).on("click", ".table-add", function() {
     var $CURR_TAB = $('.nav-tabs .active a').attr('href');
 

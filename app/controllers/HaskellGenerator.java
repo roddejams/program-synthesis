@@ -26,7 +26,7 @@ public class HaskellGenerator {
     public List<String> generateHaskell(List<String> chosenPredicates) throws IOException {
         //Step 1: Get relevant rules from set of skeleton rules.
 
-        learnedConditions = new String[chosenPredicates.size() - 1];
+        learnedConditions = new String[chosenPredicates.size() / 2];
 
         chosenPredicates.stream().filter(pred -> pred.contains("match")).forEach(pred -> {
             String split = pred.split("\\(")[1].split("\\)")[0].split(",")[1];
@@ -45,6 +45,10 @@ public class HaskellGenerator {
             }
 
             matchRule.updateCondition(learnedCondition);
+
+            String matchPosition = pred.split("\\(")[1].split("\\)")[0].split(",")[0];
+            ((Match) rule).setRulePosition(Integer.valueOf(matchPosition));
+
             chosenMatches.add(matchRule);
 
 	        int rulePosition = Integer.valueOf(pred.split("\\(")[1].split("\\)")[0].split(",")[0]);
@@ -156,6 +160,7 @@ public class HaskellGenerator {
                     codeline = String.format("\t| otherwise = %s", ruleToHaskell(body));
                 } else {
                     String condition = learnedConditions[rulePosition - 1];
+                    System.out.println(Arrays.asList(learnedConditions));
                     codeline = String.format("\t| %s = %s\n", ruleToHaskell(condition), ruleToHaskell(body));
                 }
 
@@ -302,14 +307,18 @@ public class HaskellGenerator {
             return String.format("(%s - %s)", arg1, arg2);
 
         } else if(body.startsWith("call")) {
-            String funcArgs = args.subList(1, args.size()).stream().map(HaskellGenerator::ruleToHaskell).collect(Collectors.toList()).toString();
-            funcArgs = funcArgs.replace("[", "");
-            funcArgs = funcArgs.replace("]", "");
-            funcArgs = funcArgs.replace(",", "");
             String calledFunction = args.get(0);
+            String funcArgs = ruleToHaskell(args.get(1));
 
             return String.format("(%s %s)", calledFunction, funcArgs);
 
+        } else if(body.startsWith("((")) {
+            String funcArgs = args.stream().map(HaskellGenerator::ruleToHaskell).collect(Collectors.toList()).toString();
+            funcArgs = funcArgs.replace("[", "");
+            funcArgs = funcArgs.replace("]", "");
+            funcArgs = funcArgs.replace(",", "");
+
+            return funcArgs.toLowerCase();
         } else {
             return body.toLowerCase();
         }

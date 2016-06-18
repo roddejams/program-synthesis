@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.IOExamples;
 import models.LearningResult;
 import models.rules.ChoiceRule;
+import org.apache.commons.io.FileUtils;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -31,8 +32,7 @@ import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static akka.pattern.Patterns.ask;
-import static controllers.StatusProtocol.StatusQuery;
-import static controllers.StatusProtocol.StatusResult;
+import static controllers.StatusProtocol.*;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -44,7 +44,7 @@ public class HomeController extends Controller {
     @Inject
     FormFactory formFactory;
     private final ActorSystem system;
-    private final static int TIMEOUT = 180000; // 180 sec timeout;
+    private final static int TIMEOUT = 1800000; // 180 sec timeout;
 
     private List<String> selectedFunctionNames = new ArrayList<>();
     private Map<String, List<ChoiceRule>> learnedFunctions = new HashMap<>();
@@ -155,7 +155,7 @@ public class HomeController extends Controller {
     public Result removeActor(String uuid) {
         System.out.println("Deleting " + uuid);
 
-        uuid =  "akka://application/user/" + uuid;
+        uuid = "akka://application/user/" + uuid;
 
         try {
             ActorRef actorToStop = system.actorFor(uuid);
@@ -164,6 +164,25 @@ public class HomeController extends Controller {
             return notFound();
         }
         return ok();
+    }
+
+    public CompletionStage<Result> downloadHaskell(String uuid) {
+        uuid = "akka://application/user/" + uuid;
+
+        ActorRef actorToDownload = system.actorFor(uuid);
+
+        return FutureConverters.toJava(ask(actorToDownload, new FileQuery(), TIMEOUT)).thenApply(response -> {
+            DownloadResult result = (DownloadResult) response;
+            Path fileToDownload = Paths.get(String.format("../ASP/%s.hs", result.fnName));
+
+            try {
+                FileUtils.copyFile(result.file.toFile(), fileToDownload.toFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return ok(fileToDownload.toFile());
+        });
     }
 
     protected static void write(Path file, String line) throws IOException {

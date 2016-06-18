@@ -111,7 +111,7 @@ public class Match extends ChoiceRule{
         if (condition.isEmpty()) {
             return String.format("match_guard(%s, %s, %s) :- is_call(call(%s, %s)).\n",
                     functionName,
-                    ruleNumber,
+                    rulePosition,
                     argString,
                     functionName,
                     argString);
@@ -119,7 +119,7 @@ public class Match extends ChoiceRule{
 
             return String.format("match_guard(%s, %s, %s) :- %s, is_call(call(%s, %s)).\n",
                     functionName,
-                    ruleNumber,
+                    rulePosition,
                     argString,
                     condition,
                     functionName,

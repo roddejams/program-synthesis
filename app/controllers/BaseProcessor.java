@@ -47,6 +47,8 @@ public abstract class BaseProcessor extends UntypedActor {
             runLearningTask((IOExamples) msg);
         } else if(msg instanceof StatusProtocol.StatusQuery) {
             sender().tell(new StatusProtocol.StatusResult(result, finished), self());
+        } else if(msg instanceof StatusProtocol.FileQuery) {
+            sender().tell(new StatusProtocol.DownloadResult(haskellFile, fnName), self());
         }
     }
 
@@ -68,7 +70,7 @@ public abstract class BaseProcessor extends UntypedActor {
                 examplesToWrite.setName(fnName);
 
                 int numArgs = examples.get(0).getInputs().size();
-                int maxDepth = 3; //TODO: Work out a good way to calc this dynamically
+                int maxDepth = 2; //TODO: Work out a good way to calc this dynamically
                 //int numFuncs = functionNames.size();
 
                 List<String> chosenOps = inputExamples.getChosenArithmeticOps();
@@ -99,7 +101,7 @@ public abstract class BaseProcessor extends UntypedActor {
 
                 //Path haskellFile = Paths.get(current, "program-synthesis/ASP/haskell/projectout.hs");
                 haskellFile = File.createTempFile("projectout", ".hs").toPath();
-                writeHaskell(haskell, haskellFile);
+                writeHaskell(haskell, haskellFile, numArgs);
             }
 
             //Complete examples if necessary
@@ -150,12 +152,14 @@ public abstract class BaseProcessor extends UntypedActor {
         compilation.waitFor();
 
         for(IOExample example : uncompleted) {
-            String argString = example.getInputs().toString();
-            argString = argString.replace("[", "");
-            argString = argString.replace("]", "");
-            argString = argString.replace(",", " ");
+            List<String> arguments = new ArrayList<>();
+            arguments.add(haskellExe);
+            arguments.addAll(example.getInputs());
 
-            ProcessBuilder pb = new ProcessBuilder(haskellExe, argString);
+            System.out.println(arguments);
+            String[] argArray = arguments.toArray(new String[arguments.size()]);
+
+            ProcessBuilder pb = new ProcessBuilder(argArray);
             //Process proc = rt.exec(String.format("%s %s", haskellExe, argString));
             Process proc = pb.start();
 
@@ -183,7 +187,7 @@ public abstract class BaseProcessor extends UntypedActor {
                 skeletonRulePath));
         Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
                 skeletonRulePath));*/
-        String[] procArguments = {"./clingo", rulesPath, examplesPath, skeletonRulePath};
+        String[] procArguments = {"clingo", rulesPath, examplesPath, skeletonRulePath, "../ASP/learned_functions.lp"};
         ProcessBuilder pb = new ProcessBuilder(procArguments);
 
         pb.directory(new File("bin"));
@@ -228,15 +232,22 @@ public abstract class BaseProcessor extends UntypedActor {
         return chosenPredicates;
     }
 
-    protected void writeHaskell(List<String> haskell, Path haskellFile) throws IOException {
+    protected void writeHaskell(List<String> haskell, Path haskellFile, int numArgs) throws IOException {
         Files.write(haskellFile, "".getBytes());
 
-        write(haskellFile, "import System.Environment\n");
-        write(haskellFile, "main = do\n");
-        write(haskellFile, "\targ:args <- getArgs\n");
-        write(haskellFile, String.format("\tputStrLn (show (%s (read arg)))\n", fnName));
-        write(haskellFile, "\n");
-
+        if(numArgs == 1) {
+            write(haskellFile, "import System.Environment\n");
+            write(haskellFile, "main = do\n");
+            write(haskellFile, "\targ:args <- getArgs\n");
+            write(haskellFile, String.format("\tputStrLn (show (%s (read arg)))\n", fnName));
+            write(haskellFile, "\n");
+        } else if(numArgs == 2) {
+            write(haskellFile, "import System.Environment\n");
+            write(haskellFile, "main = do\n");
+            write(haskellFile, "\targ1:arg2:args <- getArgs\n");
+            write(haskellFile, String.format("\tputStrLn (show (%s (read arg1) (read arg2)))\n", fnName));
+            write(haskellFile, "\n");
+        }
         for(String line : haskell) {
             write(haskellFile, line);
         }

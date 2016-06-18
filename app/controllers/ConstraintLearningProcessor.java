@@ -77,14 +77,14 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         }
 
         //Depth 2
-        factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
+        /*factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).forEach(rule -> {
             for (String op : inner_ops) {
                 for (String arg : args) {
                     factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format(op, rule.body(), arg)));
                     factory.addSimpleRule(ruleBuilder.withDepth(2).withBody(String.format(op, rule.body(), "CX")));
                 }
             }
-        });
+        });*/
 
         Set<String> simpleRules = factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 1).map(ChoiceRule::body).collect(Collectors.toSet());
         List<Set<String>> cartesianArguments = Collections.nCopies(numArgs, simpleRules);
@@ -147,7 +147,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         int maxNumConstants = 0;
         int maxMatchConstants = 0;
 
-        String[] ruleNums = new String[2*maxDepth];
+        String[][] ruleNums = new String[2*maxDepth][2];
         String[] matchNums = new String[2*maxDepth];
 
         try {
@@ -184,12 +184,23 @@ public class ConstraintLearningProcessor extends BaseProcessor {
                 if (rule instanceof EqRule) {
                     int numConsts = rule.numConstants();
 
-                    String nums = ruleNums[numConsts];
-                    if (nums == null) {
-                        ruleNums[numConsts] = "" + rule.ruleNumber();
+                    String nums = ruleNums[numConsts][1];
+                    if(!rule.body().contains("call")) {
+                        if (nums == null) {
+                            ruleNums[numConsts][0] = "" + rule.ruleNumber();
+                            ruleNums[numConsts][1] = "" + rule.ruleNumber();
+                        } else {
+                            nums += ";" + rule.ruleNumber();
+                            ruleNums[numConsts][0] = nums;
+                            ruleNums[numConsts][1] = nums;
+                        }
                     } else {
-                        nums += ";" + rule.ruleNumber();
-                        ruleNums[numConsts] = nums;
+                        if (nums == null) {
+                            ruleNums[numConsts][1] = "" + rule.ruleNumber();
+                        } else {
+                            nums += ";" + rule.ruleNumber();
+                            ruleNums[numConsts][1] = nums;
+                        }
                     }
                 }
 
@@ -242,7 +253,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
             if(containsDiv) {
                 write(file, "expr_const(1;2).\n");
             } else {
-                write(file, "expr_const(0;1;2).\n");
+                write(file, "expr_const(0;1).\n");
             }
             write(file, "num_rules(1..2).\n");
             write(file, "num_match(1..2).\n");
@@ -271,37 +282,48 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         return file;
     }
 
-    private static void generateChoiceRule(Path file, int maxNumConstants, String[] ruleNums) throws IOException {
+    private static void generateChoiceRule(Path file, int maxNumConstants, String[][] ruleNums) throws IOException {
+
         String minimiseStmt = "";
-        write(file, "1 {\n");
+        for(int currRule = 1; currRule <= 2; currRule++) {
+            minimiseStmt = "";
+            write(file, "1 {\n");
 
-        for(int i = 0; i <= maxNumConstants; i++) {
-            String consts = "";
-            String expr_consts = "";
-            for (int j = 0; j < i; j++) {
-                consts += String.format(", C%d", j);
-                expr_consts += String.format(": expr_const(C%d) ", j);
-            }
-
-            //have to check to put a comma or not;
-            String choice = "";
-            String min = "";
-            if(ruleNums[i] != null) {
-                if (i == maxNumConstants) {
-                    choice = String.format("choose(R, %s%s) %s\n", ruleNums[i], consts, expr_consts);
-                    min = String.format("choose(_, R%s)=R ", StringUtils.repeat(", _", i));
-                } else {
-                    choice = String.format("choose(R, %s%s) %s,\n", ruleNums[i], consts, expr_consts);
-                    min = String.format("choose(_, R%s)=R, ", StringUtils.repeat(", _", i));
+            for (int i = 0; i <= maxNumConstants; i++) {
+                String consts = "";
+                String expr_consts = "";
+                for (int j = 0; j < i; j++) {
+                    consts += String.format(", C%d", j);
+                    expr_consts += String.format(": expr_const(C%d) ", j);
                 }
+
+                //have to check to put a comma or not;
+                String choice = "";
+                String min = "";
+                if (ruleNums[i][currRule - 1] != null) {
+                    if (i == maxNumConstants) {
+                        choice = String.format("choose(%s, %s%s) %s\n", currRule, ruleNums[i][currRule - 1], consts, expr_consts);
+                        min = String.format("choose(_, R%s)=R ", StringUtils.repeat(", _", i));
+                    } else {
+                        choice = String.format("choose(%s, %s%s) %s,\n", currRule, ruleNums[i][currRule - 1], consts, expr_consts);
+                        min = String.format("choose(_, R%s)=R, ", StringUtils.repeat(", _", i));
+                    }
+                } else {
+                    if(i == maxNumConstants) {
+                        choice = String.format("choose(%s, 0) \n", currRule);
+                    } else {
+                        choice = String.format("choose(%s, 0),  \n", currRule);
+                    }
+                }
+
+                minimiseStmt += min;
+                write(file, choice);
             }
 
-            minimiseStmt += min;
-            write(file, choice);
+            //write(file, "} 1 :- num_rules(R).\n");
+            write(file, "} 1.\n");
+
         }
-
-        write(file, "} 1 :- num_rules(R).\n");
-
         write(file, String.format("#minimise [%s].\n", minimiseStmt));
     }
 }
