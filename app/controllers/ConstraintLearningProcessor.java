@@ -113,9 +113,6 @@ public class ConstraintLearningProcessor extends BaseProcessor {
         }
 
         //Depth 3+
-        //factory.getSimpleRules().stream().filter(rule -> ((EqRule) rule).depth() == 2).forEach(rule -> {
-        //    factory.addCallRule(ruleBuilder.withDepth(3).withBody(String.format("call(%s, %s)", fnName, rule.body())));
-        //});
 
         if(!useTailRecursion) {
             for (int i = 2; i <= maxDepth; i++) {
@@ -139,8 +136,6 @@ public class ConstraintLearningProcessor extends BaseProcessor {
     public Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
-        //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
-        //Path file = Paths.get(current, "tmp_skeleton_rules.lp");
         Path file = File.createTempFile("tmp_skeleton_rules", ".lp").toPath();
         System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
@@ -180,7 +175,7 @@ public class ConstraintLearningProcessor extends BaseProcessor {
                     maxNumConstants = rule.numConstants();
                 }
 
-                //Fuck about with rule numbers for choice rules later :(
+                //Calculate rule numbers for choice rules later
                 if (rule instanceof EqRule) {
                     int numConsts = rule.numConstants();
 
@@ -244,7 +239,6 @@ public class ConstraintLearningProcessor extends BaseProcessor {
 
     protected Path writeExamples(IOExamples examples, int numArgs, boolean containsDiv) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
-        //Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
         Path file = File.createTempFile("examples", ".lp").toPath();
         System.out.println("Writing examples to " + file.toAbsolutePath().toString());
 
@@ -258,21 +252,6 @@ public class ConstraintLearningProcessor extends BaseProcessor {
             write(file, "num_rules(1..2).\n");
             write(file, "num_match(1..2).\n");
 
-            //Statically write match statements for now. Will learn these later*
-            /*
-            if(numArgs == 1) {
-                write(file, String.format("match_guard(%s, (R + 1), Input) :- is_call(call(%s, Input)), num_match(R).\n",
-                        fnName, fnName));
-                //write(file, "match2(f, 1, Input) :- Input == 0, is_call(call(f, Input)).\n");
-                //write(file, "match2(f, 2, Input) :- is_call(call(f, Input)).\n");
-
-            } else {
-                write(file, String.format("match_guard(%s, (R + 1), (Arg1, Args)) :- is_call(call(%s, (Arg1, Args))), num_match(R).\n",
-                        fnName, fnName));
-                //write(file, "match2(f, 1, (Arg1, Args)) :- Arg1 == 0, is_call(call(f, (Arg1, Args))).\n");
-                //write(file, "match2(f, 2, (Arg1, Args)) :- is_call(call(f, (Arg1, Args))).\n");
-            }
-            */
             write(file, examples.toString());
 
         } catch (IOException e) {
@@ -320,7 +299,6 @@ public class ConstraintLearningProcessor extends BaseProcessor {
                 write(file, choice);
             }
 
-            //write(file, "} 1 :- num_rules(R).\n");
             write(file, "} 1.\n");
 
         }

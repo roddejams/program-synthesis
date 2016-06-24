@@ -143,8 +143,6 @@ public abstract class BaseProcessor extends UntypedActor {
         String haskellExe = haskellFileLocation.substring(0, haskellFileLocation.length() - 3);
 
         //Compile Haskell
-        //Runtime rt = Runtime.getRuntime();
-        //rt.exec(String.format("/usr/bin/ghc -o %s --make %s", haskellExe, haskellFileLocation));
         ProcessBuilder compBuilder = new ProcessBuilder("ghc", "--make", haskellFileLocation);
         compBuilder.directory(new File("bin"));
         Process compilation = compBuilder.start();
@@ -160,7 +158,6 @@ public abstract class BaseProcessor extends UntypedActor {
             String[] argArray = arguments.toArray(new String[arguments.size()]);
 
             ProcessBuilder pb = new ProcessBuilder(argArray);
-            //Process proc = rt.exec(String.format("%s %s", haskellExe, argString));
             Process proc = pb.start();
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -182,11 +179,6 @@ public abstract class BaseProcessor extends UntypedActor {
         List<String> chosenPredicates = new ArrayList<>();
 
         //Run clingo
-      /*Process proc = rt.exec(String.format("C:\\Users\\James\\Documents\\Code\\clingo-3.0.5-win64\\clingo ASP/rules.lp %s %s",
-                examplesPath,
-                skeletonRulePath));
-        Process proc = rt.exec(String.format("/vol/lab/CLASP/clingo 0 ../rules.lp ../factorial_examples.lp %s",
-                skeletonRulePath));*/
         String[] procArguments = {"clingo", rulesPath, examplesPath, skeletonRulePath, "../ASP/learned_functions.lp"};
         ProcessBuilder pb = new ProcessBuilder(procArguments);
 
@@ -215,14 +207,12 @@ public abstract class BaseProcessor extends UntypedActor {
                 }
             }
 
-            //List<String> preds = splitLine.stream().filter(pred -> pred.startsWith("choose")).collect(Collectors.toList());
             if(!preds.isEmpty()) {
                 chosenPredicates = preds;
             }
         }
 
         // Print standard error
-        //System.out.println("Error:\n");
         while ((s = stdError.readLine()) != null) {
             System.out.println(s);
         }

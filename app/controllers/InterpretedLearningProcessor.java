@@ -82,9 +82,6 @@ public class InterpretedLearningProcessor extends BaseProcessor {
         Set<String> callVargs = new HashSet<>();
         callVargs.addAll(args);
         callVargs.addAll(vars);
-        /*for(int i = 1; i < numArgs; i++) {
-            vargs.add("C" + i);
-        }*/
 
         Set<Set<String>> callArgCombinations = Sets.powerSet(callVargs).stream().filter(s -> s.size() == numArgs).collect(Collectors.toSet());
 
@@ -121,9 +118,6 @@ public class InterpretedLearningProcessor extends BaseProcessor {
                     factory.addRule(whereBuilder.withVar(var).withBody(String.format(callString, fn, filledInputString)));
                 }
             }
-
-            //vargs.add(var);
-            //callVargs.add(var);
         }
 
         return factory.getRules();
@@ -142,8 +136,6 @@ public class InterpretedLearningProcessor extends BaseProcessor {
     public Path writeSkeletonRules(List<ChoiceRule> generatedRules, List<ChoiceRule> matchRules, int maxDepth) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
         System.out.println("Current dir = " + current);
-        //Path file = Paths.get(current, "program-synthesis/ASP/skeleton_rules/tmp_skeleton_rules.lp");
-        //Path file = Paths.get(current, "tmp_skeleton_rules.lp");
         Path file = File.createTempFile("tmp_skeleton_rules", ".lp").toPath();
         System.out.println("Writing skeleton rules to " + file.toAbsolutePath().toString());
 
@@ -200,7 +192,6 @@ public class InterpretedLearningProcessor extends BaseProcessor {
 
     protected Path writeExamples(IOExamples examples, int numArgs, boolean containsDiv) throws IOException {
         String current = Paths.get("").toAbsolutePath().toString();
-        //Path file = Paths.get(current, "program-synthesis/ASP/examples.lp");
         Path file = File.createTempFile("examples", ".lp").toPath();
         System.out.println("Writing examples to " + file.toAbsolutePath().toString());
 

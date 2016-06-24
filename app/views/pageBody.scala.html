@@ -46,10 +46,6 @@
                             <input type="checkbox" name="@examplesForm("useMultiplication").name" value="true" @if(examplesForm("useMultiplication").valueOr("false") == "true"){checked="checked"}>
                             Multiplication
                         </label>
-                        <!--<label class="checkbox-inline">
-                            <input type="checkbox" name="@examplesForm("useDivision").name" value="true" @if(examplesForm("useDivision").valueOr("false") == "true"){checked="checked"}>
-                            Division
-                        </label>-->
                     </div>
                     <div>
                         <label class="checkbox-inline"><input type="checkbox" value="">Equality</label>
@@ -65,16 +61,6 @@
                 </div>
             </div>
         </div>
-        <!--<div class="col-md-2">
-            <label for="numFuncs">
-                No. Functions
-            </label>
-            <select class="form-control" id="numFuncs">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-            </select>
-        </div>-->
     </div>
     <div id="table-container">
         @dynamicTable(examplesForm, generatedCode)
